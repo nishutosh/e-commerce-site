@@ -62,15 +62,14 @@ class Customer(models.Model):
 
 class Customer_Card_Details(models.Model):
   Card_Customer=models.ForeignKey(Customer)
-  Card_Number=models.IntegerField()
+  Card_Number=models.IntegerField( validators=[MaxValueValidator(9999999999999999)])
   Owner=models.CharField(max_length=50)
-  Cvv=models.IntegerField()
   Date_Of_Expiry=models.DateField()
-  Cvv=models.IntegerField()
+  CVV=models.IntegerField( validators=[MaxValueValidator(999)])
 
 class Cart(models.Model):
    customer=models.ForeignKey(Customer)
-   Cart_Id=models.CharField(max_length=100)
+   Cart_Id=models.CharField(max_length=100,unique=True)
 
 class CartProduct(models.Model):
   Product_In_Cart=models.ForeignKey(Product)
@@ -89,7 +88,7 @@ class Review(models.Model):
 
 
 class Delivery_Type(models.Model):
-   type=models.CharField(max_length=100)
+   type=models.CharField(max_length=100,unique=True)
 
 class Order(models.Model):
    Order_Id=models.CharField(max_length=200)
@@ -105,19 +104,19 @@ class Order(models.Model):
    Order_Contact_Number=models.IntegerField()
 
 class Order_Status_Model(models.Model):
-  status_for_order=models.CharField(max_length=100)
+  status_for_order=models.CharField(max_length=100,unique=True)
   #delivered,shipped,outfordelivery,cancelled
 
 class Payment_Method(models.Model):
-   payment_type=models.CharField(max_length=100)
+   payment_type=models.CharField(max_length=100,unique=True)
 
 class Shipment_Orgs(models.Model):
   Shipping_Company_Name=models.CharField(max_length=100)
-  Shipping_Company_Id=models.CharField(max_length=100)
-  #shipping company details
+  Shipping_Company_Id=models.CharField(max_length=100,unique=True)
+  #shipping company details will be added as per requirements
 
 class Payment_Status(models.Model):
-  payment_status=models.CharField(max_length=100)
+  payment_status=models.CharField(max_length=100,unique=True)
   #pending,paid,cancelled
 
 
@@ -125,11 +124,11 @@ class Payment_Status(models.Model):
 class Order_Product_Specs(models.Model):
   Order=models.ForeignKey(Order)
   Ordered_Product=models.ForeignKey(Product)
-  Quantity=models.IntegerField()
+  Quantity=models.IntegerField(default=1)
   Order_Payment_Type=models.ForeignKey(Payment_Method)
   Order_Payment_status=models.ForeignKey(Payment_Status)
-  Transaction_Id=models.CharField(max_length=100)
-  Invoice_Id=models.CharField(max_length=100)
+  Transaction_Id=models.CharField(max_length=100,unique=True)
+  Invoice_Id=models.CharField(max_length=100,unique=True)
   Invoice=models.FileField(upload_to="Invoices/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   Order_Status=models.ForeignKey(Order_Status_Model)
