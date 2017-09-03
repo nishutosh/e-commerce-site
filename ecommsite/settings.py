@@ -100,7 +100,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+#default user model 
+AUTH_USER_MODEL = 'ecommapp.CustomUser'
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
