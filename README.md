@@ -1,6 +1,38 @@
-# e-commerce-site
+# Fash Volts E-commerce Website
 
-* master will updated only via pull request  from  development
-* CI testing will be included  in development branch
+A django e-commerce application .
 
->  So please never commit on them  :sweat_smile:
+
+### Installation
+
+- Create a virtual environment
+
+    `virtualenv venv`
+
+
+- Start virtual environment
+
+    `source venv/bin/activate`
+
+
+- Install requirements
+
+    `pip install -r requirements`
+
+
+- Enable Debug for debugging
+
+    Go to the `settings.py` file and set the variable `DEBUG` to True.
+
+
+- Migrate DB
+
+    `python manage.py makemigrations` and `python manage.py migrate` 
+
+
+- Running test server, go to the folder with `manage.py` file and run:
+
+    `python manage.py runserver`
+
+    This will run the server at localhost.
+
