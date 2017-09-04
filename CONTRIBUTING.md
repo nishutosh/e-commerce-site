@@ -1,6 +1,5 @@
 ### Contributing
 
-Contribution are welcome as always. Checkout the existing issues or create issues.
 
 Steps for contributing:
 

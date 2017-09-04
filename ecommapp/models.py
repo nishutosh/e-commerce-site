@@ -68,10 +68,14 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class BaseCategory(models.Model):
   Base_Category=models.CharField(max_length=100,unique=True)
+  Base_Category_Pic=models.ImageField(upload_to="BaseCatPic/")
 
 class SubCategory(models.Model):
   Base_category=models.ForeignKey(BaseCategory)
   Sub_Category=models.CharField(max_length=100,unique=True)
+  Sub_Category_Pic=models.ImageField(upload_to="SubCatPic/")
+
+ 
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)
@@ -91,10 +95,11 @@ class Seller(models.Model):
   Profile=models.TextField(max_length=1000)
   email=models.EmailField()
   Contact_Number=models.IntegerField()
-  Seller_Rating=models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(5)])
+
 
 class Product_Status(models.Model):
    status=models.CharField(max_length=20,unique=True)
+   #avaiable, outof stock etc
  
 
 
@@ -114,13 +119,18 @@ class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
    Products_In_Sale=models.ManyToManyField(Product)
 
+class Flash_Sale_Banner(models.Model):
+   Flash_Sale_Ancess=models.ForeignKey(Flash_Sale)
+   Banner_Pic=models.ImageField(upload_to="FlashSaleBanner/")
+   Is_Main_Banner=models.BooleanField(default=False)
 
 
 class Pics(models.Model):
   ProductPics=models.ForeignKey(Product)
-  is_thumbnail=models.BooleanField(default=False)
+  is_Thumbnail=models.BooleanField(default=False)
+  Is_Main_Image=models.BooleanField(default=True)
+  Is_Detail_Image=models.BooleanField(default=False)
   Images=models.ImageField(upload_to="ProductImages/")
-
 
 
 class Customer(models.Model):
@@ -134,13 +144,8 @@ class Customer(models.Model):
    State=models.CharField(max_length=200)
    ZIP=models.IntegerField()
    Volts_Credit=models.IntegerField(default=0)
+   User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/")
 
-class Customer_Card_Details(models.Model):
-  Card_Customer=models.ForeignKey(Customer)
-  Card_Number=models.IntegerField( validators=[MaxValueValidator(9999999999999999)])
-  Owner=models.CharField(max_length=50)
-  Date_Of_Expiry=models.DateField()
-  CVV=models.IntegerField( validators=[MaxValueValidator(999)])
 
 class Cart(models.Model):
    customer=models.ForeignKey(Customer)
@@ -158,12 +163,12 @@ class Review(models.Model):
   Product=models.ForeignKey(Product)
   Review_Title=models.CharField(max_length=200)
   Review_Body=models.TextField(max_length=5000)
-  Product_Rating=models.IntegerField(validators=[MinValueValidator(0),MaxValueValidator(5)])
-
+  show_review=models.BooleanField(default=True)
 
 
 class Delivery_Type(models.Model):
    type=models.CharField(max_length=100,unique=True)
+   #normal #express
 
 class Order(models.Model):
    Order_Id=models.CharField(max_length=200)
@@ -209,7 +214,7 @@ class Sales_Team(models.Model):
 
 class Order_Product_Specs(models.Model):
   Order=models.ForeignKey(Order)
-  Ordered_Product=models.ForeignKey(Product)
+  Ordered_Product=models.OneToOneField(Product)
   Quantity=models.IntegerField(default=1)
   Order_Payment_Type=models.ForeignKey(Payment_Method)
   Order_Payment_status=models.ForeignKey(Payment_Status)

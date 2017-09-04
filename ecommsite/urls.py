@@ -19,4 +19,5 @@ from ecommapp import urls as appurls
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^',include(appurls))
 ]
