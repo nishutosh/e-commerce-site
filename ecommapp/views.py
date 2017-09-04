@@ -8,7 +8,8 @@ from .models import BaseCategory
 
 class HomeView(ListView):
     model=BaseCategory
-    context_object_name = 'base_category'
+    context_object_name="base_category_list"
+    template_name ="index.html"
     
 
 
