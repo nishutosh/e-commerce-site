@@ -7,8 +7,11 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager
+from django.template.defaultfilters import slugify
+from django.utils.crypto import get_random_string
 
-
+chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+SECRET_KEY = get_random_string(50, chars)
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
     def _create_user(self, username, password, **extra_fields):
@@ -69,11 +72,22 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class BaseCategory(models.Model):
   Base_Category=models.CharField(max_length=100,unique=True)
   Base_Category_Pic=models.ImageField(upload_to="BaseCatPic/")
+  Base_Slug_Field=models.SlugField(max_length=120,blank=True)
+  def save(self, *args, **kwargs):
+        print self.Base_Category 
+        self.Base_Slug_Field=slugify(self.Base_Category)
+        super(BaseCategory, self).save()
+
+
 
 class SubCategory(models.Model):
-  Base_category=models.ForeignKey(BaseCategory)
+  Base_category_Key=models.ForeignKey(BaseCategory)
   Sub_Category=models.CharField(max_length=100,unique=True)
   Sub_Category_Pic=models.ImageField(upload_to="SubCatPic/")
+  Sub_Category_Slug_Field=models.SlugField(max_length=120,blank=True)
+  def save(self, *args, **kwargs):
+        self.Sub_Category_Slug_Field=slugify(self.Sub_Category)
+        super(SubCategory, self).save()
 
  
 
@@ -114,6 +128,9 @@ class Product(models.Model):
   Features=models.TextField(max_length=10000)
   TechnicalSpecs=models.CharField(max_length=10000)
   Product_Filter=models.ManyToManyField(Filter_Category)
+  def save(self, *args, **kwargs):
+        #automate process to generate product key
+        super(Products, self).save()
 
 class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
