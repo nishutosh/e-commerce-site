@@ -7,8 +7,11 @@ from django.views.generic import DetailView,ListView
 from .models import BaseCategory,Product
 from django.http import Http404
 from django.views.generic.edit import FormView
-from .forms import RegisterForm
-
+from .forms import *
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
+from django.core.urlresolvers  import reverse
+from django.shortcuts import redirect
 
 class HomeView(ListView):
     model=BaseCategory
@@ -50,6 +53,21 @@ class RegisterView(FormView):
         return super(RegisterView, self).form_valid(form)
    
 
+class SignInView(FormView):
+  """
+  Login class
+  """
+  template_name="signin.html"
+  form_class=SignInForm
+  success_url="/home/"
+  def form_valid(self,form):
+        user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
+        if user is not None:
+             login(self.request,user)
+        else:
+             messages.error(self.request, 'Invalid username or password')
+             return redirect(reverse("signin"))
+        return super(SignInView, self).form_valid(form)
 
 
     

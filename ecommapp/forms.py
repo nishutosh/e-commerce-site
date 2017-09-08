@@ -1,14 +1,15 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.contrib.auth.password_validation import UserAttributeSimilarityValidator,MinimumLengthValidator,CommonPasswordValidator,NumericPasswordValidator
 from .models import CustomUser,Customer
 
 
 
 
 class RegisterForm(forms.Form):
-    username=forms.CharField(max_length=50)
-    password=forms.CharField(widget=forms.PasswordInput,validators=[RegexValidator()],help_text='Your password  should have blah blah blah..')
+    username=forms.CharField(max_length=50,min_length=8)
+    password=forms.CharField(widget=forms.PasswordInput,validators=[],help_text='Your password  should have blah blah blah..')
     confirm_password=forms.CharField(widget=forms.PasswordInput)
     first_name=forms.CharField(max_length=50)
     last_name=forms.CharField(max_length=50)
@@ -39,6 +40,14 @@ class RegisterForm(forms.Form):
                                        City=self.cleaned_data["city"],
                                        State=self.cleaned_data["state"],
                                        ZIP=self.cleaned_data["ZIP"]  )
+
+class SignInForm(forms.Form):
+    username=forms.CharField(max_length=50)
+    password=forms.CharField(widget=forms.PasswordInput)
+
+    def signin_user(self):
+        print self.request
+
 
 
 
