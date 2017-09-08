@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block body %}
-
     <h2>PRODUCT DETAILS</h2> 
                 {{product.Product_Name}}
+                {{product.Price}}
+                {% for pic in pics %}
+                <img src={{pic.Images.url}}  />
+                {%endfor%}
 {% endblock %}

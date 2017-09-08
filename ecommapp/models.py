@@ -10,8 +10,6 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.template.defaultfilters import slugify
 from django.utils.crypto import get_random_string
 
-chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-SECRET_KEY = get_random_string(50, chars)
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
     def _create_user(self, username, password, **extra_fields):
@@ -121,16 +119,13 @@ class Product(models.Model):
   Produce_Base_Category=models.ForeignKey(BaseCategory)
   product_Sub_Category=models.ForeignKey(SubCategory)
   Product_Name=models.CharField(max_length=200)
-  Product_Code=models.TextField(max_length=100,unique=True)
   Price=models.FloatField()
   Availiability=models.ForeignKey(Product_Status)
   Description=models.TextField(max_length=10000)
   Features=models.TextField(max_length=10000)
   TechnicalSpecs=models.CharField(max_length=10000)
   Product_Filter=models.ManyToManyField(Filter_Category)
-  def save(self, *args, **kwargs):
-        #automate process to generate product key
-        super(Products, self).save()
+
 
 class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
@@ -161,7 +156,7 @@ class Customer(models.Model):
    State=models.CharField(max_length=200)
    ZIP=models.IntegerField()
    Volts_Credit=models.IntegerField(default=0)
-   User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/")
+   User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
 
 
 class Cart(models.Model):
