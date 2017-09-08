@@ -125,22 +125,22 @@ class Product(models.Model):
   Features=models.TextField(max_length=10000)
   TechnicalSpecs=models.CharField(max_length=10000)
   Product_Filter=models.ManyToManyField(Filter_Category)
+  Main_Image=models.ImageField(upload_to="ProductImages/")
 
 
 class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
    Products_In_Sale=models.ManyToManyField(Product)
+   Main_Banner=models.ImageField(upload_to="FlashSaleBanner/")
 
 class Flash_Sale_Banner(models.Model):
    Flash_Sale_Ancess=models.ForeignKey(Flash_Sale)
-   Banner_Pic=models.ImageField(upload_to="FlashSaleBanner/")
-   Is_Main_Banner=models.BooleanField(default=False)
+   Banner_Pics=models.ImageField(upload_to="FlashSaleBanner/")
 
 
 class Pics(models.Model):
   ProductPics=models.ForeignKey(Product)
-  is_Thumbnail=models.BooleanField(default=False)
-  Is_Main_Image=models.BooleanField(default=True)
+  #is_Thumbnail=models.BooleanField(default=False)
   Is_Detail_Image=models.BooleanField(default=False)
   Images=models.ImageField(upload_to="ProductImages/")
 

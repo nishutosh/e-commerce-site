@@ -25,7 +25,8 @@ class ProductList(ListView):
         try: 
               return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
         except:
-              raise Http404     
+              raise Http404
+  
    
 
 

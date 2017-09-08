@@ -45,9 +45,6 @@ class SignInForm(forms.Form):
     username=forms.CharField(max_length=50)
     password=forms.CharField(widget=forms.PasswordInput)
 
-    def signin_user(self):
-        print self.request
-
 
 
 
