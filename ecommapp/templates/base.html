@@ -5,6 +5,13 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% if siteuser %}
+      <a href={%url "signout" %}>Logout</a>
+      <li>hi  {{siteuser.customer.Customer_First_Name}}   {{siteuser.customer.Customer_Last_Name}}</li>
+     {% else %}
+        <a href={%url  "signin" %}>SignIn</a>
+        <a href={%url "register" %}>New User</a>
+    {% endif %}
     {% block title %}
     {%endblock %}
     <link href={%static "css/bootstrap.min.css" %}  rel="stylesheet">

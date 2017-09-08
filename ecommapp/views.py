@@ -8,15 +8,23 @@ from .models import BaseCategory,Product
 from django.http import Http404
 from django.views.generic.edit import FormView
 from .forms import *
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
 from django.core.urlresolvers  import reverse
 from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
 
 class HomeView(ListView):
     model=BaseCategory
     context_object_name="base_category_list"
     template_name ="index.html"
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+             context["siteuser"]=self.request.user      
+        return context
 
 class ProductList(ListView):
   context_object_name="product_list"
@@ -42,15 +50,25 @@ class ProductDetails(DetailView):
    def get_context_data(self, **kwargs):
         context = super(ProductDetails, self).get_context_data(**kwargs)
         context["pics"]=context["product"].pics_set.filter(Is_Detail_Image=True)
-        print context
         return context          
    
 class RegisterView(FormView):
    template_name="register.html"
    form_class=RegisterForm
-   success_url='/account-created/'
+   success_url='/signin/'
    def form_valid(self, form):
-        form.create_user()
+        user_made=CustomUser.objects.create_user(username=form.cleaned_data["username"],password=form.cleaned_data["password"])
+        Customer.objects.create(
+                                       User_customer=user_made,
+                                       Customer_First_Name=form.cleaned_data["first_name"],
+                                       Customer_Last_Name=form.cleaned_data["last_name"],
+                                       Customer_Email=form.cleaned_data["email"],
+                                       Address_Line1=form.cleaned_data["address_line_1"],
+                                       Address_Line2=form.cleaned_data["address_line_2"],
+                                       City=form.cleaned_data["city"],
+                                       State=form.cleaned_data["state"],
+                                       ZIP=form.cleaned_data["ZIP"]  )
+        messages.success(self.request, 'User Registered')
         return super(RegisterView, self).form_valid(form)
    
 
@@ -71,7 +89,10 @@ class SignInView(FormView):
         return super(SignInView, self).form_valid(form)
 
 
-    
+class OrderProducts(LoginRequiredMixin,View):
+         pass
 
-
-# Create your views here.
+class SignOutView(LoginRequiredMixin,View):
+     def get(self,request):
+          logout(request)
+          return redirect(reverse("home"))
