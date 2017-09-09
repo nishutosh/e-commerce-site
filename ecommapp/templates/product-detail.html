@@ -1,0 +1,200 @@
+{% extends 'base/detail.html' %}
+{% load static %}
+{% block body_block %}
+<div class="page-content">
+  <div class="container-fluid">
+  <div class="visible-xs-block">
+    <h2 class="name">{{product.Product_Name}}</h2>
+    <span class="current-price">₹{{product.Price}}</span>
+  </div>
+    <div class="row product-display">
+      <div class="all-image-vertical-list row col-md-1  visible-lg-inline">
+          <div class="thumbnail small-image active">
+            <img src="{% static "main/images/product.jpg" %}"/>
+          </div>
+          <div class="thumbnail small-image col-centered">
+            <img src="{% static "main/images/product.jpg" %}"/>
+          </div>
+          <div class="thumbnail small-image col-centered">
+            <img src="{% static "main/images/product.jpg" %}"/>
+          </div>
+          <div class="thumbnail small-image col-centered">
+            <img src="{% static "main/images/product.jpg" %}"/>
+          </div>
+
+      </div>
+        <div class="col-xs-12 col-md-4 product-image-display-container">
+          <div class="big-image">
+                <img src="{% static "main/images/product.jpg" %}"/>
+          </div>
+          <div class="all-image-list row">
+              <div class="thumbnail small-image col-md-2 col-xs-2 col-centered active">
+                <img src="{% static "main/images/product.jpg" %}"/>
+              </div>
+              <div class="thumbnail small-image col-md-2 col-xs-2 col-centered">
+                <img src="{% static "main/images/product.jpg" %}"/>
+              </div>
+              <div class="thumbnail small-image col-md-2 col-xs-2 col-centered">
+                <img src="{% static "main/images/product.jpg" %}"/>
+              </div>
+              <div class="thumbnail small-image col-md-2 col-xs-2 col-centered">
+                <img src="{% static "main/images/product.jpg" %}"/>
+              </div>
+
+          </div>
+        </div>
+        <!--Product detail container -->
+        <div class="col-xs-12 col-md-6 product-details-display-container">
+
+          <div class="product-details">
+              <h3>{{product.Product_name}}</h3>
+
+              <span class="original-price"><strike>₹500</strike></span>
+              <span class="discount">(20% off)</span>
+              <span class="current-price">₹{{product.Price}}</span>
+
+          </div>
+          <div class="size-list row">
+            <h4>Select Size</h4>
+            <div class="col-md-1 col-xs-2 col-xs-offset-1">
+                <div class="size">
+                  <div class="circle">
+                    S
+                  </div>
+                </div>
+            </div>
+            <div class="col-md-1 col-xs-2 col-xs-offset-1">
+              <div class="size active">
+                <div class="circle">
+                  M
+                </div>
+              </div>
+            </div>
+            <div class="col-md-1 col-xs-2 col-xs-offset-1">
+              <div class="size">
+                <div class="circle">
+                  L
+                </div>
+              </div>
+            </div>
+            <div class="col-md-1 col-xs-2 col-xs-offset-1">
+              <div class="size">
+                <div class="circle">
+                  XL
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cart-cta">
+            <button class="btn btn-default cart-btn">
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                ADD TO CART
+            </button>
+          </div>
+          <div class="product-content">
+            <h4>Description</h4>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+              </p>
+          </div>
+          <div class="product-attributes">
+                <h4>Material and Care</h4>
+                <ul>
+                    <li>
+                      Cotton
+                    </li>
+                    <li>
+                      Machine-wash
+                    </li>
+                </ul>
+                <h4>Product details</h4>
+                <ul>
+                    <li>
+                      White solid T-shirt
+                    </li>
+                    <li>
+                      polo collar
+                    </li>
+                    <li>
+                       short sleeves
+                    </li>
+                </ul>
+          </div>
+          <!--Product attributes end-->
+
+        </div>
+        <!--Product details ends-->
+    </div>
+    <!--Product display ends-->
+    <!--Questions-->
+    <div class="col-md-offset-1 col-md-10 question-list">
+        <h2>Questions</h2>
+        <ul>
+          <li>
+            <div class="question">
+                <h4>Lorem Ipsum</h4>
+            </div>
+            <div class="answer">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </div>
+          </li>
+          <li>
+            <div class="question">
+                <h4>Lorem Ipsum</h4>
+            </div>
+            <div class="answer">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </div>
+          </li>
+          <li>
+            <div class="question">
+                <h4>Lorem Ipsum</h4>
+            </div>
+            <div class="answer">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </div>
+          </li>
+        </ul>
+    </div>
+    <!-- Questions end -->
+    <div class="review-list col-md-offset-1 col-md-10">
+          <h2>Reviews</h2>
+          <ul>
+            <li>
+              <div class="review">
+                <h4>Lorem Ipsum</h4>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="review">
+                <h4>Lorem Ipsum</h4>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="review">
+                <h4>Lorem Ipsum</h4>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+              </div>
+            </li>
+            <li>
+              <div class="review">
+                <h4>Lorem Ipsum</h4>
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                </p>
+              </div>
+            </li>
+          </ul>
+    </div>
+  </div>
+</div>
+
+{%endblock%}
