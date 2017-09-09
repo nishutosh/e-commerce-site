@@ -14,6 +14,9 @@ from django.core.urlresolvers  import reverse
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+menu_product_view_context={
+"base_category_list":BaseCategory.objects.all() 
+}
 
 
 class HomeView(ListView):
@@ -23,7 +26,7 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-             context["siteuser"]=self.request.user      
+             context["siteuser"]=self.request.user           
         return context
 
 class ProductList(ListView):
@@ -36,9 +39,9 @@ class ProductList(ListView):
               raise Http404
   def get_context_data(self, **kwargs):
         context = super(ProductList, self).get_context_data(**kwargs)
+        context.update(menu_product_view_context)
         if self.request.user.is_authenticated:
-             context["siteuser"]=self.request.user
-        print context           
+             context["siteuser"]=self.request.user        
         return context
   
    
@@ -55,7 +58,8 @@ class ProductDetails(DetailView):
 
    def get_context_data(self, **kwargs):
         context = super(ProductDetails, self).get_context_data(**kwargs)
-        context["pics"]=context["product"].pics_set.filter(Is_Detail_Image=True)
+        context["pics"]=context["product"].pics_set.all()
+        context.update(menu_product_view_context)
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user      
         return context          
