@@ -34,6 +34,12 @@ class ProductList(ListView):
               return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
         except:
               raise Http404
+  def get_context_data(self, **kwargs):
+        context = super(ProductList, self).get_context_data(**kwargs)
+        if self.request.user.is_authenticated:
+             context["siteuser"]=self.request.user
+        print context           
+        return context
   
    
 
@@ -45,11 +51,13 @@ class ProductDetails(DetailView):
         try:
             return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"],pk=self.kwargs["pk"])
         except:
-              raise Http404 
+              raise Http404
 
    def get_context_data(self, **kwargs):
         context = super(ProductDetails, self).get_context_data(**kwargs)
         context["pics"]=context["product"].pics_set.filter(Is_Detail_Image=True)
+        if self.request.user.is_authenticated:
+             context["siteuser"]=self.request.user      
         return context          
    
 class RegisterView(FormView):
@@ -90,7 +98,7 @@ class SignInView(FormView):
 
 
 class OrderProducts(LoginRequiredMixin,View):
-         pass
+    pass
 
 class SignOutView(LoginRequiredMixin,View):
      def get(self,request):

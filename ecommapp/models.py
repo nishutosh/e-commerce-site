@@ -140,7 +140,6 @@ class Flash_Sale_Banner(models.Model):
 
 class Pics(models.Model):
   ProductPics=models.ForeignKey(Product)
-  Is_Detail_Image=models.BooleanField(default=False)
   Images=models.ImageField(upload_to="ProductImages/")
 
 
