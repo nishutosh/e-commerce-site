@@ -1,17 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
-    <h2>PRODUCT DETAILS</h2> 
-     <ul>
-               <li>{{product.Product_Name}}</li>
-                <li>{{product.Price}}</li>
-                <li>{{ product.Availiability.status}}</li>
-                <li>{{product.Description}}</li>
-                <li>{{product.Features}}</li>
-                <li>{{product.TechnicalSpecs}}</li>
-                <!--   display product  images   -->
-                {% for pic in pics %}
-                <img src={{pic.Images.url}}  />
-                {%endfor%}
 
-          </ul>      
+    <h2>PRODUCT DETAILS</h2> 
+                {{product.Product_Name}}
 {% endblock %}

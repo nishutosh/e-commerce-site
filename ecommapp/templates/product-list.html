@@ -1,0 +1,116 @@
+{% extends 'base/list.html' %}
+{% load static %}
+
+{% block body_block %}
+{% if product_list %}
+  <div class="page-content">
+    <div class="product-filters">
+      <button class="btn btn-default main-filter-btn filter-btn" data-toggle="collapse" data-target="#full-list">
+        <h3>
+          Filters
+          <i class="fa fa-chevron-down" aria-hidden="true"></i>
+        </h3>
+      </button>
+      <div id="full-list" class="main-filter-list collapse">
+        <div id="filter1-list" class="filter-list">
+          <button class="btn btn-default filter-btn" data-toggle="collapse" data-target="#type-list">
+            Type
+
+              <i class="fa fa-chevron-down" aria-hidden="true"></i>
+          </button>
+          <div id="type-list" class="collapse type-list">
+              <ul class="filter-type-list">
+                      <li>
+                        <input type="checkbox" value="t-shirt"> T-shirt
+                      </li>
+                      <li>
+                        <input type="checkbox" value="shirt"> Shirt
+                      </li>
+                      <li>
+                        <input type="checkbox" value="trouser"> Trouser
+                      </li>
+                      <li>
+                        <input type="checkbox" value="blazer"> Blazers
+                      </li>
+              </ul>
+          </div>
+        </div>
+          <div id="filter1-list" class="filter-list">
+            <button class="btn btn-default filter-btn" data-toggle="collapse" data-target="#type2-list">
+              Type
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <div id="type2-list" class="collapse type-list">
+                <ul class="filter-type-list">
+                        <li>
+                          <input type="checkbox" value="t-shirt"> T-shirt
+                        </li>
+                        <li>
+                          <input type="checkbox" value="shirt"> Shirt
+                        </li>
+                        <li>
+                          <input type="checkbox" value="trouser"> Trouser
+                        </li>
+                        <li>
+                          <input type="checkbox" value="blazer"> Blazers
+                        </li>
+                </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!--filter ends-->
+    <div class="product-list-container container-fluid">
+      <ul class="product-list">
+        {% for products in product_list%}
+          <li>
+              <div class="product-container">
+                <div class="image-container list">
+
+                  <a href="{{products.product_Sub_Category}}/{{products.pk}}/">
+                          <img src="{% static "main/images/product.jpg" %}"/>
+                  </a>
+                </div>
+                <div class="product-attributes-container">
+                      <div class="product-rating list-cta-btn">
+                            4.5/5
+                      </div>
+                      <div class="product-attributes">
+                          <div class="product-name">
+                            <a href="{{product.Product_Code}}">{{products.Product_Name}}</a>
+                          </div>
+                          <div class="product-price">
+                            <span class="current-price">₹{{product.Price}}</span>
+                            <span class="original-price"><strike>₹500</strike></span>
+                            <span class="discount">20% off</span>
+                          </div>
+                          <div class="product-ctas">
+                            <div class="product-add-to-cart">
+                                <button class="btn btn-default list-cta-btn">+</button>
+                            </div>
+                            <div class="sizes dropdown">
+                              <button class="btn btn-default dropdown-toggle list-cta-btn" type="button" data-toggle="dropdown" data-hover="dropdown">
+                                    Sizes
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li class="size-type">s</li>
+                                <li class="size-type">m</li>
+                                <li class="size-type">l</li>
+                              </ul>
+
+                            </div>
+                          </div>
+                      </div>
+                </div>
+
+              </div>
+
+          </li>
+
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+{%endblock%}
