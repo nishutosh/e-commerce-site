@@ -53,13 +53,13 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username=models.CharField(max_length=50,unique=True)
     is_active=models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-
+    
     def get_full_name(self):
           return self.username
 
     def get_short_name(self):
-          return self.username
-
+          return self.username  
+    
     USERNAME_FIELD='username'
     REQUIRED_FIELD=['']
 
@@ -72,7 +72,7 @@ class BaseCategory(models.Model):
   Base_Category_Pic=models.ImageField(upload_to="BaseCatPic/")
   Base_Slug_Field=models.SlugField(max_length=120,blank=True)
   def save(self, *args, **kwargs):
-        print (self.Base_Category) 
+        print self.Base_Category 
         self.Base_Slug_Field=slugify(self.Base_Category)
         super(BaseCategory, self).save()
 
@@ -87,18 +87,18 @@ class SubCategory(models.Model):
         self.Sub_Category_Slug_Field=slugify(self.Sub_Category)
         super(SubCategory, self).save()
 
-
+ 
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)
 
 class Filter_Category(models.Model):
    Filter=models.ForeignKey(Filter_Name)
-   Filter_Category_Name=models.CharField(max_length=100)
+   Filter_Category_Name=models.CharField(max_length=100)  
 
 
 class Availibilty_status(models.Model):
-  status=models.CharField(max_length=50,unique=True)
+  status=models.CharField(max_length=50,unique=True)  
 
 class Seller(models.Model):
   Seller_Id=models.CharField(max_length=100,unique=True)
@@ -112,7 +112,7 @@ class Seller(models.Model):
 class Product_Status(models.Model):
    status=models.CharField(max_length=20,unique=True)
    #avaiable, outof stock etc
-
+ 
 
 
 class Product(models.Model):
@@ -218,7 +218,7 @@ class Sales_Team(models.Model):
    is_intern=models.BooleanField(default=False)
    Sales_Contact_Number=models.IntegerField()
    Sales_Points=models.IntegerField(default=0)
-   #will add more details
+   #will add more details 
 
 
 
@@ -236,3 +236,4 @@ class Order_Product_Specs(models.Model):
   Esimated_Dilivery_Date=models.DateField()
   Order_Reference=models.OneToOneField(Sales_Team)
   Order_price=models.FloatField(default=0)
+

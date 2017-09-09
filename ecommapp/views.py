@@ -23,14 +23,14 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-             context["siteuser"]=self.request.user
+             context["siteuser"]=self.request.user      
         return context
 
 class ProductList(ListView):
   context_object_name="product_list"
-  template_name="product-list.html"
+  template_name="product_list.html"
   def get_queryset(self):
-        try:
+        try: 
               return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
         except:
               raise Http404
@@ -38,10 +38,10 @@ class ProductList(ListView):
         context = super(ProductList, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user
-        print (context)
+        print context           
         return context
-
-
+  
+   
 
 
 class ProductDetails(DetailView):
@@ -57,9 +57,9 @@ class ProductDetails(DetailView):
         context = super(ProductDetails, self).get_context_data(**kwargs)
         context["pics"]=context["product"].pics_set.filter(Is_Detail_Image=True)
         if self.request.user.is_authenticated:
-             context["siteuser"]=self.request.user
-        return context
-
+             context["siteuser"]=self.request.user      
+        return context          
+   
 class RegisterView(FormView):
    template_name="register.html"
    form_class=RegisterForm
@@ -78,7 +78,7 @@ class RegisterView(FormView):
                                        ZIP=form.cleaned_data["ZIP"]  )
         messages.success(self.request, 'User Registered')
         return super(RegisterView, self).form_valid(form)
-
+   
 
 class SignInView(FormView):
   """
