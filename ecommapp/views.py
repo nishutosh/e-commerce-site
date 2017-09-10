@@ -14,6 +14,9 @@ from django.core.urlresolvers  import reverse
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+menu_product_view_context={
+"base_category_list":BaseCategory.objects.all()
+}
 
 
 class HomeView(ListView):
@@ -23,30 +26,30 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-             context["siteuser"]=self.request.user      
+             context["siteuser"]=self.request.user
         return context
 
 class ProductList(ListView):
   context_object_name="product_list"
-  template_name="product_list.html"
+  template_name="product-list.html"
   def get_queryset(self):
-        try: 
+        try:
               return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
         except:
               raise Http404
   def get_context_data(self, **kwargs):
         context = super(ProductList, self).get_context_data(**kwargs)
+        context.update(menu_product_view_context)
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user
-        print context           
         return context
-  
-   
+
+
 
 
 class ProductDetails(DetailView):
    context_object_name="product"
-   template_name="product.html"
+   template_name="product-detail.html"
    def get_queryset(self):
         try:
             return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"],pk=self.kwargs["pk"])
@@ -55,11 +58,12 @@ class ProductDetails(DetailView):
 
    def get_context_data(self, **kwargs):
         context = super(ProductDetails, self).get_context_data(**kwargs)
-        context["pics"]=context["product"].pics_set.filter(Is_Detail_Image=True)
+        context["pics"]=context["product"].pics_set.all()
+        context.update(menu_product_view_context)
         if self.request.user.is_authenticated:
-             context["siteuser"]=self.request.user      
-        return context          
-   
+             context["siteuser"]=self.request.user
+        return context
+
 class RegisterView(FormView):
    template_name="register.html"
    form_class=RegisterForm
@@ -78,7 +82,7 @@ class RegisterView(FormView):
                                        ZIP=form.cleaned_data["ZIP"]  )
         messages.success(self.request, 'User Registered')
         return super(RegisterView, self).form_valid(form)
-   
+
 
 class SignInView(FormView):
   """

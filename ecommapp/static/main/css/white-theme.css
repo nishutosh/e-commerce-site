@@ -3,7 +3,7 @@
   background-color: rgba(255,255,255,0.15);
   border-bottom: 1px solid #f1f1f1;
   box-shadow: 0 0 2px #000;
-
+  background-color: #232f3e;
 
 
 }
@@ -11,8 +11,8 @@
 
 .main-navbar-header div
 {
-  color:black;
-  color: #535766;
+  color:white;
+
 }
 
 .main-navbar .search-btn
@@ -23,7 +23,7 @@
 .small-button
 {
   background-color: transparent!important;
-  color: black!important;
+  color: white!important;
   border:none!important;
 }
 .navbar-cart-btn
@@ -40,21 +40,20 @@
 
 .main-navbar-form input.form-control
 {
-  background: transparent;
-  color: white;
-  border-color: black;
+  background-color: white;
+  border-color: white;
   color: #535766;
 }
 .main-navbar-form input.form-control::placeholder
 {
-  color:black;
+  color:white;
   color: #535766;
 }
 
 .main-navbar-form button
 {
-  color:black;
-    color: #535766;
+  color:white;
+
 }
 
 
@@ -66,8 +65,8 @@
 
 .main-navbar-menu-list li a
 {
-  color:black;
-  color: #535766;
+  color:white;
+
 }
 
 .main-navbar-menu-list li.open a.dropdown-toggle
@@ -87,8 +86,8 @@
 
 button.main-navbar-toggle
 {
-  color:black;
-  border: 1px solid black;
+  color:white;
+  border: 1px solid white;
 }
 .user-action-list
 {
@@ -101,8 +100,12 @@ button.main-navbar-toggle
 .user-action-list li a
 {
   color:black;
-  color: #535766;
 
+
+}
+.other-navbar-header-items ul li a
+{
+  color: white;
 }
 
 

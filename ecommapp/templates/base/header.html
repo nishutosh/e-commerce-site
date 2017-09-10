@@ -76,29 +76,14 @@
 
                   <div class="main-navbar-menu-list navbar-list" data-hover="dropdown" id="mainNavbar">
                       <ul>
-                        <!--
-                        {% for base in base_category_list%}
-          <li>
-                 {{ base.Base_Category }}
-                  <img src={{base.Base_Category_Pic.url}}   />
-                   <ul >
-                           {% for  sub in base.subcategory_set.all %}
-                            <li>{{sub.Sub_Category}}
-                            <img src={{sub.Sub_Category_Pic.url}}   />
-                            </li>
-                           {%endfor%}
-                     </ul>
-          </li>
-      {% endfor %}
-                      -->
-                        {% for base in base_category_list%}
-                            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ base.Base_Category }}</a>
+                      {% for base in base_category_list%}
+                            <li class="dropdown"><a href="{{category.category_name}}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ base.Base_Category }}</a>
                               <ul class="dropdown-menu">
-                                   {% for  sub in base.subcategory_set.all %}
-                                    {% if sub.category == category %}
-                                      <li><a href="{{base.Base_Category}}/{{sub.Sub_Category_Slug_Field}}">{{sub.Sub_Category_Slug_Field}}</a></li>
-                                    {% endif %}
-                                  {% endfor %}
+                                {% for  sub in base.subcategory_set.all %}
+
+                                    <li><a href="#">{{sub.Sub_Category}}</a></li>
+
+                                {% endfor %}
                               </ul>
                             </li>
                         {% endfor %}
@@ -115,14 +100,14 @@
                   <a href="/">HOME</a>
                 </div>
                 <ul>
-                  {% for category in all_categories %}
-                      <li class="mobile-list-link"><a href="{{category.category_name}}"><strong>{{category.category_name}}</strong></a>
+                  {% for base in base_category_list%}
+                      <li class="mobile-list-link"><a href="{{category.category_name}}"><strong>{{ base.Base_Category }}</strong></a>
                         <i class="fa fa-plus pull-right" aria-hidden="true"></i>
                         <ul class="mobile-list-sub">
-                            {% for sub in sub_categories_menu%}
-                              {% if sub.category == category %}
-                                <li><a href="{{base.Base_Category}}/{{sub.Sub_Category_Slug_Field}}">{{sub.name}}</a></li>
-                              {% endif %}
+                            {% for  sub in base.subcategory_set.all %}
+
+                                <li><a href="#">{{sub.Sub_Category}}</a></li>
+
                             {% endfor %}
                         </ul>
                       </li>

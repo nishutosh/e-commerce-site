@@ -5,22 +5,36 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    {% if siteuser %}
-      <a href={%url "signout" %}>Logout</a>
-      <li>hi  {{siteuser.customer.Customer_First_Name}}   {{siteuser.customer.Customer_Last_Name}}</li>
-     {% else %}
-        <a href={%url  "signin" %}>SignIn</a>
-        <a href={%url "register" %}>New User</a>
-    {% endif %}
-    {% block title %}
-    {%endblock %}
-    <link href={%static "css/bootstrap.min.css" %}  rel="stylesheet">
-  </head>
-  <body>
-  {% block body %}
-  {%endblock%}
-
-
+     <link href={%static "css/bootstrap.min.css" %}  rel="stylesheet">
+       {% block title %}
+        {%endblock %}
+      </head>
+    <body>
+       <div  class="container">
+       <div class="col-md-8">
+          {% for base in base_category_list%}
+            <li>
+                   {{ base.Base_Category }}
+                     <ul >
+                             {% for  sub in base.subcategory_set.all %}
+                              <li>{{sub.Sub_Category}}
+                              </li>
+                             {%endfor%}
+                       </ul>
+            </li>
+        {% endfor %}
+       </div>
+       <div class="col-md-4">
+             {% if siteuser %}
+                  <a href={%url "signout" %}>Logout</a>
+                  <li>Hi  {{siteuser.customer.Customer_First_Name}}   {{siteuser.customer.Customer_Last_Name}}</li>
+            {% else %}
+                <a href={%url  "signin" %}>SignIn</a>
+                <a href={%url "register" %}>Registerr</a>
+            {% endif %}
+         </div>   
+           {% block body %}
+           {%endblock%}
     <script src={%static "js/bootstrap.min.js" %}></script>
   </body>
 </html>

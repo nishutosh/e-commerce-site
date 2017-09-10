@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body_block %}
-{% if product_list %}
+
   <div class="page-content">
     <div class="product-filters">
       <button class="btn btn-default main-filter-btn filter-btn" data-toggle="collapse" data-target="#full-list">
@@ -63,13 +63,12 @@
     <!--filter ends-->
     <div class="product-list-container container-fluid">
       <ul class="product-list">
-        {% for products in product_list%}
+        {% for product in product_list %}
           <li>
               <div class="product-container">
                 <div class="image-container list">
-
-                  <a href="{{products.product_Sub_Category}}/{{products.pk}}/">
-                          <img src="{% static "main/images/product.jpg" %}"/>
+                  <a href="{{product.pk}}">
+                          <img src="{{product.Main_Image.url}}"/>
                   </a>
                 </div>
                 <div class="product-attributes-container">
@@ -78,7 +77,7 @@
                       </div>
                       <div class="product-attributes">
                           <div class="product-name">
-                            <a href="{{product.Product_Code}}">{{products.Product_Name}}</a>
+                            <a href="{{product.product_id}}">{{product.Product_Name}}</a>
                           </div>
                           <div class="product-price">
                             <span class="current-price">₹{{product.Price}}</span>
@@ -112,5 +111,5 @@
       </ul>
     </div>
   </div>
-{% endif %}
+
 {%endblock%}

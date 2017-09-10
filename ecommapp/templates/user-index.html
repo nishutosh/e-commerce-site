@@ -1,0 +1,83 @@
+{% extends 'user-dash.html' %}
+{% load static %}
+
+{% block body_block %}
+<div class="page-content">
+  <div class="user-side-menu">
+    <div class="user-side-menu-list">
+      <h4>ACCOUNT SETTINGS</h4>
+      <ul class="list">
+        <li>Personal Details</li>
+        <li>Security</li>
+      </ul>
+    </div>
+    <div class="user-side-menu-list">
+      <h4>ORDERS</h4>
+      <ul class="list">
+        <li>Past Orders</li>
+        <li>Reviews</li>
+      </ul>
+    </div>
+    <div class="user-side-menu-list">
+      <h4>REWARDS</h4>
+      <ul class="list">
+        <li>Fashvolts credits</li>
+        <li>Coupons</li>
+      </ul>
+    </div>
+
+  </div>
+  <div class="user-main-screen">
+    <div class="account-details">
+      <div class="user-icon">
+          <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+      </div>
+      <div class="details">
+          <h3><strong>Ankit Gupta</strong></h3>
+          <h5>ankit@fashvolts.command</h5>
+          <h5>8130809812</h5>
+      </div>
+    </div>
+    <div class="features">
+      <div class="box">
+        <div class="icon">
+          <i class="fa fa-gift" aria-hidden="true"></i>
+        </div>
+        <h3>ORDERS</h3>
+      </div>
+
+      <div class="box">
+        <div class="icon">
+          <i class="fa fa-ticket" aria-hidden="true"></i>
+        </div>
+        <h3>COUPONS</h3>
+      </div>
+      <div class="box">
+        <div class="icon">
+          <i class="fa fa-flash" aria-hidden="true"></i>
+        </div>
+        <h3>FASH CREDITS</h3>
+      </div>
+      <div class="box">
+        <div class="icon">
+          <i class="fa fa-comments" aria-hidden="true"></i>
+        </div>
+        <h3>REVIEWS</h3>
+      </div>
+      <div class="box">
+        <div class="icon">
+          <i class="fa fa-repeat" aria-hidden="true"></i>
+        </div>
+        <h3>RETURN</h3>
+      </div>
+      <div class="box">
+        <div class="icon">
+          <i class="fa fa-lock" aria-hidden="true"></i>
+        </div>
+        <h3>SECURITY</h3>
+      </div>
+    </div>
+
+  </div>
+</div>
+{%endblock%}

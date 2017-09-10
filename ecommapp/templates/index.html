@@ -1,4 +1,24 @@
-{% extends 'base/base.html' %}
+{% extends "base/base.html" %}
+
+
+
+    <!-- <h2>HOME</h2>
+    <ul>
+        {% for base in base_category_list%}
+            <li>
+                   {{ base.Base_Category }}
+                    <img src={{base.Base_Category_Pic.url}}   />
+                     <ul >
+                             {% for  sub in base.subcategory_set.all %}
+                              <li>{{sub.Sub_Category}}
+                              <img src={{sub.Sub_Category_Pic.url}}   />
+                              </li>
+                             {%endfor%}
+                       </ul>
+            </li>
+        {% endfor %}
+    </ul> -->
+
 {% load static %}
 {% block body_block %}
 

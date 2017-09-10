@@ -1,0 +1,80 @@
+.page-content
+{
+  margin: 20px auto;
+}
+
+.user-side-menu
+{
+    width: 20%;
+    display:inline-block;
+    vertical-align: top;
+    margin:0 50px;
+    padding:70px 20px;
+    height:100%;
+}
+.user-side-menu-list
+{
+  margin: 20px;
+}
+.list
+{
+    font-size: 18px;
+    padding: 5px;
+}
+.list li
+{
+  display: list-item;
+  margin: 10px;
+}
+.user-main-screen
+{
+  width: 70%;
+  display:inline-block;
+  text-align:center;
+  padding-bottom: 40px;
+}
+.account-details
+{
+
+}
+.user-icon
+{
+    font-size: 200px;
+    width:200px;
+    display:inline-block;
+    vertical-align: middle;
+}
+.details
+{
+
+  display:inline-block;
+  margin: 0px 60px;
+  vertical-align: middle;
+}
+.features
+{
+
+}
+.box
+{
+  width: 300px;
+  margin: 10px;
+  display:inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+.icon
+{
+
+  font-size: 100px;
+  display:inline-block;
+  vertical-align: middle;
+
+  margin: 0 10px;
+}
+
+.box h3
+{
+  width: 200px;
+  display:inline;
+}

@@ -1,0 +1,65 @@
+body
+{
+  background-color:#eff2f6;
+}
+div
+{
+
+}
+.box i
+{
+  color: orange;
+}
+
+h1,h2,h3,h4,h5,h6,div
+{
+    color:#535766;
+}
+
+.box h3
+{
+  font-weight: bold;
+}
+.user-side-menu-list h4
+{
+  font-weight: bold;
+}
+
+.box
+{
+  border: 2px solid #535766;
+  box-shadow: 0 0 4px #000;
+
+}
+
+.box:hover
+{
+  border: 2px solid #535766;
+  box-shadow: 4px 4px 4px #535766;
+}
+.box:hover
+{
+  background-color: orange;
+
+}
+.box:hover .icon i,.box:hover h3
+{
+  color:white;
+}
+
+.user-side-menu
+{
+
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .08);
+    background-color: white;
+
+}
+.user-main-screen
+{
+    background-color: white;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .08);
+}
+.user-main-screen i
+{
+  color: orange;
+}
