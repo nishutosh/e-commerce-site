@@ -4,12 +4,12 @@ $(".main-navbar-button").click(function(){
 
   if(showing === false)
     {
-      $('#full-list').show();
+      $('#full-list').slideDown();
       showing = true;
     }
   else
     {
-      $('#full-list').hide();
+      $('#full-list').slideUp();
       showing = false;
     }
 });

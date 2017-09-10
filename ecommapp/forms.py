@@ -9,14 +9,14 @@ from .models import CustomUser,Customer
 
 class RegisterForm(forms.Form):
     username=forms.CharField(max_length=50,min_length=8)
-    password=forms.CharField(widget=forms.PasswordInput,validators=[],help_text='Your password  should have blah blah blah..')
+    password=forms.CharField(widget=forms.PasswordInput,validators=[],help_text='Your password  should have blah blah blah.')
     confirm_password=forms.CharField(widget=forms.PasswordInput)
     first_name=forms.CharField(max_length=50)
     last_name=forms.CharField(max_length=50)
     email=forms.EmailField()
     address_line_1=forms.CharField(max_length=400)
     address_line_2=forms.CharField(max_length=400)
-    city=forms.CharField(max_length=200)  
+    city=forms.CharField(max_length=200)
     state=forms.CharField(max_length=200)
     ZIP=forms.IntegerField()
 
@@ -28,12 +28,7 @@ class RegisterForm(forms.Form):
                 raise forms.ValidationError(
                     "Password and confirm Password fields does not match"
                 )
-                
+
 class SignInForm(forms.Form):
     username=forms.CharField(max_length=50)
     password=forms.CharField(widget=forms.PasswordInput)
-
-
-
-
-    

@@ -44,7 +44,7 @@ nav
 {
   width: 100%;
   padding:0 5px;
-  position: relative;
+
   text-align:left;
 }
 .main-navbar div
@@ -94,8 +94,9 @@ nav
 }
 .main-navbar-more-buttons
 {
-    margin-left: 10px;
-
+    float:right;
+    margin-top: 15px;
+    vertical-align: bottom;
 }
 .small-button
 {
@@ -114,10 +115,7 @@ nav
 }
 .search-form
 {
-    position:absolute;
-    top: 50px;
-    width:100%;
-    left:0;
+  width:100%;
 }
 .main-navbar-form
 {
@@ -181,34 +179,39 @@ nav
 {
   display:none;
   position:absolute;
-  width: 70%;
-  background-color: white;
-  left:-5px;
-  z-index:10;
-  top:-5px;
+  width: 100%;
+  left:0px;
+  z-index:100;
+  top:0px;
   box-shadow: 0 0 4px black;
+  background-color:#eff2f6;
+  height:100%;
 }
 #full-list .mobile-list-header
 {
     padding: 15px;
     width:100%;
-    background-color: orange;
+    background-color: #232f3e;
+    color:white;
 
 }
 .mobile-list-header .main-toggle-button
 {
+  margin-top:15px;
   vertical-align: middle;
 }
 .mobile-list-header a
 {
   padding: 10px;
-  color: black;
+  color: white;
+  font-size: 20px;
   font-weight: bold;
   vertical-align: middle;
 }
 #full-list ul
 {
   border-bottom: 1px solid gray;
+
 }
 #full-list ul:last-of-type
 {

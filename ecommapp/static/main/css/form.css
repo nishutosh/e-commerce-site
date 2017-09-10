@@ -1,0 +1,137 @@
+.form-container
+{
+  width:100%;
+  max-width: 500px;
+  padding: 20px;
+  margin:20px auto;
+  text-align: center;
+}
+
+.input-field
+{
+  float: none;
+  margin: auto;
+}
+.form-horizontal .form-group
+{
+  position: relative;
+  float:none;
+  padding:0;
+  margin:30px auto;
+}
+
+.form-group .control-label
+{
+  text-align: left;
+    position: absolute;
+    z-index: 10;
+    top: 2px;
+    left: 0px;
+    pointer-events: none;
+    width: 100%;
+    -webkit-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.form-group input
+{
+  width: 100%;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid #232f3e;
+  height:30px;
+  box-shadow: none;
+  margin: auto;
+  outline:none;
+  background-color:white;
+  background-image:none;
+}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+
+  -webkit-box-shadow: none;
+  transition: background-color 5000s ease-in-out 0s;
+}
+.form-group input:focus ~ .control-label
+{
+  top: -20px;
+}
+input:-webkit-autofill ~ .control-label
+{
+  top: -20px;
+}
+
+.form-group.button
+{
+  float:none;
+  margin: 30px auto;
+  padding: 0;
+}
+.form-group.button input
+{
+  height: auto;
+  border-radius: 15px;
+}
+.orange-line:before
+{
+  content: '';
+  display: inline-block;
+  position: absolute;
+  right: 50%;
+  bottom: 0;
+  width: 0%;
+  height: 2px;
+  z-index: 9;
+  background: #eb7f00;
+  -webkit-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  -moz-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  -ms-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  -o-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.orange-line:after
+{
+  content: '';
+    display: inline-block;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0%;
+    height: 2px;
+    z-index: 9;
+    background: #eb7f00;
+    -webkit-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    -moz-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    -ms-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    -o-transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.form-group input:focus
+{
+  border-bottom:none;
+}
+.form-group input:focus ~ .orange-line:before
+{
+
+  width: 50%;
+
+}
+.form-group input:focus ~ .orange-line:after
+{
+  width:50%;
+}
+
+.signup-container
+{
+  margin: 40px 0;
+}
+
+.signup-container a.btn
+{
+    margin: 20px 0;
+    margin-top: 10px;
+}
