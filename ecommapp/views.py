@@ -90,7 +90,7 @@ class SignInView(FormView):
   """
   template_name="signin.html"
   form_class=SignInForm
-  success_url="/home/"
+  success_url="/user-dashboard/"
   def form_valid(self,form):
         user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
         if user is not None:
@@ -108,3 +108,7 @@ class SignOutView(LoginRequiredMixin,View):
      def get(self,request):
           logout(request)
           return redirect(reverse("home"))
+
+class UserDashboard(DetailView):
+    template_name="user-index.html"
+    context_object_name = "user_data"
