@@ -27,7 +27,7 @@
        <div class="col-md-4">
              {% if siteuser %}
                   <a href={%url "signout" %}>Logout</a>
-                  <li>Hi  {{siteuser.customer.Customer_First_Name}}   {{siteuser.customer.Customer_Last_Name}}</li>
+                  <li>Hi <a href={%url   "user-dashboard" %}  {{siteuser.customer.Customer_First_Name}}   {{siteuser.customer.Customer_Last_Name}}</li>
             {% else %}
                 <a href={%url  "signin" %}>SignIn</a>
                 <a href={%url "register" %}>Register</a>

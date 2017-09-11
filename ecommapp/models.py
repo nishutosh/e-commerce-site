@@ -156,8 +156,17 @@ class Customer(models.Model):
    City=models.CharField(max_length=200)
    State=models.CharField(max_length=200)
    ZIP=models.IntegerField()
+   Customer_Contact_Number=models.IntegerField()
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
+
+class Wish_List(models.Model):
+   User_Wishlist=models.OneToOneField(CustomUser)
+
+
+class Wish_List_Product(models.Model):   
+   Product_In_Wishlist=models.ForeignKey(Product)
+   Wishlist=models.ForeignKey(Wish_List)
 
 
 class Cart(models.Model):
@@ -249,4 +258,7 @@ class Order_Product_Specs(models.Model):
   Esimated_Dilivery_Date=models.DateField()
   Order_Reference=models.ForeignKey(Sales_Team)
   Order_price=models.FloatField(default=0)
+
+
+
 

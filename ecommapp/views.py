@@ -14,6 +14,7 @@ from django.core.urlresolvers  import reverse
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
@@ -80,7 +81,8 @@ class RegisterView(FormView):
                                        Address_Line2=form.cleaned_data["address_line_2"],
                                        City=form.cleaned_data["city"],
                                        State=form.cleaned_data["state"],
-                                       ZIP=form.cleaned_data["ZIP"]  )
+                                       ZIP=form.cleaned_data["ZIP"],
+                                       Customer_Contact_Number=form.cleaned_data["contact_number"] )
         messages.success(self.request, 'User Registered')
         return super(RegisterView, self).form_valid(form)
    
@@ -112,9 +114,13 @@ class SignOutView(LoginRequiredMixin,View):
           logout(request)
           return redirect(reverse("home"))
 
+class UserDashboard(LoginRequiredMixin,DetailView):
+    """user home page"""
+    template_name="userindex.html"
+    context_object_name = "siteuser"
+
 
 class PostGetCartView(View):
-
      CART_ID="CART_ID"
      def get(self,request): 
              cart=request.COOKIES.get(self.CART_ID)
@@ -179,21 +185,64 @@ class CheckoutView(LoginRequiredMixin,View):
                   
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class OrderProducts(LoginRequiredMixin,View):
-
     pass
+
+
+
+#user flow
+class UserDashboard(LoginRequiredMixin,View):
+    """user home page"""
+    template_name="userhome.html"
+    context_object_name = "siteuser"
+    def get(self,request):
+           context={"siteuser":request.user}
+           context.update(menu_product_view_context)
+           return render(request,self.template_name,context) 
+
+class  EditFormView(LoginRequiredMixin,FormView):
+    """user edit details"""
+    success_url="/user-dashboard/"
+    template_name="user-edit-form.html"
+    form_class=AccountEditForm
+    def get_initial(self):
+          user_obj=self.request.user
+          initial={
+                      "email":user_obj.customer.Customer_Email,
+                      "contact_number":user_obj.customer.Customer_Contact_Number,
+                      "address_line_1":user_obj.customer.Address_Line1,
+                      "address_line_2":user_obj.customer.Address_Line2,
+                      "city":user_obj.customer.City,
+                      "state":user_obj.customer.State,
+                      "ZIP":user_obj.customer.ZIP,
+                      }
+          return initial
+
+    def form_valid(self,form):
+          user_obj=self.request.user
+          Customer.objects.filter(User_customer=user_obj).update(
+                                                        Customer_Email=form.cleaned_data["email"],
+                                                        Address_Line1=form.cleaned_data["address_line_1"],
+                                                        Address_Line2=form.cleaned_data["address_line_2"],
+                                                        City=form.cleaned_data["city"],
+                                                        State=form.cleaned_data["state"],
+                                                        ZIP=form.cleaned_data["ZIP"],
+                                                        Customer_Contact_Number=form.cleaned_data["contact_number"] )
+          messages.success(self.request, 'Details Updated')
+          return super(EditFormView, self).form_valid(form)
+
+class SecurityView(LoginRequiredMixin,FormView):
+    success_url="/user-dashboard/"
+    template_name="security.html"
+    form_class=PasswordChange
+    def form_valid(self,form):
+          user_obj=self.request.user
+          if not user_obj.check_password(form.cleaned_data["old_password"]):
+                raise forms.ValidationError("Old password does not match")
+          else:
+                user_obj.set_password(form.cleaned_data["password"]) 
+                user_obj.save()  
+                messages.success(self.request, 'Password Changed')
+                return super(SecurityView, self).form_valid(form)
+
+ 

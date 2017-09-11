@@ -1,0 +1,159 @@
+body{
+  background-color:#eff2f6;
+}
+
+.main-navbar
+{
+  background-color: rgba(255,255,255,0.15);
+  border-bottom: 1px solid #f1f1f1;
+  box-shadow: 0 0 2px #000;
+  background-color: #232f3e;
+}
+
+
+.main-navbar-header div
+{
+  color:white;
+
+}
+
+.main-navbar .search-btn
+{
+  background-color:transparent;
+  border:none;
+}
+.small-button
+{
+  background-color: transparent!important;
+  color: white!important;
+  border:none!important;
+}
+.navbar-cart-btn
+{
+    background-color:orange;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+.navbar-user-btn
+{
+
+}
+
+.main-navbar-form input.form-control
+{
+  background-color: white;
+  border-color: white;
+  color: #535766;
+}
+.main-navbar-form input.form-control::placeholder
+{
+  color:white;
+  color: #535766;
+}
+
+.main-navbar-form button
+{
+  color:white;
+
+}
+
+
+.main-navbar-menu-list li.open a.dropdown-toggle:hover
+{
+  background-color:rgba(0,0,0,0.5);
+  color:white;
+}
+
+.main-navbar-menu-list li a
+{
+  color:white;
+
+}
+
+.main-navbar-menu-list li.open a.dropdown-toggle
+{
+  background-color:rgba(0,0,0,0.5);
+  color:white;
+}
+
+.dropdown-menu
+{
+  background-color:rgba(0,0,0,0.5);
+}
+.dropdown-menu li a
+{
+  color:white;
+}
+
+button.main-navbar-toggle
+{
+  color:white;
+  border: 1px solid white;
+}
+.user-action-list
+{
+  background-color: white;
+}
+.user-action-list li
+{
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+}
+.user-action-list li a
+{
+  color:black;
+
+
+}
+.other-navbar-header-items ul li a
+{
+  color: white;
+}
+
+
+/*header ends*/
+/*footer starts*/
+footer
+{
+  background-color: black;
+}
+
+footer a
+{
+  color: white;
+}
+
+/*footer ends*/
+.hero
+{
+  background-image: url("../images/banner.jpg");
+  background-size: cover;
+  background-blend-mode: overlay;
+  background-color: rgba(255,255,255,0.03);
+}
+
+
+.bannerText
+{
+  color: white;
+}
+
+.bannerText h1
+{
+  color:rgba(255,255,255,1);
+  text-shadow: 1px 4px 6px #fff, 0 0 0 #000;
+  text-shadow: 1px 1px 0 rgba(140,140,140,0.6) , -1px -1px 1px rgba(0,0,0,0.67) ;
+}
+
+@media(max-width:768px)
+{
+  /*optimisation of color for small screen*/
+  #mymain-navbar
+  {
+    background-color:rgba(255,255,255,0.7);
+  }
+  #mymain-navbar li a
+  {
+    color:black;
+  }
+}

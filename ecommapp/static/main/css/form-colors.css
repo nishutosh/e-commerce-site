@@ -1,0 +1,28 @@
+.form-container
+{
+  background-color: white;
+  box-shadow: 0 0 2px #232f3e;
+  color:#535766;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+  color:#535766;
+}
+
+.button input
+{
+  background-color: #fc7f1a;
+  color: white;
+  border: none;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.signup-container a.btn
+{
+  border: 2px solid #535766;
+  color: #232f3e;
+  font-weight:bold;
+  padding: 10px 20px;
+}
