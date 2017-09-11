@@ -1,10 +1,15 @@
 {% extends "base.html" %}
+{%load static%}
 {% block body %}
     <h2>PRODUCT DETAILS</h2> 
      <ul>
+
                <li>{{product.Product_Name}}</li>
                 <li>{{product.Price}}</li>
                 <li>{{ product.Availiability.status}}</li>
+                {%csrf_token%}
+                <input  type="number" value="1"  min="1" class="quantity" name="quantity">
+                <button class="cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>ADD TO CART</button>
                 <li>{{product.Description}}</li>
                 <li>{{product.Features}}</li>
                 <li>{{product.TechnicalSpecs}}</li>
@@ -15,3 +20,9 @@
 
           </ul>      
 {% endblock %}
+{%block scripts%}
+<script src={%static "js/jquery.js" %}></script>
+<script src={%static "js/ajax.js"%}>
+</script>
+
+{%endblock%}

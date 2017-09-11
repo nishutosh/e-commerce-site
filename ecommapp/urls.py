@@ -11,4 +11,6 @@ urlpatterns = [
     url(r'register/$',RegisterView.as_view(),name="register"),
     url(r'signin/$',SignInView.as_view(),name="signin"),
     url(r'signout/$',SignOutView.as_view(),name="signout"),
+    url(r'cart/$',PostGetCartView.as_view(),name="cart"),
+    url(r'cart/delete$',DeleteCartView.as_view(),name="cartdelete")
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

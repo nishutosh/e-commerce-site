@@ -158,12 +158,19 @@ class Customer(models.Model):
 
 
 class Cart(models.Model):
-   customer=models.ForeignKey(Customer)
-   Cart_Id=models.CharField(max_length=100,unique=True)
+   date_of_creation=models.DateField(auto_now_add=True)
+   checkout_date=models.DateField(blank=True,null=True)
 
-class CartProduct(models.Model):
-  Product_In_Cart=models.ForeignKey(Product)
+
+class Cartitem(models.Model):
   Cart_Product_Belongs_To=models.ForeignKey(Cart)
+  Product_In_Cart=models.ForeignKey(Product)
+  Product_Quantity=models.IntegerField(default=1)
+
+  def Total_Price(self):
+        Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+        return Total
+
 
 
 
@@ -224,7 +231,7 @@ class Sales_Team(models.Model):
 
 class Order_Product_Specs(models.Model):
   Order=models.ForeignKey(Order)
-  Ordered_Product=models.OneToOneField(Product)
+  Ordered_Product=models.ForeignKey(Product)
   Quantity=models.IntegerField(default=1)
   Order_Payment_Type=models.ForeignKey(Payment_Method)
   Order_Payment_status=models.ForeignKey(Payment_Status)
@@ -234,6 +241,6 @@ class Order_Product_Specs(models.Model):
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   Order_Status=models.ForeignKey(Order_Status_Model)
   Esimated_Dilivery_Date=models.DateField()
-  Order_Reference=models.OneToOneField(Sales_Team)
+  Order_Reference=models.ForeignKey(Sales_Team)
   Order_price=models.FloatField(default=0)
 

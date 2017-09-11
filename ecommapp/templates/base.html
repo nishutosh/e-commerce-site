@@ -30,11 +30,17 @@
                   <li>Hi  {{siteuser.customer.Customer_First_Name}}   {{siteuser.customer.Customer_Last_Name}}</li>
             {% else %}
                 <a href={%url  "signin" %}>SignIn</a>
-                <a href={%url "register" %}>Registerr</a>
+                <a href={%url "register" %}>Register</a>
             {% endif %}
-         </div>   
+         <div style="border:1px solid #b3b3b3; padding:10px;border-radius:5px;" >
+         CART:{{cart}}
+         </div> 
+         </div>
            {% block body %}
            {%endblock%}
+  <!--   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
     <script src={%static "js/bootstrap.min.js" %}></script>
+    {%block scripts%}
+    {%endblock%}
   </body>
 </html>

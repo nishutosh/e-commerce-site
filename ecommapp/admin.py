@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 
-from ecommapp.models import BaseCategory,SubCategory,Availibilty_status,Seller,Product_Status,Product,Pics,Customer,Cart,CartProduct,Review,Delivery_Type,Order,Order_Status_Model,Payment_Method,Shipment_Orgs,Payment_Status,Order_Product_Specs,Filter_Name,Filter_Category
+from ecommapp.models import BaseCategory,SubCategory,Availibilty_status,Seller,Product_Status,Product,Pics,Customer,Cart,Cartitem,Review,Delivery_Type,Order,Order_Status_Model,Payment_Method,Shipment_Orgs,Payment_Status,Order_Product_Specs,Filter_Name,Filter_Category
 from .models import CustomUser
 
 admin.site.register(CustomUser)
@@ -17,7 +17,7 @@ admin.site.register(Product)
 admin.site.register(Pics)
 admin.site.register(Customer )
 admin.site.register(Cart)
-admin.site.register(CartProduct)
+admin.site.register(Cartitem)
 admin.site.register(Review)
 admin.site.register(Delivery_Type)
 admin.site.register(Order)

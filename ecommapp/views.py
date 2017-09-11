@@ -4,8 +4,8 @@ from __future__ import unicode_literals
 from django.shortcuts import render,get_object_or_404
 from django.views import View
 from django.views.generic import DetailView,ListView
-from .models import BaseCategory,Product
-from django.http import Http404
+from .models import *
+from django.http import Http404,JsonResponse
 from django.views.generic.edit import FormView
 from .forms import *
 from django.contrib.auth import authenticate, login,logout
@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.core.urlresolvers  import reverse
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
@@ -102,9 +103,63 @@ class SignInView(FormView):
 
 
 class OrderProducts(LoginRequiredMixin,View):
+
     pass
 
 class SignOutView(LoginRequiredMixin,View):
-     def get(self,request):
+    def get(self,request):
           logout(request)
           return redirect(reverse("home"))
+
+
+class PostGetCartView(View):
+
+     CART_ID="CART_ID"
+     def get(self,request): 
+             cart=request.COOKIES.get(self.CART_ID)
+             if cart:
+                     new_cart_obj=Cart.objects.get(id=cart)
+                     cart_items=new_cart_obj.cartitem_set.all()
+                     cart_list=[]
+                     for items in cart_items:
+                         product_details={"Product_name":items.Product_In_Cart.Product_Name,
+                                                         "Price":items.Total_Price(),
+                                                         "Quantity":items.Product_Quantity}
+                         cart_list.append(product_details)
+                     return  JsonResponse(cart_list,safe=False)  
+             else :
+                     return  JsonResponse({"response":"no cokiee set"},safe=False)  
+
+     def post(self,request):
+             cart=request.COOKIES.get(self.CART_ID)
+             if cart:
+                 cart_obj=Cart.objects.get(pk=cart)
+                 product=Product.objects.get(pk=request.POST["product"])
+                 if cart_obj.cartitem_set.filter(Product_In_Cart=product).exists():
+
+                       cart_obj.cartitem_set.filter(Product_In_Cart=product).update(Product_Quantity=request.POST["quantity"])
+                 else:      
+                       Cartitem.objects.create(Cart_Product_Belongs_To=cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
+                 response= JsonResponse({"response":"updated"},safe=False)  
+             else:
+                  new_cart_obj=Cart.objects.create(date_of_creation=timezone.now())
+                  product=Product.objects.get(pk=request.POST["product"])
+                  Cartitem.objects.create(Cart_Product_Belongs_To=new_cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
+                  response= JsonResponse({"response":"cookieson"},safe=False)   
+                  response.set_cookie(self.CART_ID,new_cart_obj.pk)
+             return response
+
+
+class DeleteCartView(View):
+
+     CART_ID="CART_ID"
+     def  post(self,request):
+               cart=request.COOKIES.get(self.CART_ID)
+               if cart:
+                     product=Product.objects.get(pk=request.POST["product"])
+                     Cartitem.objects.filter(Product_In_Cart=product).delete()
+               else:
+                      return JsonResponse()
+               return JsonResponse()
+
+
