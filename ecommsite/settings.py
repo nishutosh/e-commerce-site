@@ -101,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL="/siginin/"
+LOGIN_URL="/signin/"
 #default user model 
 AUTH_USER_MODEL = 'ecommapp.CustomUser'
 # Internationalization

@@ -142,6 +142,9 @@ class Pics(models.Model):
   ProductPics=models.ForeignKey(Product)
   Images=models.ImageField(upload_to="ProductImages/")
 
+class Tax(models.Model):
+    Prducts=models.ForeignKey(SubCategory)
+    Tax_Percentage=models.FloatField()
 
 class Customer(models.Model):
    User_customer=models.OneToOneField(CustomUser)
@@ -221,11 +224,14 @@ class Sales_Team(models.Model):
    Sales_First_Name=models.CharField(max_length=100)
    Sales_Last_Name=models.CharField(max_length=100)
    Sales_Email=models.CharField(max_length=100)
-   Sales_Person_UCode=models.CharField(max_length=100)
    is_intern=models.BooleanField(default=False)
    Sales_Contact_Number=models.IntegerField()
    Sales_Points=models.IntegerField(default=0)
    #will add more details 
+
+class CouponCode(models.Model):
+    Code=models.TextField(max_length=100)
+    Sales_Member=models.ForeignKey(Sales_Team)
 
 
 

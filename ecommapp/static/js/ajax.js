@@ -1,4 +1,4 @@
-
+// #disable checkout button when cart is empty
 
 function getCookie(name) {
     var cookieValue = null;
@@ -53,9 +53,15 @@ $(".cart-btn").click(function(){
 });
 $.ajax({
              type: "GET",
-             url: $(".cart-btn").attr("data-ajax-url"),
+             url: "/cart/",
               success: function(result){
-             console.log(result)
+                console.log(result)
+             for(i=0;i<result.length;i++){
+                 prod=result[i].Product_name;
+                 console.log(prod)
+                
+
+             }
 
               }
               });

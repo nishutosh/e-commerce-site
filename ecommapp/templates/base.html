@@ -33,13 +33,18 @@
                 <a href={%url "register" %}>Register</a>
             {% endif %}
          <div style="border:1px solid #b3b3b3; padding:10px;border-radius:5px;" >
-         CART:{{cart}}
+         CART:<ul .class="cart-list">
+           
+
+         </ul> 
          </div> 
          </div>
            {% block body %}
            {%endblock%}
   <!--   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
     <script src={%static "js/bootstrap.min.js" %}></script>
+    <script src={%static "js/jquery.js" %}></script>
+   <script src={%static "js/ajax.js"%}></script>
     {%block scripts%}
     {%endblock%}
   </body>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+    <h2>HOME</h2>
+    address:{{user.customer.Address_Line1}}
+    <h3>cart</h3>
+    <ul>
+        {% for items in cart_items%}
+            <li>
+                   {{ items.Product_In_Cart.Product_Name}}
+                 
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

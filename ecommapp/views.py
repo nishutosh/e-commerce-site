@@ -100,11 +100,12 @@ class SignInView(FormView):
              messages.error(self.request, 'Invalid username or password')
              return redirect(reverse("signin"))
         return super(SignInView, self).form_valid(form)
+  def get_success_url(self):
+             if "next" in self.request.GET.keys():
+                 return  self.request.GET["next"]
+             else:
+                 return "/home/"   
 
-
-class OrderProducts(LoginRequiredMixin,View):
-
-    pass
 
 class SignOutView(LoginRequiredMixin,View):
     def get(self,request):
@@ -151,7 +152,6 @@ class PostGetCartView(View):
 
 
 class DeleteCartView(View):
-
      CART_ID="CART_ID"
      def  post(self,request):
                cart=request.COOKIES.get(self.CART_ID)
@@ -162,4 +162,38 @@ class DeleteCartView(View):
                       return JsonResponse()
                return JsonResponse()
 
+class CheckoutView(LoginRequiredMixin,View):
+     CART_ID="CART_ID"
+     def get(self,request):
+            cart=request.COOKIES.get(self.CART_ID)
+            if cart:
+                 user=request.user
+                 cart_obj=Cart.objects.get(pk=cart)
+                 cart_items=cart_obj.cartitem_set.all()
+                 context={"siteuser":user,"cart_items":cart_items}
+                 print context
+                 return render(request,"checkout.html",context)
+            else:
+                #disable checkout button
+                return JsonResponse({"error":"nothing in cart"})
+                  
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class OrderProducts(LoginRequiredMixin,View):
+
+    pass
