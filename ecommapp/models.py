@@ -160,6 +160,7 @@ class Customer(models.Model):
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
 
+
 class Wish_List(models.Model):
    User_Wishlist=models.OneToOneField(CustomUser)
 
@@ -173,7 +174,7 @@ class Cart(models.Model):
    date_of_creation=models.DateField(auto_now_add=True)
    checkout_date=models.DateField(blank=True,null=True)
 
-
+ 
 class Cartitem(models.Model):
   Cart_Product_Belongs_To=models.ForeignKey(Cart)
   Product_In_Cart=models.ForeignKey(Product)
@@ -182,7 +183,6 @@ class Cartitem(models.Model):
   def Total_Price(self):
         Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
         return Total
-
 
 
 
@@ -242,6 +242,9 @@ class CouponCode(models.Model):
     Code=models.TextField(max_length=100)
     Sales_Member=models.ForeignKey(Sales_Team)
 
+class CustomerCoupounApplied(models.Model):
+  customer=models.ForeignKey(Customer)
+  coupoun_code=models.ForeignKey(CouponCode)
 
 
 class Order_Product_Specs(models.Model):

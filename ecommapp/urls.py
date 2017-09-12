@@ -4,8 +4,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 userurls=[
-   url(r'edit-info',EditFormView.as_view(),name="edit-form"),
-   url(r'security',SecurityView.as_view(),name="security"),
+   url(r'edit-info$',EditFormView.as_view(),name="edit-form"),
+   url(r'security$',SecurityView.as_view(),name="security"),
+   url(r'credits$',FashVoltsCreditView.as_view(),name="credits"),
+   url(r'coupoun-applied$',CoupounAppliedView.as_view(),name="coupouns"),
+   url(r'reviews$',UserReviewList.as_view(),name="user-reviews"),
+   url(r'orders$',UserOrderList.as_view(),name="user-orders")
 ]
 
 urlpatterns = [

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block body %}
+    <h2>COUPOUNS</h2>
+    <ul>
+        {% for coupoun in coupouns%}
+            <li>
+                   {{ coupoun}}
+                 
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -7,8 +7,15 @@
     {% endfor %}
 </ul>
 {% endif %}
-<a href={%url "edit-form" %}>Edit details</a>
-<a href={%url "security" %}>Edit details</a>
+<h3>Account Settings</h3>
+<a href={%url "edit-form" %}>Change Account Details</a><br>
+<a href={%url "security" %}>Change Password</a>
+<h3>Reward</h3>
+<a href={%url "credits" %}>Fash Volts</a><br>
+<a href={%url "coupouns" %}>Coupouns Applied</a>
+<h3>Reviews</h3>
+<a href={%url "user-reviews" %}>Reviews</a><br>
+<a href={%url "user-orders" %}>Past Orders</a>
 <h1>
      {{siteuser.username}}<br>
      {{siteuser.customer.Customer_First_Name}}

@@ -245,4 +245,67 @@ class SecurityView(LoginRequiredMixin,FormView):
                 messages.success(self.request, 'Password Changed')
                 return super(SecurityView, self).form_valid(form)
 
- 
+class FashVoltsCreditView(LoginRequiredMixin,View):
+     def get(self,request):
+         user_obj=request.user
+         context={"siteuser":user_obj,"credits":user_obj.customer.Volts_Credit}
+         context.update(menu_product_view_context)
+         return render(request,"credits.html",context)
+         
+class  CoupounAppliedView(LoginRequiredMixin,View):
+    def get(self,request):
+         user_obj=request.user
+         context={"siteuser":user_obj,"coupouns":user_obj.customer.customercoupounapplied_set.all()}
+         context.update(menu_product_view_context)
+         return render(request,"coupouns.html",context)
+
+
+class UserReviewList(LoginRequiredMixin,View):
+    def get(self,request):
+       user_obj=request.user
+       context={"siteuser":user_obj,"reviews":user_obj.customer.review_set.all()}
+       context.update(menu_product_view_context)
+       return render(request,"user-reviews.html",context)
+
+class UserOrderList(LoginRequiredMixin,View):
+    def get(self,request):
+        user_obj=request.user
+        context={"siteuser":user_obj,"orders":user_obj.customer.order_set.all()}
+        context.update(menu_product_view_context)
+        return render(request,"user-orders.html",context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
