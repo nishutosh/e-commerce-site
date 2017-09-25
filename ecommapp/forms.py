@@ -55,4 +55,24 @@ class PasswordChange(forms.Form):
         if password != confirm_password:
                 raise forms.ValidationError("Password and confirm Password fields does not match" )
 
-    
+
+
+
+class PlaceOrderForm(forms.Form):
+     """
+     fields to be added in front end
+     payment option select button
+     terms and condition checkbox
+     """
+     Your_Name=forms.CharField(max_length=200)
+     Order_In_Name_Of=forms.CharField(max_length=100)
+     Order_Address_Line1=forms.CharField(max_length=200)
+     Order_Address_Line2=forms.CharField(max_length=200)
+     Order_City=forms.CharField(max_length=200)
+     Order_State=forms.CharField(max_length=200)
+     Order_ZIP=forms.CharField(max_length=200)
+     Shipping_Charges=forms.IntegerField()
+     
+     
+
+   

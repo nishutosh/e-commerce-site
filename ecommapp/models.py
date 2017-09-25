@@ -173,14 +173,7 @@ class Wish_List_Product(models.Model):
 class Cart(models.Model):
    date_of_creation=models.DateField(auto_now_add=True)
    checkout_date=models.DateField(blank=True,null=True)
-
- 
-class Cartitem(models.Model):
-  Cart_Product_Belongs_To=models.ForeignKey(Cart)
-  Product_In_Cart=models.ForeignKey(Product)
-  Product_Quantity=models.IntegerField(default=1)
-
-  def Total_Price(self):
+   def Total_Price(self):
         Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
         return Total
 
@@ -188,7 +181,7 @@ class Cartitem(models.Model):
 
 
 class Review(models.Model):
-  Reviwer=models.ForeignKey(Customer)
+  Reviewer=models.ForeignKey(Customer)
   Product=models.ForeignKey(Product)
   Review_Title=models.CharField(max_length=200)
   Review_Body=models.TextField(max_length=5000)
@@ -201,6 +194,7 @@ class Delivery_Type(models.Model):
 
 class Order(models.Model):
    Order_Id=models.CharField(max_length=200)
+   Order_In_Name_Of=models.CharField(max_length=100)
    Order_Customer=models.ForeignKey(Customer)
    Order_Delivery_Type=models.ForeignKey(Delivery_Type)
    Order_Date_Time=models.DateTimeField(auto_now_add=True)
@@ -241,10 +235,24 @@ class Sales_Team(models.Model):
 class CouponCode(models.Model):
     Code=models.TextField(max_length=100)
     Sales_Member=models.ForeignKey(Sales_Team)
+    Discount=models.FloatField(default=0)
 
-class CustomerCoupounApplied(models.Model):
+class CustomerCouponUsedTrack(models.Model):
   customer=models.ForeignKey(Customer)
-  coupoun_code=models.ForeignKey(CouponCode)
+  coupon_code=models.ForeignKey(CouponCode)
+ 
+
+class Cartitem(models.Model):
+  Cart_Product_Belongs_To=models.ForeignKey(Cart)
+  Product_In_Cart=models.ForeignKey(Product)
+  Product_Quantity=models.IntegerField(default=1)
+  coupoun_code=models.ForeignKey(CouponCode,null=True)
+  def Total_Price(self):
+          if self.coupon_code:
+            #write discount function
+             Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+          else:     
+             Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
 
 
 class Order_Product_Specs(models.Model):

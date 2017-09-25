@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% block body %}
-    <h3>Reviews</h3>
+    <h3>Orders</h3>
     <ul>
         {% for order in orders%}
             <li>
-                   {{ order}}
-                 
+                   {{ order}}               
             </li>
         {% endfor %}
     </ul>

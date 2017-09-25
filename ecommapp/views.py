@@ -114,59 +114,8 @@ class SignOutView(LoginRequiredMixin,View):
           logout(request)
           return redirect(reverse("home"))
 
-class UserDashboard(LoginRequiredMixin,DetailView):
-    """user home page"""
-    template_name="userindex.html"
-    context_object_name = "siteuser"
 
 
-class PostGetCartView(View):
-     CART_ID="CART_ID"
-     def get(self,request): 
-             cart=request.COOKIES.get(self.CART_ID)
-             if cart:
-                     new_cart_obj=Cart.objects.get(id=cart)
-                     cart_items=new_cart_obj.cartitem_set.all()
-                     cart_list=[]
-                     for items in cart_items:
-                         product_details={"Product_name":items.Product_In_Cart.Product_Name,
-                                                         "Price":items.Total_Price(),
-                                                         "Quantity":items.Product_Quantity}
-                         cart_list.append(product_details)
-                     return  JsonResponse(cart_list,safe=False)  
-             else :
-                     return  JsonResponse({"response":"no cokiee set"},safe=False)  
-
-     def post(self,request):
-             cart=request.COOKIES.get(self.CART_ID)
-             if cart:
-                 cart_obj=Cart.objects.get(pk=cart)
-                 product=Product.objects.get(pk=request.POST["product"])
-                 if cart_obj.cartitem_set.filter(Product_In_Cart=product).exists():
-
-                       cart_obj.cartitem_set.filter(Product_In_Cart=product).update(Product_Quantity=request.POST["quantity"])
-                 else:      
-                       Cartitem.objects.create(Cart_Product_Belongs_To=cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
-                 response= JsonResponse({"response":"updated"},safe=False)  
-             else:
-                  new_cart_obj=Cart.objects.create(date_of_creation=timezone.now())
-                  product=Product.objects.get(pk=request.POST["product"])
-                  Cartitem.objects.create(Cart_Product_Belongs_To=new_cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
-                  response= JsonResponse({"response":"cookieson"},safe=False)   
-                  response.set_cookie(self.CART_ID,new_cart_obj.pk)
-             return response
-
-
-class DeleteCartView(View):
-     CART_ID="CART_ID"
-     def  post(self,request):
-               cart=request.COOKIES.get(self.CART_ID)
-               if cart:
-                     product=Product.objects.get(pk=request.POST["product"])
-                     Cartitem.objects.filter(Product_In_Cart=product).delete()
-               else:
-                      return JsonResponse()
-               return JsonResponse()
 
 class CheckoutView(LoginRequiredMixin,View):
      CART_ID="CART_ID"
@@ -185,12 +134,24 @@ class CheckoutView(LoginRequiredMixin,View):
                   
 
 
-class OrderProducts(LoginRequiredMixin,View):
-    pass
 
 
 
-#user flow
+
+# class ReviewFormView(LoginRequiredMixin,FormView):
+#     """user submit review"""
+#     template_name="user-review"
+#     form_class=ReviewForm
+#     def form_valid(self,form):
+#         Review.objects.create(Reviewer=self.request.user,
+#                                                Product=self.kwargs["product"],
+#                                                Review_Title=form.validated_data["Review_titile"],
+#                                                Review_Body=form.validated_data["Review_Body"],
+#                                                show_review=True)
+#         messages.success(self.request, 'Review Submitted')
+#         return super(RegisterView, self).form_valid(form)
+
+
 class UserDashboard(LoginRequiredMixin,View):
     """user home page"""
     template_name="userhome.html"
@@ -245,6 +206,8 @@ class SecurityView(LoginRequiredMixin,FormView):
                 messages.success(self.request, 'Password Changed')
                 return super(SecurityView, self).form_valid(form)
 
+
+
 class FashVoltsCreditView(LoginRequiredMixin,View):
      def get(self,request):
          user_obj=request.user
@@ -262,17 +225,112 @@ class  CoupounAppliedView(LoginRequiredMixin,View):
 
 class UserReviewList(LoginRequiredMixin,View):
     def get(self,request):
-       user_obj=request.user
-       context={"siteuser":user_obj,"reviews":user_obj.customer.review_set.all()}
-       context.update(menu_product_view_context)
-       return render(request,"user-reviews.html",context)
+         user_obj=request.user
+         context={"siteuser":user_obj,"reviews":user_obj.customer.review_set.all()}
+         context.update(menu_product_view_context)
+         return render(request,"user-reviews.html",context)
 
 class UserOrderList(LoginRequiredMixin,View):
     def get(self,request):
-        user_obj=request.user
-        context={"siteuser":user_obj,"orders":user_obj.customer.order_set.all()}
-        context.update(menu_product_view_context)
-        return render(request,"user-orders.html",context)
+          user_obj=request.user
+          context={"siteuser":user_obj,"orders":user_obj.customer.order_set.all()}
+          context.update(menu_product_view_context)
+          return render(request,"user-orders.html",context)
+
+
+#AJAX calls classes
+
+#add to cart view
+class PostGetCartView(View):
+     """post and get products to cart"""
+     CART_ID="CART_ID"
+     def get(self,request): 
+             cart=request.COOKIES.get(self.CART_ID)
+             if cart:
+                     new_cart_obj=Cart.objects.get(id=cart)
+                     cart_items=new_cart_obj.cartitem_set.all()
+                     cart_list=[]
+                     for items in cart_items:
+                         if items.coupon_code:
+                            code=items.coupon_code
+                            product_details={"Product_name":items.Product_In_Cart.Product_Name,
+                                                             "Price":items.Total_Price(),
+                                                             "Quantity":items.Product_Quantity,
+                                                             "code":code,
+                                                            }
+                         else: 
+                             product_details={"Product_name":items.Product_In_Cart.Product_Name,
+                                                             "Price":items.Total_Price(),
+                                                             "Quantity":items.Product_Quantity
+                                                             }
+                         cart_list.append(product_details)
+                     return  JsonResponse(cart_list,safe=False)  
+             else :
+                     return  JsonResponse({"response":"no cookie present"})  
+     def post(self,request):
+             cart=request.COOKIES.get(self.CART_ID)
+             if cart:
+                 cart_obj=Cart.objects.get(pk=cart)
+                 product=Product.objects.get(pk=request.POST["product"])
+                 if cart_obj.cartitem_set.filter(Product_In_Cart=product).exists():
+
+                       cart_obj.cartitem_set.filter(Product_In_Cart=product).update(Product_Quantity=request.POST["quantity"])
+                 else:      
+                       Cartitem.objects.create(Cart_Product_Belongs_To=cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
+                 response= JsonResponse({"response":"product data updated"},safe=False)  
+             else:
+                  new_cart_obj=Cart.objects.create(date_of_creation=timezone.now())
+                  product=Product.objects.get(pk=request.POST["product"])
+                  Cartitem.objects.create(Cart_Product_Belongs_To=new_cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
+                  response= JsonResponse({"response":"cart made cookies on"})   
+                  response.set_cookie(self.CART_ID,new_cart_obj.pk)
+             return response
+
+
+class DeleteCartView(View):
+     """delete product from cart"""
+     CART_ID="CART_ID"
+     def  post(self,request):
+               cart=request.COOKIES.get(self.CART_ID)
+               if cart:
+                     product=Product.objects.get(pk=request.POST["product"])
+                     Cartitem.objects.filter(Product_In_Cart=product).delete()
+               else:
+                      return JsonResponse({"response":"no cookie present"})
+               return JsonResponse({"product deleted"})
+
+class ApplyCoupount(View):
+  CART_ID="CART_ID"
+  def post(self,request):
+        cart=request.COOKIES.get(self.CART_ID)
+        if cart:
+               cart_obj=Cart.objects.get(pk=cart)
+               product=Product.objects.get(pk=request.POST["product"])
+               coupon_code_entered=request.POST["coupon_entered"]
+               if CouponCode.objects.filter(Code=coupon_code_entered).exist() and (not CustomerCouponUsedTrack.objects.filter(coupon_code=coupon_code_entered).exist()):
+                    coupon=CouponCode.objects.get(Code=coupon_code_entered)
+                    d_cart_item=cart_obj.cartitem_set.filter(Product_In_Cart=product)
+                    if not(d.cart_item.coupon_code):
+                       d_cart_item.coupon_code=coupon
+                       d_cart_item.save()
+                       return JsonResponse({"message":"coupon code applied"})         
+               else :
+                     return JsonResponse({"message":"coupon code expired"})
+        else:
+           return  JsonResponse({"response":"no cookie present"})  
+
+class UserNameCheckView(View):
+    """checks username exist or not during registartion process"""
+    def get(self,request):
+           if "username" in request.GET:
+                if CustomUser.objects.filter(username=request.GET["username"]).exist():
+                    return JsonResponse({"message":"username already exist"})
+                else:
+                     return JsonResponse({"message":"Good to go"})  
+           else:
+                 return JsonResponse({"message":"error no username field"})          
+
+
 
 
 
