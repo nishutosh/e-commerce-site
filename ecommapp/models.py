@@ -109,10 +109,10 @@ class Seller(models.Model):
   Contact_Number=models.IntegerField()
 
 
-class Product_Status(models.Model):
-   status=models.CharField(max_length=20,unique=True)
-   #avaiable, outof stock etc
- 
+class Shipment_Orgs(models.Model):
+  Shipping_Company_Name=models.CharField(max_length=100)
+  Shipping_Company_Id=models.CharField(max_length=100,unique=True)
+  #shipping company details will be added as per requirements
 
 
 class Product(models.Model):
@@ -120,12 +120,13 @@ class Product(models.Model):
   product_Sub_Category=models.ForeignKey(SubCategory)
   Product_Name=models.CharField(max_length=200)
   Price=models.FloatField()
-  Availiability=models.ForeignKey(Product_Status)
+  Availiability=models.BooleanField(default=True)
   Description=models.TextField(max_length=10000)
   Features=models.TextField(max_length=10000)
   TechnicalSpecs=models.CharField(max_length=10000)
   Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
+  Shipment_Authority=models.ManyToManyField(Shipment_Orgs)
 
 
 class Flash_Sale(models.Model):
@@ -160,6 +161,12 @@ class Customer(models.Model):
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
 
+class Review(models.Model):
+  Reviewer=models.ForeignKey(Customer)
+  Product=models.ForeignKey(Product)
+  Review_Title=models.CharField(max_length=200)
+  Review_Body=models.TextField(max_length=5000)
+  show_review=models.BooleanField(default=True)
 
 class Wish_List(models.Model):
    User_Wishlist=models.OneToOneField(CustomUser)
@@ -170,58 +177,6 @@ class Wish_List_Product(models.Model):
    Wishlist=models.ForeignKey(Wish_List)
 
 
-class Cart(models.Model):
-   date_of_creation=models.DateField(auto_now_add=True)
-   checkout_date=models.DateField(blank=True,null=True)
-   def Total_Price(self):
-        Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
-        return Total
-
-
-
-
-class Review(models.Model):
-  Reviewer=models.ForeignKey(Customer)
-  Product=models.ForeignKey(Product)
-  Review_Title=models.CharField(max_length=200)
-  Review_Body=models.TextField(max_length=5000)
-  show_review=models.BooleanField(default=True)
-
-
-class Delivery_Type(models.Model):
-   type=models.CharField(max_length=100,unique=True)
-   #normal #express
-
-class Order(models.Model):
-   Order_Id=models.CharField(max_length=200)
-   Order_In_Name_Of=models.CharField(max_length=100)
-   Order_Customer=models.ForeignKey(Customer)
-   Order_Delivery_Type=models.ForeignKey(Delivery_Type)
-   Order_Date_Time=models.DateTimeField(auto_now_add=True)
-   Order_Address_Line1=models.CharField(max_length=200)
-   Order_Address_Line2=models.CharField(max_length=200)
-   Order_City=models.CharField(max_length=200)
-   Order_State=models.CharField(max_length=200)
-   Order_ZIP=models.IntegerField()
-   Order_Volts_Credit=models.IntegerField(default=0)
-   Order_Contact_Number=models.IntegerField()
-
-class Order_Status_Model(models.Model):
-  status_for_order=models.CharField(max_length=100,unique=True)
-  #delivered,shipped,outfordelivery,cancelled
-
-class Payment_Method(models.Model):
-   payment_type=models.CharField(max_length=100,unique=True)
-
-class Shipment_Orgs(models.Model):
-  Shipping_Company_Name=models.CharField(max_length=100)
-  Shipping_Company_Id=models.CharField(max_length=100,unique=True)
-  #shipping company details will be added as per requirements
-
-class Payment_Status(models.Model):
-  payment_status=models.CharField(max_length=100,unique=True)
-  #pending,paid,cancelled
-
 class Sales_Team(models.Model):
    Sales_user=models.OneToOneField(CustomUser)
    Sales_First_Name=models.CharField(max_length=100)
@@ -230,17 +185,25 @@ class Sales_Team(models.Model):
    is_intern=models.BooleanField(default=False)
    Sales_Contact_Number=models.IntegerField()
    Sales_Points=models.IntegerField(default=0)
-   #will add more details 
 
+#coupon stuff
 class CouponCode(models.Model):
     Code=models.TextField(max_length=100)
     Sales_Member=models.ForeignKey(Sales_Team)
     Discount=models.FloatField(default=0)
 
+
 class CustomerCouponUsedTrack(models.Model):
-  customer=models.ForeignKey(Customer)
-  coupon_code=models.ForeignKey(CouponCode)
- 
+    customer=models.ForeignKey(Customer)
+    coupon_code=models.ForeignKey(CouponCode)
+
+#cart stuff
+class Cart(models.Model):
+   date_of_creation=models.DateField(auto_now_add=True)
+   checkout_date=models.DateField(blank=True,null=True)
+   def Total_Price(self):
+        Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+        return Total
 
 class Cartitem(models.Model):
   Cart_Product_Belongs_To=models.ForeignKey(Cart)
@@ -253,22 +216,77 @@ class Cartitem(models.Model):
              Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
           else:     
              Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+  def ProductAvailibiltyCheck(self):
+         if self.Product_In_Cart.Availiability:
+             return self.Product_In_Cart
+         else:
+             return None    
 
+#order stuff
+
+class Delivery_Type(models.Model):
+   type=models.CharField(max_length=100,unique=True)
+   #normal #express
+
+class Payment_Method(models.Model):
+   payment_type=models.CharField(max_length=100,unique=True)
+
+class Payment_Status(models.Model):
+  payment_status=models.CharField(max_length=100,unique=True)
+
+class Order(models.Model):
+   Order_In_Name_Of=models.CharField(max_length=100)
+   Order_Customer=models.ForeignKey(Customer)
+   Order_Delivery_Type=models.ForeignKey(Delivery_Type)
+   Order_Date_Time=models.DateTimeField(auto_now_add=True)
+   Order_Address_Line1=models.CharField(max_length=200)
+   Order_Address_Line2=models.CharField(max_length=200)
+   Order_City=models.CharField(max_length=200)
+   Order_State=models.CharField(max_length=200,default="DelhiNCR")
+   Order_ZIP=models.IntegerField()
+   Order_Payment_Type=models.ForeignKey(Payment_Method)
+   Order_Payment_status=models.ForeignKey(Payment_Status)
+   Transaction_Id=models.CharField(max_length=100,unique=True)
+   Order_Reference=models.ForeignKey(Sales_Team,null=True)
+   def Order_Total_Price(self):
+       order_list=self.order_product_specs_set.all()
+       total=0
+       for order_item in order_list:
+           total=total+order_item.Final_Ordered_Product_price
+       return total    
+
+def OrderPaymentOptionCheck(method_request):
+          if Order_Payment_Type.objects.filter(Payment_Method__payment_type=method_request).exist():
+                return  Order_Payment_Type.objects.get(Payment_Method__payment_type=method_request)
+          else:
+                return None  
+
+class Order_Status_Model(models.Model):
+  status_for_order=models.CharField(max_length=100,unique=True)
+  #delivered,shipped,outfordelivery,cancelled
 
 class Order_Product_Specs(models.Model):
   Order=models.ForeignKey(Order)
   Ordered_Product=models.ForeignKey(Product)
   Quantity=models.IntegerField(default=1)
-  Order_Payment_Type=models.ForeignKey(Payment_Method)
-  Order_Payment_status=models.ForeignKey(Payment_Status)
-  Transaction_Id=models.CharField(max_length=100,unique=True)
-  Invoice_Id=models.CharField(max_length=100,unique=True)
-  Invoice=models.FileField(upload_to="Invoices/")
+  #Invoice_Id=models.CharField(max_length=100,unique=True)
+  #Invoice=models.FileField(upload_to="Invoices/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   Order_Status=models.ForeignKey(Order_Status_Model)
-  Esimated_Dilivery_Date=models.DateField()
-  Order_Reference=models.ForeignKey(Sales_Team)
-  Order_price=models.FloatField(default=0)
+  Esimated_Delivery_Date=models.DateField()
+  Final_Ordered_Product_price=models.FloatField(default=0)
+  Order_Volts_Credit_Used=models.IntegerField(default=0)
+
+
+
+
+            
+           
+
+
+
+
+
 
 
 

@@ -65,7 +65,18 @@ class ProductDetails(DetailView):
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user      
         return context          
-   
+class UserNameCheckView(View):
+    """checks username exist or not during registartion process"""
+    def get(self,request):
+           if "username" in request.GET:
+                if CustomUser.objects.filter(username=request.GET["username"]).exist():
+                    return JsonResponse({"message":"username already exist"})
+                else:
+                     return JsonResponse({"message":"Good to go"})  
+           else:
+                 return JsonResponse({"message":"error no username field"})  
+
+
 class RegisterView(FormView):
    template_name="register.html"
    form_class=RegisterForm
@@ -113,29 +124,6 @@ class SignOutView(LoginRequiredMixin,View):
     def get(self,request):
           logout(request)
           return redirect(reverse("home"))
-
-
-
-
-class CheckoutView(LoginRequiredMixin,View):
-     CART_ID="CART_ID"
-     def get(self,request):
-            cart=request.COOKIES.get(self.CART_ID)
-            if cart:
-                 user=request.user
-                 cart_obj=Cart.objects.get(pk=cart)
-                 cart_items=cart_obj.cartitem_set.all()
-                 context={"siteuser":user,"cart_items":cart_items}
-                 print context
-                 return render(request,"checkout.html",context)
-            else:
-                #disable checkout button
-                return JsonResponse({"error":"nothing in cart"})
-                  
-
-
-
-
 
 
 # class ReviewFormView(LoginRequiredMixin,FormView):
@@ -273,16 +261,18 @@ class PostGetCartView(View):
                  cart_obj=Cart.objects.get(pk=cart)
                  product=Product.objects.get(pk=request.POST["product"])
                  if cart_obj.cartitem_set.filter(Product_In_Cart=product).exists():
-
                        cart_obj.cartitem_set.filter(Product_In_Cart=product).update(Product_Quantity=request.POST["quantity"])
                  else:      
                        Cartitem.objects.create(Cart_Product_Belongs_To=cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
-                 response= JsonResponse({"response":"product data updated"},safe=False)  
+                 response= JsonResponse({"message":"product data updated"},safe=False)  
              else:
                   new_cart_obj=Cart.objects.create(date_of_creation=timezone.now())
                   product=Product.objects.get(pk=request.POST["product"])
-                  Cartitem.objects.create(Cart_Product_Belongs_To=new_cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
-                  response= JsonResponse({"response":"cart made cookies on"})   
+                  if product.Availiability:
+                          Cartitem.objects.create(Cart_Product_Belongs_To=new_cart_obj,Product_In_Cart=product,Product_Quantity=request.POST["quantity"])
+                          response= JsonResponse({"message":"cart made cookies on"}) 
+                  else:
+                          response=JsonResponse({"message":"product unavailable... unable to add"})         
                   response.set_cookie(self.CART_ID,new_cart_obj.pk)
              return response
 
@@ -319,22 +309,64 @@ class ApplyCoupount(View):
         else:
            return  JsonResponse({"response":"no cookie present"})  
 
-class UserNameCheckView(View):
-    """checks username exist or not during registartion process"""
-    def get(self,request):
-           if "username" in request.GET:
-                if CustomUser.objects.filter(username=request.GET["username"]).exist():
-                    return JsonResponse({"message":"username already exist"})
-                else:
-                     return JsonResponse({"message":"Good to go"})  
-           else:
-                 return JsonResponse({"message":"error no username field"})          
+class CheckoutView(LoginRequiredMixin,View):
+     CART_ID="CART_ID"
+     def get(self,request):
+            cart=request.COOKIES.get(self.CART_ID)
+            if cart:
+                 user=request.user
+                 cart_obj=Cart.objects.get(pk=cart)
+                 cart_items=cart_obj.cartitem_set.all()
+                 context={"siteuser":user,"cart_items":cart_items}
+                 print context
+                 return render(request,"checkout.html",context)
+            else:
+                #disable checkout button
+                return JsonResponse({"error":"nothing in cart"})
 
-
-
-
-
-
+class PlaceOrder(LoginRequiredMixin,FormView):
+     template_name="place-order.html"
+     form_class=PlaceOrderForm
+     success_url="/order-placed/"
+     def get_context_data(self, **kwargs):
+        context = super(PlaceOrder, self).get_context_data(**kwargs)
+        context.update(menu_product_view_context)
+        context["siteuser"]=self.request.user      
+        return context 
+     def form_valid(self,form):
+           """make an  order"""
+           order=Order.objects.create( 
+                                                 Order_In_Name_Of=form.validated_data["Your_Name"],
+                                                 Order_Customer=self.request.user,
+                                                 Order_Delivery_Type=form.validated_data["Delivery_Type"],
+                                                 Order_Date_Time=timezone.now(),
+                                                 Order_Address_Line1=form.validated_data["Order_Address_Line1"],
+                                                 Order_Address_Line2=form.validated_data["Order_Address_Line2"],
+                                                 Order_City=form.validated_data["Order_City"],
+                                                 Order_ZIP=form.validated_data["Order_ZIP"],
+                                                 Order_Payment_Type=OrderPaymentOptionCheck(form.validated_data["Payment_Method"]),
+                                                 Order_Payment_status=Payment.objects.get(payment_status="PENDING"),
+                                                 Transaction_Id="NONE",
+                                              )
+           cart=self.request.COOKIES.get(self.CART_ID)
+           if cart:
+              cart_obj=Cart.objects.get(pk=cart)
+              cart_items=new_cart_obj.cartitem_set.all()
+              for cart_item in cart_items:
+                   order_item=Order_Product_Specs( Order=order,
+                                                                              Ordered_Product=cart_item.Product_In_Cart.ProductAvailibiltyCheck(),
+                                                                              Quantity=cart_item.Product_Quantity,
+                                                                              Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
+                                                                              Order_Status=Order_Status.objects.get(status_for_order="PLACED"),
+                                                                              Esimated_Delivery_Date=cart_item.CalculateEstimateDate(),
+                                                                              Order_Reference=cart_item.OrderReferenceCheck(),
+                                                                              Order_price=cart_item.CalculatePrice(),
+                                                                               )
+              if(order.Order_Payment_Type=="CASH ON DELIVERY"):
+                          return super(RegisterView, self).form_valid(form)
+              else:
+                         #redirect to payment gateway
+                         pass             
 
 
 
