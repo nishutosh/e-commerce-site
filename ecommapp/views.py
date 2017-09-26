@@ -133,8 +133,8 @@ class SignOutView(LoginRequiredMixin,View):
 #     def form_valid(self,form):
 #         Review.objects.create(Reviewer=self.request.user,
 #                                                Product=self.kwargs["product"],
-#                                                Review_Title=form.validated_data["Review_titile"],
-#                                                Review_Body=form.validated_data["Review_Body"],
+#                                                Review_Title=form.cleaned_data["Review_titile"],
+#                                                Review_Body=form.cleaned_data["Review_Body"],
 #                                                show_review=True)
 #         messages.success(self.request, 'Review Submitted')
 #         return super(RegisterView, self).form_valid(form)
@@ -254,7 +254,7 @@ class PostGetCartView(View):
                          cart_list.append(product_details)
                      return  JsonResponse(cart_list,safe=False)  
              else :
-                     return  JsonResponse({"response":"no cookie present"})  
+                     return  JsonResponse({"message":"no cookie present"})  
      def post(self,request):
              cart=request.COOKIES.get(self.CART_ID)
              if cart:
@@ -286,7 +286,7 @@ class DeleteCartView(View):
                      product=Product.objects.get(pk=request.POST["product"])
                      Cartitem.objects.filter(Product_In_Cart=product).delete()
                else:
-                      return JsonResponse({"response":"no cookie present"})
+                      return JsonResponse({"message":"no cookie present"})
                return JsonResponse({"product deleted"})
 
 class ApplyCoupount(View):
@@ -327,7 +327,7 @@ class CheckoutView(LoginRequiredMixin,View):
 class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
-     success_url="/order-placed/"
+     success_url="/user/orders"
      def get_context_data(self, **kwargs):
         context = super(PlaceOrder, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
@@ -335,37 +335,43 @@ class PlaceOrder(LoginRequiredMixin,FormView):
         return context 
      def form_valid(self,form):
            """make an  order"""
+           print form.cleaned_data["Delivery_Type"]
            order=Order.objects.create( 
-                                                 Order_In_Name_Of=form.validated_data["Your_Name"],
-                                                 Order_Customer=self.request.user,
-                                                 Order_Delivery_Type=form.validated_data["Delivery_Type"],
+                                                 Order_In_Name_Of=form.cleaned_data["Order_In_Name_Of"],
+                                                 Order_Customer=self.request.user.customer,
+                                                 Order_Delivery_Type=Delivery_Type.objects.get(type=form.cleaned_data["Delivery_Type"]),
                                                  Order_Date_Time=timezone.now(),
-                                                 Order_Address_Line1=form.validated_data["Order_Address_Line1"],
-                                                 Order_Address_Line2=form.validated_data["Order_Address_Line2"],
-                                                 Order_City=form.validated_data["Order_City"],
-                                                 Order_ZIP=form.validated_data["Order_ZIP"],
-                                                 Order_Payment_Type=OrderPaymentOptionCheck(form.validated_data["Payment_Method"]),
-                                                 Order_Payment_status=Payment.objects.get(payment_status="PENDING"),
-                                                 Transaction_Id="NONE",
+                                                 Order_Address_Line1=form.cleaned_data["Order_Address_Line1"],
+                                                 Order_Address_Line2=form.cleaned_data["Order_Address_Line2"],
+                                                 Order_City=form.cleaned_data["Order_City"],
+                                                 Order_ZIP=form.cleaned_data["Order_ZIP"],
+                                                 Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
+                                                 Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
+                                                 Transaction_Id="null",
                                               )
-           cart=self.request.COOKIES.get(self.CART_ID)
+           CART_ID="CART_ID"
+           cart=self.request.COOKIES.get(CART_ID)
            if cart:
               cart_obj=Cart.objects.get(pk=cart)
-              cart_items=new_cart_obj.cartitem_set.all()
+              cart_items=cart_obj.cartitem_set.all()
               for cart_item in cart_items:
-                   order_item=Order_Product_Specs( Order=order,
-                                                                              Ordered_Product=cart_item.Product_In_Cart.ProductAvailibiltyCheck(),
+                   order_item=Order_Product_Specs.objects.create( 
+                                                                              Order=order,
+                                                                              Ordered_Product=cart_item.ProductAvailibiltyCheck(),
                                                                               Quantity=cart_item.Product_Quantity,
                                                                               Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
-                                                                              Order_Status=Order_Status.objects.get(status_for_order="PLACED"),
+                                                                              Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED"),
                                                                               Esimated_Delivery_Date=cart_item.CalculateEstimateDate(),
                                                                               Order_Reference=cart_item.OrderReferenceCheck(),
-                                                                              Order_price=cart_item.CalculatePrice(),
+                                                                              Final_Ordered_Product_price=cart_item.Total_Price(),
                                                                                )
               if(order.Order_Payment_Type=="CASH ON DELIVERY"):
-                          return super(RegisterView, self).form_valid(form)
+                          messages.success(self.request, 'Order Placed succesfully')
+                          return super(PlaceOrder, self).form_valid(form)
               else:
                          #redirect to payment gateway
+                         messages.success(self.request, 'Order Placed succesfully')
+                         return super(PlaceOrder, self).form_valid(form)
                          pass             
 
 

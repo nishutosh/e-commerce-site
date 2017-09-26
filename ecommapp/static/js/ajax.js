@@ -42,7 +42,11 @@ $(".cart-btn").click(function(){
                                          type: "GET",
                                          url: $(".cart-btn").attr("data-ajax-url"),
                                           success: function(result){
-                                         console.log(result)
+                                            console.log(result);
+                                          $(".cart-list").html(result.mesg);
+                                           for(i=0;i<result.length;i++){
+                                             prod=result[i].Product_name;
+                                             $(".cart-list").append("<ul>"+prod+"</ul>");}
 
                                           }
                                           });
@@ -55,15 +59,16 @@ $.ajax({
              type: "GET",
              url: "/cart/",
               success: function(result){
-                console.log(result)
-             for(i=0;i<result.length;i++){
+                    console.log(result);
+                $(".cart-list").text(result.message);
+              for(i=0;i<result.length;i++){
                  prod=result[i].Product_name;
-                 console.log(prod)
+                 $(".cart-list").append("<ul>"+prod+"</ul>");
                 
-
+}
              }
 
-              }
+              
               });
 
 

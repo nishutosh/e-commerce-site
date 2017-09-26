@@ -9,6 +9,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager
 from django.template.defaultfilters import slugify
 from django.utils.crypto import get_random_string
+from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
@@ -126,13 +127,14 @@ class Product(models.Model):
   TechnicalSpecs=models.CharField(max_length=10000)
   Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
-  Shipment_Authority=models.ManyToManyField(Shipment_Orgs)
+  Shipment_Authority=models.ForeignKey(Shipment_Orgs)
 
 
 class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
    Products_In_Sale=models.ManyToManyField(Product)
    Main_Banner=models.ImageField(upload_to="FlashSaleBanner/")
+   Flash_slug=models.SlugField()
 
 class Flash_Sale_Banner(models.Model):
    Flash_Sale_Ancess=models.ForeignKey(Flash_Sale)
@@ -209,18 +211,27 @@ class Cartitem(models.Model):
   Cart_Product_Belongs_To=models.ForeignKey(Cart)
   Product_In_Cart=models.ForeignKey(Product)
   Product_Quantity=models.IntegerField(default=1)
-  coupoun_code=models.ForeignKey(CouponCode,null=True)
+  coupon_code=models.ForeignKey(CouponCode,null=True,blank=True)
   def Total_Price(self):
           if self.coupon_code:
             #write discount function
              Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
           else:     
              Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+          return Total  
   def ProductAvailibiltyCheck(self):
          if self.Product_In_Cart.Availiability:
              return self.Product_In_Cart
          else:
-             return None    
+             return None
+  def OrderReferenceCheck(self):
+        if self.coupon_code:
+             return self.coupoun_code.Sales_Member
+        else:
+             return None
+  def CalculateEstimateDate(self):
+        return timezone.now()
+
 
 #order stuff
 
@@ -246,8 +257,7 @@ class Order(models.Model):
    Order_ZIP=models.IntegerField()
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
-   Transaction_Id=models.CharField(max_length=100,unique=True)
-   Order_Reference=models.ForeignKey(Sales_Team,null=True)
+   Transaction_Id=models.CharField(max_length=100)
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0
@@ -256,10 +266,10 @@ class Order(models.Model):
        return total    
 
 def OrderPaymentOptionCheck(method_request):
-          if Order_Payment_Type.objects.filter(Payment_Method__payment_type=method_request).exist():
-                return  Order_Payment_Type.objects.get(Payment_Method__payment_type=method_request)
+          if Payment_Method.objects.filter(payment_type=method_request).exists():
+                return  Payment_Method.objects.get(payment_type=method_request)
           else:
-                return None  
+                return None 
 
 class Order_Status_Model(models.Model):
   status_for_order=models.CharField(max_length=100,unique=True)
@@ -274,8 +284,10 @@ class Order_Product_Specs(models.Model):
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   Order_Status=models.ForeignKey(Order_Status_Model)
   Esimated_Delivery_Date=models.DateField()
-  Final_Ordered_Product_price=models.FloatField(default=0)
+  Final_Ordered_Product_price=models.FloatField()
+  Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
   Order_Volts_Credit_Used=models.IntegerField(default=0)
+
 
 
 

@@ -33,11 +33,12 @@
                 <a href={%url "register" %}>Register</a>
             {% endif %}
          <div style="border:1px solid #b3b3b3; padding:10px;border-radius:5px;" >
-         CART:<ul .class="cart-list">
+         CART:<p class="cart-list">
            
 
-         </ul> 
-         </div> 
+         </p> 
+         </div>
+           <a href={% url "checkout" %}>checkout</a>
          </div>
            {% block body %}
            {%endblock%}
