@@ -229,8 +229,8 @@ class Cartitem(models.Model):
              return self.coupoun_code.Sales_Member
         else:
              return None
-  def CalculateEstimateDate(self):
-        return timezone.now()
+  # def CalculateEstimateDate(self):
+  #       return timezone.now()
 
 
 #order stuff
@@ -257,6 +257,7 @@ class Order(models.Model):
    Order_ZIP=models.IntegerField()
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
+
    Transaction_Id=models.CharField(max_length=100)
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
@@ -282,8 +283,8 @@ class Order_Product_Specs(models.Model):
   #Invoice_Id=models.CharField(max_length=100,unique=True)
   #Invoice=models.FileField(upload_to="Invoices/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  #Esimated_Delivery_Date=models.DateField()
   Order_Status=models.ForeignKey(Order_Status_Model)
-  Esimated_Delivery_Date=models.DateField()
   Final_Ordered_Product_price=models.FloatField()
   Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
   Order_Volts_Credit_Used=models.IntegerField(default=0)

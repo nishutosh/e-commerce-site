@@ -80,7 +80,7 @@ class UserNameCheckView(View):
 class RegisterView(FormView):
    template_name="register.html"
    form_class=RegisterForm
-   success_url='/signin/'
+   success_url='auth/signin/'
    def form_valid(self, form):
         user_made=CustomUser.objects.create_user(username=form.cleaned_data["username"],password=form.cleaned_data["password"])
         Customer.objects.create(
@@ -151,7 +151,7 @@ class UserDashboard(LoginRequiredMixin,View):
 
 class  EditFormView(LoginRequiredMixin,FormView):
     """user edit details"""
-    success_url="/user-dashboard/"
+    success_url="user/user-dashboard/"
     template_name="user-edit-form.html"
     form_class=AccountEditForm
     def get_initial(self):
@@ -181,7 +181,7 @@ class  EditFormView(LoginRequiredMixin,FormView):
           return super(EditFormView, self).form_valid(form)
 
 class SecurityView(LoginRequiredMixin,FormView):
-    success_url="/user-dashboard/"
+    success_url="user/user-dashboard/"
     template_name="security.html"
     form_class=PasswordChange
     def form_valid(self,form):
@@ -289,7 +289,8 @@ class DeleteCartView(View):
                       return JsonResponse({"message":"no cookie present"})
                return JsonResponse({"product deleted"})
 
-class ApplyCoupount(View):
+#yet to be tested
+class ApplyCoupount(LoginRequiredMixin,View):
   CART_ID="CART_ID"
   def post(self,request):
         cart=request.COOKIES.get(self.CART_ID)
@@ -307,7 +308,13 @@ class ApplyCoupount(View):
                else :
                      return JsonResponse({"message":"coupon code expired"})
         else:
-           return  JsonResponse({"response":"no cookie present"})  
+           return  JsonResponse({"response":"no cookie present"}) 
+
+class RemoveCoupoun(LoginRequiredMixin,View):
+    """removes coupon code"""
+    pass
+
+
 
 class CheckoutView(LoginRequiredMixin,View):
      CART_ID="CART_ID"
@@ -327,7 +334,8 @@ class CheckoutView(LoginRequiredMixin,View):
 class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
-     success_url="/user/orders"
+     #paytm redirect url
+     success_url=""
      def get_context_data(self, **kwargs):
         context = super(PlaceOrder, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
@@ -360,20 +368,34 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                                               Ordered_Product=cart_item.ProductAvailibiltyCheck(),
                                                                               Quantity=cart_item.Product_Quantity,
                                                                               Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
-                                                                              Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED"),
-                                                                              Esimated_Delivery_Date=cart_item.CalculateEstimateDate(),
                                                                               Order_Reference=cart_item.OrderReferenceCheck(),
                                                                               Final_Ordered_Product_price=cart_item.Total_Price(),
+                                                                              Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED"),
                                                                                )
-              if(order.Order_Payment_Type=="CASH ON DELIVERY"):
-                          messages.success(self.request, 'Order Placed succesfully')
-                          return super(PlaceOrder, self).form_valid(form)
-              else:
-                         #redirect to payment gateway
-                         messages.success(self.request, 'Order Placed succesfully')
-                         return super(PlaceOrder, self).form_valid(form)
-                         pass             
+              # if(order.Order_Payment_Type.payment_type=="CASH ON DELIVERY"):
+              #             messages.success(self.request, 'Order Placed succesfully')
+              #             return super(PlaceOrder, self).form_valid(form)
+              # else:
+                         #redirect to paytm gateway
+              return super(PlaceOrder, self).form_valid(form)
 
+
+class OrderProcessCompleted(LoginRequiredMixin,View):
+     pass
+     #delete cart id and revive paytm crdentials
+
+
+
+class CancelOrder(LoginRequiredMixin,View):
+   """take ajax calls to cancel order with 
+        order_id and order product as parameter in post request"""
+   def post(self,request):
+      pass
+   
+
+
+
+##admin panel
 
 
 

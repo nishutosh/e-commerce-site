@@ -55,6 +55,33 @@ $(".cart-btn").click(function(){
                                                          } 
               });
 });
+
+
+$(".cart-btn").click(function(){
+    $.ajax({
+            type: "POST",
+            url: $(".cart-btn").attr("data-ajax-url"),
+            data:{
+                 "product":$(".cart-btn").attr("data-product-id"),
+                 "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
+                "s":console.log($("input[name='csrfmiddlewaretoken']").val())
+                     },
+              success: function(result){
+                           $.ajax({
+                                         type: "GET",
+                                         url: $(".cart-btn").attr("data-ajax-url"),
+                                          success: function(result){
+                                            console.log(result);
+                                          $(".cart-list").html(result.mesg);
+                                           for(i=0;i<result.length;i++){
+                                             prod=result[i].Product_name;
+                                             $(".cart-list").append("<ul>"+prod+"</ul>");}
+
+                                          }
+                                          });
+   } 
+       });
+});
 $.ajax({
              type: "GET",
              url: "/cart/",
