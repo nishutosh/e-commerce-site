@@ -3,21 +3,20 @@
 {% block body %}
     <h2>PRODUCT DETAILS</h2> 
      <ul>
-
                <li>{{product.Product_Name}}</li>
                 <li>{{product.Price}}</li>
                 <li>{{ product.Availiability.status}}</li>
                 {%csrf_token%}
                 <input  type="number" value="1"  min="1" class="quantity" name="quantity">
-                <button class="cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>ADD TO CART</button>
+                <button class="cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>ADD TO CART</button>2
+                  <button class="rmv-cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cartdelete' %}>REMOVE FROM CART</button>
                 <li>{{product.Description}}</li>
                 <li>{{product.Features}}</li>
                 <li>{{product.TechnicalSpecs}}</li>
                 <!--   display product  images   -->
                 {% for pic in pics %}
                 <img src={{pic.Images.url}}  />
-                {%endfor%}
-                
+                {%endfor%}      
           </ul>      
 {% endblock %}
 

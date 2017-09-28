@@ -68,7 +68,7 @@ Delivery_Modes=(("NORMAL","NORMAL"),)
 # for delivery_types in delivery_modes:
 #   Delivery_Modes.append(delivery_types.type)
 
-Payment_Type=( ("PAYTM","PAYTM"),)
+Payment_Type=( ("PAYTM WALLET","PAYTM WALLET"),)
 # payment_methods=Payment_Method.objects.all()
 # for methods in payment_methods:
 #     Payment_Method.append(methods.payment_type)

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block body %}
+<div class="col-md-12">
     <h2>HOME</h2>
     <ul>
         {% for base in base_category_list%}
@@ -9,11 +10,11 @@
                      <ul >
                              {% for  sub in base.subcategory_set.all %}
                               <li>{{sub.Sub_Category}}
-                              <img src={{sub.Sub_Category_Pic.url}}   />
                               </li>
                              {%endfor%}
                        </ul>
             </li>
         {% endfor %}
     </ul>
+    </div>
 {% endblock %}

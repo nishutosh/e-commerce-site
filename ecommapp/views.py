@@ -16,6 +16,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
+
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
 }
@@ -28,7 +29,7 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         if self.request.user.is_authenticated:
-             context["siteuser"]=self.request.user           
+             context["siteuser"]=self.request.user          
         return context
 
 class ProductList(ListView):
@@ -291,7 +292,7 @@ class DeleteCartView(View):
                      Cartitem.objects.filter(Product_In_Cart=product).delete()
                else:
                       return JsonResponse({"message":"no cookie present"})
-               return JsonResponse({"product deleted"})
+               return JsonResponse({"message":"product deleted"})
 
 #yet to be tested
 class ApplyCoupount(LoginRequiredMixin,View):
