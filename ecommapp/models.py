@@ -125,7 +125,7 @@ class Product(models.Model):
   Description=models.TextField(max_length=10000)
   Features=models.TextField(max_length=10000)
   TechnicalSpecs=models.CharField(max_length=10000)
-  Product_Filter=models.ManyToManyField(Filter_Category)
+  # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
 
