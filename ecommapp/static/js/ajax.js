@@ -111,4 +111,27 @@ $(".rmv-cart-btn").click(function(){
    } 
        });
 });
+//ajax for  username check
+$('#id_username').keyup(function(){
+
+  $.ajax({
+                                         type: "POST",
+                                         url:"/auth/validate/",
+                                         data:{
+                 "username":$("#id_username").val(),
+                
+                     },
+                                          success: function(result){
+                                          $("#username_message").text(result.message);
+                                        
+
+
+
+                                           }
+
+                                          })
+                                          });
+
+
+
 

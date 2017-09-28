@@ -69,9 +69,10 @@ class ProductDetails(DetailView):
 
 class UserNameCheckView(View):
     """checks username exist or not during registartion process"""
-    def get(self,request):
-           if "username" in request.GET:
-                if CustomUser.objects.filter(username=request.GET["username"]).exist():
+    def post(self,request):
+           print "s"
+           if "username" in request.POST:
+                if CustomUser.objects.filter(username=request.POST["username"]).exists():
                     return JsonResponse({"message":"username already exist"})
                 else:
                      return JsonResponse({"message":"Good to go"})  
