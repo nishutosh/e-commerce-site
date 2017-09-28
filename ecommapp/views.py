@@ -65,7 +65,8 @@ class ProductDetails(DetailView):
         context.update(menu_product_view_context)
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user      
-        return context          
+        return context 
+
 class UserNameCheckView(View):
     """checks username exist or not during registartion process"""
     def get(self,request):
@@ -246,13 +247,15 @@ class PostGetCartView(View):
                      for items in cart_items:
                          if items.coupon_code:
                             code=items.coupon_code
-                            product_details={"Product_name":items.Product_In_Cart.Product_Name,
+                            product_details={ "Product_name":items.Product_In_Cart.Product_Name,
+                                                             "Product_id":items.Product_In_Cart.pk,
                                                              "Price":items.Total_Price(),
                                                              "Quantity":items.Product_Quantity,
                                                              "code":code,
                                                             }
                          else: 
                              product_details={"Product_name":items.Product_In_Cart.Product_Name,
+                                                             "Product_id":items.Product_In_Cart.pk,
                                                              "Price":items.Total_Price(),
                                                              "Quantity":items.Product_Quantity
                                                              }

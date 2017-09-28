@@ -8,7 +8,7 @@
                 <li>{{ product.Availiability.status}}</li>
                 {%csrf_token%}
                 <input  type="number" value="1"  min="1" class="quantity" name="quantity">
-                <button class="cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>ADD TO CART</button>2
+                <button class="cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>ADD TO CART</button>
                   <button class="rmv-cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cartdelete' %}>REMOVE FROM CART</button>
                 <li>{{product.Description}}</li>
                 <li>{{product.Features}}</li>

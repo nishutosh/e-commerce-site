@@ -1,4 +1,22 @@
 // #disable checkout button when cart is empty
+$.ajax({
+             type: "GET",
+             url: "/cart/cartitems",
+              success: function(result){
+                    console.log(result);
+                $(".cart-list").text(result.message);
+              for(i=0;i<result.length;i++){
+
+                 prod=result[i].Product_name;
+                  id=result[i].Product_id;
+                                           quantity=result[i].Quantity;
+                                         $(".cart-list").append("<ul>"+prod+quantity+"</ul>");
+                
+}
+             }
+
+              
+              });
 
 function getCookie(name) {
     var cookieValue = null;
@@ -45,8 +63,9 @@ $(".cart-btn").click(function(){
                                           $(".cart-list").html(result.mesg);
                                            for(i=0;i<result.length;i++){
                                              prod=result[i].Product_name;
+                                           id=result[i].Product_id;
                                            quantity=result[i].Quantity;
-                                           $(".cart-list").append("<ul>"+prod+"  "+quantity+"</ul>");
+                                       $(".cart-list").append("<ul>"+prod+quantity+"</ul>");
 
 
                                            }
@@ -79,8 +98,9 @@ $(".rmv-cart-btn").click(function(){
                                            for(i=0;i<result.length;i++){
                   
                                            prod=result[i].Product_name;
+                                           id=result[i].Product_id;
                                            quantity=result[i].Quantity;
-                                           $(".cart-list").append("<ul>"+prod+"  "+quantity+"</ul>");
+                                            $(".cart-list").append("<ul>"+prod+quantity+"</ul>");
 
 
 
@@ -91,22 +111,4 @@ $(".rmv-cart-btn").click(function(){
    } 
        });
 });
-$.ajax({
-             type: "GET",
-             url: "/cart/cartitems",
-              success: function(result){
-                    console.log(result);
-                $(".cart-list").text(result.message);
-              for(i=0;i<result.length;i++){
-
-                 prod=result[i].Product_name;
-                 quantity=result[i].Quantity;
-                 $(".cart-list").append("<ul>"+prod+"  "+quantity+"</ul>");
-                
-}
-             }
-
-              
-              });
-
 
