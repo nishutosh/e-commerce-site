@@ -12,19 +12,15 @@ userurls=[
    url(r'orders/$',UserOrderList.as_view(),name="user-orders"),
    url(r'user-dashboard/$',UserDashboard.as_view(),name="user-dashboard"),
 ]
-
-
 carturls=[
-    url(r'cartitems$',PostGetCartView.as_view(),name="cart"),
-    url(r'delete$',DeleteCartView.as_view(),name="cartdelete"),
+    url(r'cartitems/$',PostGetCartView.as_view(),name="cart"),
+    url(r'delete/$',DeleteCartView.as_view(),name="cartdelete"),
     url(r'checkout/$',CheckoutView.as_view(),name="checkout"),
 ]
-
 authurls=[
     url(r'register/$',RegisterView.as_view(),name="register"),
     url(r'signin/$',SignInView.as_view(),name="signin"),
     url(r'signout/$',SignOutView.as_view(),name="signout"),
-
 ]
 commonurls=[
     url(r'(?P<basefield>[\w-]+)/(?P<subfield>[\w-]+)/$',ProductList.as_view()),
@@ -32,15 +28,20 @@ commonurls=[
     url(r'',HomeView.as_view(),name="home"),
 ]
 orderurls=[
-url(r'place-order/$',PlaceOrder.as_view(),name="place-order"),
-url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
+    url(r'place-order/$',PlaceOrder.as_view(),name="place-order"),
+    url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
+]
+adminurls=[
+   url(r'signin/$',AdminSignin.as_view(),name="admin-login"),
+   url(r'panel/$',AdminPanel.as_view(),name="admin-panel"),
+   url(r'signout/$',AdminSignOut.as_view(),name="admin-signout")
 
 ]
-
 urlpatterns = [
     url(r'home/',include(commonurls)),
     url(r'auth/',include(authurls)),   
     url(r'cart/',include(carturls)),
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
+    url(r'adminsite/',include(adminurls))
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

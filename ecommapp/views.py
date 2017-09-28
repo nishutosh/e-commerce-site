@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
 from django.core.urlresolvers  import reverse
 from django.shortcuts import redirect
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
@@ -108,11 +108,15 @@ class SignInView(FormView):
   def form_valid(self,form):
         user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
         if user is not None:
-             login(self.request,user)
+            if user.is_active:
+                  login(self.request,user)
+                  return super(SignInView, self).form_valid(form)
+            else:
+                 messages.error(self.request, 'Invalid username or password')
+                 return redirect(reverse("signin"))    
         else:
              messages.error(self.request, 'Invalid username or password')
              return redirect(reverse("signin"))
-        return super(SignInView, self).form_valid(form)
   def get_success_url(self):
              if "next" in self.request.GET.keys():
                  return  self.request.GET["next"]
@@ -351,7 +355,8 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                  Order_Date_Time=timezone.now(),
                                                  Order_Address_Line1=form.cleaned_data["Order_Address_Line1"],
                                                  Order_Address_Line2=form.cleaned_data["Order_Address_Line2"],
-                                                 Order_City=form.cleaned_data["Order_City"],
+                                                 Order_City=form.cleaned_data["Order_Region"],
+                                                 Order_State="DELHI",
                                                  Order_ZIP=form.cleaned_data["Order_ZIP"],
                                                  Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
                                                  Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
@@ -393,9 +398,44 @@ class CancelOrder(LoginRequiredMixin,View):
       pass
    
 
+class AdminSignin(FormView):
+    """admin login form and validation"""
+    template_name="admin-login.html"
+    form_class=SignInForm
+    success_url="adminsite/panel"
+    def form_valid(self,form):
+           user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
+           if user is not None:
+                 if user.is_active and user.is_superuser:
+                     login(self.request,user)
+                     return super(AdminSignin, self).form_valid(form)
+                 else:
+                       messages.error(self.request, 'Invalid username or password')
+                       return redirect(reverse("admin-login"))    
+           else:
+               messages.error(self.request, 'Invalid username or password')
+               return redirect(reverse("admin-login"))
+                         
 
+class AdminSignOut(LoginRequiredMixin,View):
+    def get(self,request):
+          logout(request)
+          return redirect(reverse("admin-login"))
 
 ##admin panel
+class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
+     """admin panel landing page"""
+     def test_func(self):
+           return self.request.user.is_superuser
+     def get(self,request):
+        order_count=Order.objects.all().count()
+        #ask for sales
+        customer_count=Customer.objects.all().count()
+        recent_order=Order.objects.all()[0:10]
+        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user}
+        
+        return render(request,"admin-index.html",context)      
+
 
 
 

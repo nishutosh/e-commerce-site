@@ -1,0 +1,11 @@
+{% extends "adminbase.html" %}
+{% block body %}
+    <h1>ADMIN PANEL</h1>
+   <h3>  ORDER COUNT :{{order_count}}</h3>
+     <h3>CUSTOMER COUNT : {{customer_count}}</h3>
+    {% for order in recent_order %}
+    <li>{{order.Order_In_Name_Of}}</li>
+    {%endfor%}
+
+    
+{% endblock %}

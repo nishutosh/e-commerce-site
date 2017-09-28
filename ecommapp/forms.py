@@ -63,14 +63,12 @@ Delivery_City=(
     ("3","Tughlqabad"),
 )
 
-Delivery_Modes=(("EXPRESS","EXPRESS"),
-                                  ("NORMAL","NORMAL"),)
+Delivery_Modes=(("NORMAL","NORMAL"),)
 # delivery_modes=Delivery_Type.objects.all()
 # for delivery_types in delivery_modes:
 #   Delivery_Modes.append(delivery_types.type)
 
-Payment_Type=(("CASH ON DELIVERY","CASH ON DELIVERY"),
-                                  ("ONLINE BANKING","ONLINE BANKING"),)
+Payment_Type=( ("PAYTM","PAYTM"),)
 # payment_methods=Payment_Method.objects.all()
 # for methods in payment_methods:
 #     Payment_Method.append(methods.payment_type)
@@ -86,7 +84,7 @@ class PlaceOrderForm(forms.Form):
      Order_In_Name_Of=forms.CharField(max_length=100)
      Order_Address_Line1=forms.CharField(max_length=200)
      Order_Address_Line2=forms.CharField(max_length=200)
-     Order_City=forms.ChoiceField(widget=forms.Select,choices=Delivery_City)
+     Order_Region=forms.ChoiceField(widget=forms.Select,choices=Delivery_City)
      #default state delhi
      Order_ZIP=forms.IntegerField()
      #Same_As_Shipping_Address=forms.ChoiceField(widget=forms.CheckboxInput)
@@ -94,11 +92,13 @@ class PlaceOrderForm(forms.Form):
      Delivery_Type=forms.ChoiceField(widget=forms.RadioSelect,choices=Delivery_Modes)
      #payment option
      Payment_Method=forms.ChoiceField(widget=forms.RadioSelect,choices=Payment_Type)
-     Terms_and_Condition=forms.BooleanField(widget=forms.CheckboxInput)
+     Terms_and_Condition=forms.BooleanField(required=True)
 
      def clean_terms_and_condition(self):
           if self.cleaned_data["Terms_and_Condition"]:
               return self.cleaned_data["Terms_and_Condition"]
+          else:
+              raise ValidationError("you must accept the terms and condition")   
 
      
      

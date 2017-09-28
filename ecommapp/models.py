@@ -253,18 +253,20 @@ class Order(models.Model):
    Order_Address_Line1=models.CharField(max_length=200)
    Order_Address_Line2=models.CharField(max_length=200)
    Order_City=models.CharField(max_length=200)
-   Order_State=models.CharField(max_length=200,default="DelhiNCR")
+   Order_State=models.CharField(max_length=200)
    Order_ZIP=models.IntegerField()
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
-
    Transaction_Id=models.CharField(max_length=100)
+   class Meta:
+       ordering=['pk']
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0
        for order_item in order_list:
            total=total+order_item.Final_Ordered_Product_price
-       return total    
+       return total  
+
 
 def OrderPaymentOptionCheck(method_request):
           if Payment_Method.objects.filter(payment_type=method_request).exists():
@@ -288,7 +290,6 @@ class Order_Product_Specs(models.Model):
   Final_Ordered_Product_price=models.FloatField()
   Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
   Order_Volts_Credit_Used=models.IntegerField(default=0)
-
 
 
 

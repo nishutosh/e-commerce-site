@@ -1,6 +1,6 @@
-{% extends "base.html" %}
+{% extends "adminbase.html" %}
 {% block body %}
-<h1>USER SIGNIN</h1>
+<h1>ADMIN LOGIN</h1>
 {% if messages %}
 <ul class="messages">
     {% for message in messages %}
@@ -13,6 +13,6 @@
     {{ form.as_ul }}
     <input type="submit" value="Sign In" />
 </form>
-<a href="/forgot-password/">Forget password</a>
+
 </div>
 {% endblock %}
