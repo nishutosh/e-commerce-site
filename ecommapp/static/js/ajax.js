@@ -132,6 +132,22 @@ $('#id_username').keyup(function(){
                                           })
                                           });
 
+$('#coupon').click(function(){
 
+$.ajax({
+                   type: "POST",
+                   url:"/cart/apply-coupon/",
+                   data:{
+                 "product":2,
+                 "coupon_entered":"testcoupon",               
+                     },
+                                          success: function(result){
+                                          $("#username_message").text(result.message);
+
+
+                                           }
+
+                                          })
+                                          });
 
 

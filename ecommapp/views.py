@@ -15,7 +15,8 @@ from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
@@ -299,18 +300,20 @@ class DeleteCartView(View):
                return JsonResponse({"message":"product deleted"})
 
 #yet to be tested
-class ApplyCoupount(LoginRequiredMixin,View):
+class ApplyCoupon(View):
   CART_ID="CART_ID"
+
+  @method_decorator(csrf_exempt)
   def post(self,request):
         cart=request.COOKIES.get(self.CART_ID)
         if cart:
                cart_obj=Cart.objects.get(pk=cart)
                product=Product.objects.get(pk=request.POST["product"])
                coupon_code_entered=request.POST["coupon_entered"]
-               if CouponCode.objects.filter(Code=coupon_code_entered).exist() and (not CustomerCouponUsedTrack.objects.filter(coupon_code=coupon_code_entered).exist()):
+               if CouponCode.objects.filter(Code=coupon_code_entered).exists() and (not CustomerCouponUsedTrack.objects.filter(coupon_code__Code=coupon_code_entered).exists()):
                     coupon=CouponCode.objects.get(Code=coupon_code_entered)
-                    d_cart_item=cart_obj.cartitem_set.filter(Product_In_Cart=product)
-                    if not(d.cart_item.coupon_code):
+                    if not(cart_obj.cartitem_set.filter(Product_In_Cart=product,coupon_code=coupon).exists()):
+                       d_cart_item=cart_obj.cartitem_set.get(Product_In_Cart=product)
                        d_cart_item.coupon_code=coupon
                        d_cart_item.save()
                        return JsonResponse({"message":"coupon code applied"})         
@@ -392,7 +395,7 @@ class PlaceOrder(LoginRequiredMixin,FormView):
 
 class OrderProcessCompleted(LoginRequiredMixin,View):
      pass
-     #delete cart id and revive paytm crdentials
+     #delete cart id and revive paytm crdentials and dadd coupon to used
 
 
 

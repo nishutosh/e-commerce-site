@@ -16,6 +16,7 @@ carturls=[
     url(r'cartitems/$',PostGetCartView.as_view(),name="cart"),
     url(r'delete/$',DeleteCartView.as_view(),name="cartdelete"),
     url(r'checkout/$',CheckoutView.as_view(),name="checkout"),
+    url(r'apply-coupon/$',ApplyCoupon.as_view(),name="apply-code"),
 ]
 authurls=[
     url(r'register/$',RegisterView.as_view(),name="register"),
