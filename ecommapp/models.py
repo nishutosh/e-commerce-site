@@ -215,7 +215,7 @@ class Cartitem(models.Model):
   def Total_Price(self):
           if self.coupon_code:
             #write discount function
-             Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+             Total=((self.Product_In_Cart.Price)*(self.Product_Quantity))-self.coupon_code.Discount
           else:     
              Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
           return Total  

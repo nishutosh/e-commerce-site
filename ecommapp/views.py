@@ -15,8 +15,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
@@ -248,12 +247,13 @@ class PostGetCartView(View):
                      cart_list=[]
                      for items in cart_items:
                          if items.coupon_code:
-                            code=items.coupon_code
+                            code=items.coupon_code.Code
                             product_details={ "Product_name":items.Product_In_Cart.Product_Name,
                                                              "Product_id":items.Product_In_Cart.pk,
                                                              "Price":items.Total_Price(),
                                                              "Quantity":items.Product_Quantity,
                                                              "code":code,
+                                                             "discount":items.coupon_code.Discount,
                                                             }
                          else: 
                              product_details={"Product_name":items.Product_In_Cart.Product_Name,
@@ -302,8 +302,6 @@ class DeleteCartView(View):
 #yet to be tested
 class ApplyCoupon(View):
   CART_ID="CART_ID"
-
-  @method_decorator(csrf_exempt)
   def post(self,request):
         cart=request.COOKIES.get(self.CART_ID)
         if cart:
@@ -447,10 +445,19 @@ class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
 
 
 
-
-
-
-
+class AdminBaseCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+     """base categoty handling"""
+     def get(self,request):
+         base_category=BaseCategory.objects.all()
+         paginator = Paginator(base_category, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-catelog-basecategory.html', {'base_category': base_category})
 
 
 
