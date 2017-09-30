@@ -20,7 +20,7 @@ class AccountEditForm(forms.Form):
     address_line_1=forms.CharField(max_length=400)
     address_line_2=forms.CharField(max_length=400)
     city=forms.CharField(max_length=200)  
-    state=forms.CharField(max_length=200)
+    #state=forms.CharField(max_length=200)
     ZIP=forms.IntegerField()
 
 class PasswordChange(forms.Form):
@@ -101,11 +101,21 @@ class RegisterForm(forms.Form):
                 raise forms.ValidationError(
                     "Password and confirm Password fields does not match"
                 )
+class AccountEditForm(forms.Form):
+    email=forms.EmailField()
+    contact_number=forms.IntegerField()
+    address_line_1=forms.CharField(max_length=400)
+    address_line_2=forms.CharField(max_length=400)
+    Region=forms.ChoiceField(widget=forms.Select,choices=Delivery_City)
+    #state=forms.CharField(max_length=200)
+    ZIP=forms.IntegerField()
+
+
+
 class BaseCategoryForm(ModelForm):
       class Meta:
           model = BaseCategory
           fields=["Base_Category","Base_Category_Pic"]
-
 
 
    

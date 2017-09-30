@@ -4,7 +4,8 @@
     <h2>PRODUCT DETAILS</h2> 
      <ul>
                <li>{{product.Product_Name}}</li>
-                <li>{{product.Price}}</li>
+                <li>BASE PRICE: {{product.Base_Price}}</li>
+                         <li>AC PRICE: {{product.price_after_discount}}</li>
                 <li>{{ product.Availiability.status}}</li>
                 {%csrf_token%}
                 <input  type="number" value="1"  min="1" class="quantity" name="quantity">

@@ -120,7 +120,8 @@ class Product(models.Model):
   Produce_Base_Category=models.ForeignKey(BaseCategory)
   product_Sub_Category=models.ForeignKey(SubCategory)
   Product_Name=models.CharField(max_length=200)
-  Price=models.FloatField()
+  Discount=models.FloatField(default=0)
+  Base_Price=models.FloatField()
   Availiability=models.BooleanField(default=True)
   Description=models.TextField(max_length=10000)
   Features=models.TextField(max_length=10000)
@@ -128,6 +129,9 @@ class Product(models.Model):
   # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  def price_after_discount(self):
+      Actual_Price=((100-self.Discount)/100)* self.Base_Price
+      return  Actual_Price
 
 
 class Flash_Sale(models.Model):
