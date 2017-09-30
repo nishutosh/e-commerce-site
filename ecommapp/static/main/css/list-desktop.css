@@ -94,6 +94,7 @@
   padding: 15px 0;
   display:inline-block;
   vertical-align: middle;
+  display:none;
 }
 .product-attributes
 {

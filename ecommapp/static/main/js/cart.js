@@ -31,31 +31,30 @@ $.ajaxSetup({
     }
 });
 
-// saving item in cart via add to cart cta
-$("#add-to-cart-btn").click(function(){
-    $.ajax({
-            type: "POST",
-            url: $("#add-to-cart-btn").attr("data-ajax-url"),
-            data:{
-                 "quantity":"1",
-                 "product":$("#add-to-cart-btn").attr("data-product-id"),
-                 "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
-                "s":console.log($("input[name='csrfmiddlewaretoken']").val())
-                     },
-              success: function(result){
-                           $.ajax({
-                                         type: "GET",
-                                         url: $("#add-to-cart-btn").attr("data-ajax-url"),
-                                          success: function(result){
-                                         console.log(result)
+// saving item in cart via add to cart cta for product-details page
+// $("#add-to-cart-btn").click(function(){
+//     $.ajax({
+//             type: "POST",
+//             url: $("#add-to-cart-btn").attr("data-ajax-url"),
+//             data:{
+//                  "quantity":"1",
+//                  "product":$("#add-to-cart-btn").attr("data-product-id"),
+//                  "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
+//                 "s":console.log($("input[name='csrfmiddlewaretoken']").val())
+//                      },
+//               success: function(result){
+//                            $.ajax({
+//                                          type: "GET",
+//                                          url: $("#add-to-cart-btn").attr("data-ajax-url"),
+//                                           success: function(result){
+//                                          console.log(result)
+//
+//                                           }
+//                                           });
+//                                         }
+//               });
+// });
 
-                                          }
-                                          });
-
-
-                                                         }
-              });
-});
 $.ajax({
              type: "GET",
              url: "/cart/",
@@ -70,6 +69,34 @@ $.ajax({
 
               }
               });
+/////////////////////////////////////
+// for adding to cart on list page
+//////////////////////////////////////
+
+$(".cart-btn").click(function(){
+    $.ajax({
+            type: "POST",
+            url: $(this).attr("data-ajax-url"),
+            data:{
+                 "quantity":"1",
+                 "product":$(this).attr("data-product-id"),
+                 "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
+                "s":console.log($("input[name='csrfmiddlewaretoken']").val())
+                     },
+              success: function(result){
+                           $.ajax({
+                                         type: "GET",
+                                         url: $(this).attr("data-ajax-url"),
+                                          success: function(result){
+                                         console.log(result)
+
+                                          }
+                                          });
+                                        }
+              });
+});
+
+/////////////////////////////////
 // functionality for decreasing quantity via minus button
 $(".reduce-quantity").click(function(){
   var val = $(this).siblings(".quantity-input").children().val();
@@ -83,6 +110,7 @@ $(".reduce-quantity").click(function(){
   }
   updateCart(inputElement,id,url);
 });
+
 // functionality for increasing quantity via plus button
 $(".increase-quantity").click(function(){
   var val = $(this).siblings(".quantity-input").children().val();
@@ -96,7 +124,10 @@ $(".increase-quantity").click(function(){
   }
   updateCart(inputElement,id,url);
 });
+
+//////////////////////////////
 // updating and saving cart
+///////////////////////////////
 function updateCart(element,id,url)
 {
   console.log("element = " + element);

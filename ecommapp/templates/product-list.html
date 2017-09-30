@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block body_block %}
-
+  {%csrf_token%}
   <div class="page-content">
     <div class="product-filters">
       <button class="btn btn-default main-filter-btn filter-btn" data-toggle="collapse" data-target="#full-filter-list">
@@ -86,8 +86,31 @@
                           </div>
                           <div class="product-ctas">
                             <div class="product-add-to-cart">
-                                <button class="btn btn-default list-cta-btn">+</button>
+                                <button title="Add to cart" data-toggle="modal" data-target="#cartModal-{{product.id}}" class="btn btn-default list-cta-btn">Add to Cart</button>
                             </div>
+                            <div id="cartModal-{{product.id}}" class="modal fade" role="dialog">
+                                <div class="modal-dialog">
+
+                                  <!-- Modal content-->
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                      <!-- <h4 class="modal-title">Modal Header</h4> -->
+                                    </div>
+                                    <div class="modal-body">
+                                      <p>Add Product to Cart?</p>
+                                      <button class="btn btn-default cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>
+                                          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                            ADD TO CART
+                                      </button>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    </div>
+                                  </div>
+
+                                </div>
+                              </div>
                             <div class="sizes dropdown">
                               <button class="btn btn-default dropdown-toggle list-cta-btn" type="button" data-toggle="dropdown" data-hover="dropdown">
                                     Sizes

@@ -61,9 +61,9 @@
 }
 .product-name a
 {
-  color:black;
   color: #807E7E;
-  text-shadow: 1px 1px 1px #807E7E;
+  color:#535766;
+  font-weight:bold;
 }
 .original-price
 {
