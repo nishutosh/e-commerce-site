@@ -463,10 +463,45 @@ class AdminBaseCategory(LoginRequiredMixin,UserPassesTestMixin,View):
 
 
 
-class AdminBasecategoryFormView(LoginRequiredMixin,UserPassesTestMixin,View):
+class AdminBasecategoryFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
    """admin base categort form handling"""
+   template_name="base-category-edit.html"
+   success_url="/adminsite/catelog/basecategories/"
+   form_class=BaseCategoryForm
    def test_func(self):
            return self.request.user.is_superuser
+   def get_initial(self):
+        if  self.kwargs["bcat_id"]=="new":
+             initial={}
+             return initial   
+        else:
+            base_cat=BaseCategory.objects.get(pk=self.kwargs["bcat_id"])
+            initial={"Base_Category":base_cat.Base_Category,
+                          "Base_Category_Pic":base_cat.Base_Category_Pic}
+            return initial 
+   def form_valid(self,form):
+         if self.kwargs["bcat_id"]=="new":
+             Base_Category.objects.create(Base_Category=form.cleaned_data["Base_Category"],Base_Category_Pic=form.cleaned_data["Base_Category_Pic"])
+         else:
+             base_cat=BaseCategory.objects.get(pk=self.kwargs["bcat_id"])
+             base_cat.Base_Category=form.cleaned_data["Base_Category"]
+             base_cat.Base_Category_Pic=form.cleaned_data["Base_Category_Pic"]
+             base_cat.save()             
+         return super(AdminBasecategoryFormView, self).form_valid(form)
+   def form_invalid(self,form):
+        print form
+        return super(AdminBasecategoryFormView, self).form_invalid(form)
+ 
+class AdminBasecategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+           return self.request.user.is_superuser
+      def post(self,request):
+             for id in  request.POST.getlist("selected"):
+                  BaseCategory.objects.filter(pk=id).delete()
+             return redirect(reverse("admin-catalog-base"))     
+                 
+
+
    
 
 

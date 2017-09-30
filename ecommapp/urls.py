@@ -37,7 +37,9 @@ adminurls=[
    url(r'signin/$',AdminSignin.as_view(),name="admin-login"),
    url(r'panel/$',AdminPanel.as_view(),name="admin-panel"),
    url(r'signout/$',AdminSignOut.as_view(),name="admin-signout"),
-   url(r'catelog/basecategories/$',AdminBaseCategory.as_view(),name="admin-catelog-base"),
+   url(r'catelog/basecategories/$',AdminBaseCategory.as_view(),name="admin-catalog-base"),
+   url(r'catelog/edit-basecategories/(?P<bcat_id>[\w-]+)$',AdminBasecategoryFormView.as_view(),name="admin-catalog-base-edit"),
+   url(r'catelog/edit-basecategories/delete/$',AdminBasecategoryDeleteView.as_view(),name="admin-catalog-base-delete"),
 
 ]
 urlpatterns = [
