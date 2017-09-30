@@ -13,8 +13,8 @@
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/desktop.css' %}" />
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/tablet.css' %}" />
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/white-theme.css' %}" />
-      <link rel="stylesheet" type="text/css" href="{% static 'main/css/form.css' %}" />
-      <link rel="stylesheet" type="text/css" href="{% static 'main/css/form-colors.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/orders-frame.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/orders-colors.css' %}" />
       <script src="{% static 'main/js/jquery-3.2.1.js' %}"></script>
       <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
       <script src="{% static 'main/js/bootstrap-dropdownhover.min.js' %}"></script>
@@ -27,15 +27,16 @@
       {% include 'base/header.html' %}
     </header>
 
-
-<div class="page-content">
-    {% block body_block %}{%endblock%}
-</div>
+    <div class="page-content">
+        {% block body_block %}{%endblock%}
+    </div>
 
 <footer>
   {% include 'base/footer.html' %}
 </footer>
 <script src="{% static 'main/js/nav.js' %}"></script>
-<script src="{% static 'main/js/form.js' %}"></script>
+<script type="text/javascript" src="{% static 'main/js/cart.js' %}">
+
+</script>
   </body>
 </html>

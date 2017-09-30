@@ -1,6 +1,6 @@
 body
 {
-  background-color:#eff2f6;
+  background-color:#f9f9f9;
 }
 div
 {
@@ -16,26 +16,39 @@ h1,h2,h3,h4,h5,h6,div
     color:#535766;
 }
 
+.side-navigation-bar
+{
+  background-color: white;
+}
+.side-navigation-bar a
+{
+  color: #535766;
+}
+.side-nav-header
+{
+  border-bottom: 1px solid #f0f0f0;
+}
 .box h3
 {
   font-weight: bold;
 }
-.user-side-menu-list h4
-{
-  font-weight: bold;
-}
+
 
 .box
 {
-  border: 2px solid #535766;
-  box-shadow: 0 0 4px #000;
 
+  box-shadow: 0 0 4px #f0f0f0;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    background-color: #fbfbfb;
 }
 
 .box:hover
 {
-  border: 2px solid #535766;
-  box-shadow: 4px 4px 4px #535766;
+
+
+  box-shadow: 4px 4px 4px #f0f0f0;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 .box:hover
 {
@@ -47,13 +60,7 @@ h1,h2,h3,h4,h5,h6,div
   color:white;
 }
 
-.user-side-menu
-{
 
-      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .08);
-    background-color: white;
-
-}
 .user-main-screen
 {
     background-color: white;

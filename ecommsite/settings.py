@@ -82,6 +82,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -100,7 +101,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL="/siginin/"
+LOGIN_URL="/signin/"
 #default user model 
 AUTH_USER_MODEL = 'ecommapp.CustomUser'
 # Internationalization

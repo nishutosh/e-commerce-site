@@ -34,18 +34,36 @@
                     <!--Desktop buttons-->
                     <div class="main-navbar-more-buttons hidden-xs">
                         <button class="btn btn-default navbar-cart-btn">
+                          <a href="{%url "checkout"%}">
                               <i class="fa fa-shopping-cart" aria-hidden="true"></i> CART
+                            </a>
                         </button>
                         <div class="dropdown">
+                          {% if siteuser %}
                           <a href="" class="btn btn-default navbar-user-btn dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                            {{siteuser.customer.Customer_First_Name}}
+                            <i class="fa fa-caret-down" aria-hidden="true"></i>
+                          </a>
+                          <ul class="dropdown-menu user-action-list">
+                            <li><a href="{%url "user-dashboard"%}">Dashboard</a></li>
+                            <li><a href="{%url "user-orders" %}">Orders</a></li>
+                            <li><a href="{%url "coupons" %}">Your Coupons</a></li>
+                            <li><a href="{%url "credits" %}">Your Credits</a></li>
+                            <li><a href="{%url "signout" %}">Log Out</a></li>
+                          </ul>
+                            {% else %}
+                            <a href="" class="btn btn-default navbar-user-btn dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
                             <i class="fa fa-user" aria-hidden="true"></i>
                             MY ACCOUNT
                             <i class="fa fa-caret-down" aria-hidden="true"></i>
+
                           </a>
                           <ul class="dropdown-menu user-action-list">
                             <li><a href="/signin/">Login</a></li>
                             <li><a href="/register/">Sign Up</a></li>
                           </ul>
+                          {%endif%}
                         </div>
                     </div>
                   </div>
@@ -59,7 +77,7 @@
                               <ul class="dropdown-menu">
                                 {% for  sub in base.subcategory_set.all %}
 
-                                    <li><a href="#">{{sub.Sub_Category}}</a></li>
+                                    <li><a href="/product/{{base.Base_Category|lower}}/{{sub.Sub_Category|lower}}/">{{sub.Sub_Category}}</a></li>
 
                                 {% endfor %}
                               </ul>
@@ -92,15 +110,31 @@
                   <i class="fa fa-shopping-cart" aria-hidden="true"></i>
             </button>
             <div class="dropdown">
-              <a href="" class="btn btn-default small-button navbar-user-btn dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+              {% if siteuser %}
+              <a href="" class="btn btn-default navbar-user-btn dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
                 <i class="fa fa-user" aria-hidden="true"></i>
+                {{siteuser.customer.Customer_First_Name}}
                 <i class="fa fa-caret-down" aria-hidden="true"></i>
+              </a>
+              <ul class="dropdown-menu user-action-list">
+                <li><a href="/user-dashboard/">Dashboard</a></li>
+                <li><a href="{%url "user-orders" %}">Orders</a></li>
+                <li><a href="{%url "coupons" %}">Your Coupons</a></li>
+                <li><a href="{%url "credits" %}">Your Credits</a></li>
+                <li><a href="{%url "signout" %}">Log Out</a></li>
+              </ul>
+                {% else %}
+                <a href="" class="btn btn-default navbar-user-btn dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+                <i class="fa fa-user" aria-hidden="true"></i>
+                MY ACCOUNT
+                <i class="fa fa-caret-down" aria-hidden="true"></i>
+
               </a>
               <ul class="dropdown-menu user-action-list">
                 <li><a href="/signin/">Login</a></li>
                 <li><a href="/register/">Sign Up</a></li>
               </ul>
-            </div>
+              {%endif%}
         </div>
 
       </div>
@@ -132,12 +166,12 @@
         </div>
         <ul>
           {% for base in base_category_list%}
-              <li class="mobile-list-link"><a href="{{category.category_name}}"><strong>{{ base.Base_Category }}</strong></a>
+              <li class="mobile-list-link"><strong>{{ base.Base_Category }}</strong>
                 <i class="fa fa-plus pull-right" aria-hidden="true"></i>
                 <ul class="mobile-list-sub">
                     {% for  sub in base.subcategory_set.all %}
 
-                        <li><a href="#">{{sub.Sub_Category}}</a></li>
+                        <li><a href="/product/{{base.Base_Category|lower}}/{{sub.Sub_Category|lower}}/">{{sub.Sub_Category}}</a></li>
 
                     {% endfor %}
                 </ul>

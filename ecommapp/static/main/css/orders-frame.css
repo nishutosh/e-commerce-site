@@ -1,0 +1,107 @@
+.table tbody tr td
+{
+  padding:10px 20px;
+}
+.table .item-image
+{
+  width: 120px;
+  padding: 10px;
+}
+
+.table input
+{
+  border-radius: 2px;
+  border: 1px solid #f4f4f4;
+  box-shadow: 1px 1px 2px #333;
+  outline:none;
+}
+.table input[type=text]
+{
+  padding: 4px;
+}
+.table input[type=number]
+{
+  width: 50px;
+}
+
+.table input::-webkit-input-placeholder
+{
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  color: #535766;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button
+{
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number]
+{
+  -moz-appearance: textfield;
+  text-align:center;
+}
+
+.table td div
+{
+  display:inline-block;
+}
+
+.quantity-icon
+{
+  vertical-align: top;
+  border-radius: 50%;
+  background-color: orange;
+  color:white;
+  font-weight: bold;
+  width:30px;
+  height:30px;
+  text-align:center;
+  font-size:20px;
+  padding-top:2px;
+  cursor:pointer;
+}
+.quantity-input
+{
+  margin: 2px 5px;
+}
+
+.discount-status
+{
+  margin: 10px;
+}
+
+.cart-btn
+{
+    width: 240px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
+}
+.bill-list
+{
+  padding:0;
+}
+
+
+.continue-shopping-cta
+{
+  margin: 20px auto;
+  text-align: center;
+}
+
+.continue-shopping-cta .btn
+{
+    width: 300px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.continue-shopping-cta .btn i
+{
+  margin-right: 20px;
+  font-size: 14px;
+}

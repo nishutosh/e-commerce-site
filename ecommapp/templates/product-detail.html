@@ -85,10 +85,11 @@
               </div>
             </div>
           </div>
+          {%csrf_token%}
           <div class="cart-cta">
-            <button class="btn btn-default cart-btn">
-              <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                ADD TO CART
+            <button class="btn btn-default cart-btn" id="add-to-cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                  ADD TO CART
             </button>
           </div>
           <div class="product-content">

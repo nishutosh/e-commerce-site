@@ -4,12 +4,12 @@ $(".main-navbar-button").click(function(){
 
   if(showing === false)
     {
-      $('#full-list').slideDown();
+      $('#full-list').show();
       showing = true;
     }
   else
     {
-      $('#full-list').slideUp();
+      $('#full-list').hide();
       showing = false;
     }
 });
@@ -20,3 +20,13 @@ $(".mobile-list-link").click(function(){
       $(this).children('.mobile-list-sub:hidden').slideDown();
 
 });
+
+$('.toggle-button').click(function(){
+  $('.side-main-list').slideToggle();
+});
+
+$(".navbar-cart-btn").click(function(){
+  $.get("/cart/checkout/",function(data){
+    console.log("akhand chutiyapa")
+  })
+})

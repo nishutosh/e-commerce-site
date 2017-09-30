@@ -1,42 +1,46 @@
 {% extends "base/base.html" %}
 
 
-
-    <!-- <h2>HOME</h2>
-    <ul>
-        {% for base in base_category_list%}
-            <li>
-                   {{ base.Base_Category }}
-                    <img src={{base.Base_Category_Pic.url}}   />
-                     <ul >
-                             {% for  sub in base.subcategory_set.all %}
-                              <li>{{sub.Sub_Category}}
-                              <img src={{sub.Sub_Category_Pic.url}}   />
-                              </li>
-                             {%endfor%}
-                       </ul>
-            </li>
-        {% endfor %}
-    </ul> -->
-
 {% load static %}
 {% block body_block %}
 
     <div class="hero image">
 
       <div class="bannerText">
-          <h1>SPARK YOUR STYLE</h1>
+          <h1>Want to spice up your style?</h1>
+          <h3>Get the best deals on clothes, footwear, mobile accessories that you may not have seen before.</h3>
+          <div class="cta">
+                <a name="button" href="#shopping-categories" class="cta-btn btn btn-default">Shop Now</a>
+                <a name="button" href="/register/" class="alternate-cta-btn btn btn-default">Sign Up Now</a>
+          </div>
+
       </div>
     </div>
-    <div class="page-content">
+    <div class="page-content" id="shopping-categories">
       <div class="category-container">
         <ul>
-        {% for category in all_categories %}
+          {% for base in base_category_list%}
+                <li class="category">
+                  <div class="category-image">
+                      <img src="{{base.Base_Category_Pic.url}}" alt="">
+                  </div>
+                  <div class="sub-category-container">
+                  <div class="header">
+                    {{ base.Base_Category }}'s<br />
+                    <span>Collection</span>
+                  </div>
 
-        <li>
-          <a href="{% url 'products:products' %}">{{category.category_name}}</a>
-        </li>
-        {% endfor %}
+                    <ul class="">
+                      {% for  sub in base.subcategory_set.all %}
+
+                          <li><a href="/product/{{base.Base_Category|lower}}/{{sub.Sub_Category|lower}}/">{{sub.Sub_Category}}</a></li>
+
+                      {% endfor %}
+                    </ul>
+                  </div>
+
+                </li>
+            {% endfor %}
       </ul>
       </div>
     </div>

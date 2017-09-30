@@ -1,0 +1,39 @@
+{% extends "base/form.html" %}
+{% block body_block %}
+<!-- <h1>PLACE ORDER</h1>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<form action="" method="post" style="text-align: center;">
+    {% csrf_token %}
+    {{ form.as_ul }}
+    <input type="submit" value="Pay Or Place Order" />
+</form>
+</div> -->
+
+<div class="form-container">
+  <div class="form-header">
+    <h2>Place Order</h2>
+  </div>
+      {{ form.non_field_errors }}
+  <form class="form-horizontal" action="" method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group col-sm-8 ">
+        {{ field.errors }}
+        {{ field }}
+        <label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
+        <span class="orange-line"></span>
+      </div>
+    {%endfor%}
+    <div class="form-group button col-sm-8">
+        <input type="submit" class="btn btn-default" value="Pay or Place Order" />
+    </div>
+
+  </form>
+</div>
+{% endblock %}
