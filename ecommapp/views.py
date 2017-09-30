@@ -15,8 +15,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all()
@@ -68,10 +67,23 @@ class ProductDetails(DetailView):
              context["siteuser"]=self.request.user
         return context
 
+class UserNameCheckView(View):
+    """checks username exist or not during registartion process"""
+    def post(self,request):
+           print ("s")
+           if "username" in request.POST:
+                if CustomUser.objects.filter(username=request.POST["username"]).exists():
+                    return JsonResponse({"message":"username already exist"})
+                else:
+                     return JsonResponse({"message":"Good to go"})
+           else:
+                 return JsonResponse({"message":"error no username field"})
+
+
 class RegisterView(FormView):
    template_name="register.html"
    form_class=RegisterForm
-   success_url='/signin/'
+   success_url='auth/signin/'
    def form_valid(self, form):
         user_made=CustomUser.objects.create_user(username=form.cleaned_data["username"],password=form.cleaned_data["password"])
         Customer.objects.create(
@@ -99,11 +111,15 @@ class SignInView(FormView):
   def form_valid(self,form):
         user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
         if user is not None:
-             login(self.request,user)
+            if user.is_active:
+                  login(self.request,user)
+                  return super(SignInView, self).form_valid(form)
+            else:
+                 messages.error(self.request, 'Invalid username or password')
+                 return redirect(reverse("signin"))
         else:
              messages.error(self.request, 'Invalid username or password')
              return redirect(reverse("signin"))
-        return super(SignInView, self).form_valid(form)
   def get_success_url(self):
              if "next" in self.request.GET.keys():
                  return  self.request.GET["next"]
@@ -116,7 +132,21 @@ class SignOutView(LoginRequiredMixin,View):
           logout(request)
           return redirect(reverse("home"))
 
-#user flow
+
+# class ReviewFormView(LoginRequiredMixin,FormView):
+#     """user submit review"""
+#     template_name="user-review"
+#     form_class=ReviewForm
+#     def form_valid(self,form):
+#         Review.objects.create(Reviewer=self.request.user,
+#                                                Product=self.kwargs["product"],
+#                                                Review_Title=form.cleaned_data["Review_titile"],
+#                                                Review_Body=form.cleaned_data["Review_Body"],
+#                                                show_review=True)
+#         messages.success(self.request, 'Review Submitted')
+#         return super(RegisterView, self).form_valid(form)
+
+
 class UserDashboard(LoginRequiredMixin,View):
     """user home page"""
     template_name="user-index.html"
@@ -128,7 +158,7 @@ class UserDashboard(LoginRequiredMixin,View):
 
 class  EditFormView(LoginRequiredMixin,FormView):
     """user edit details"""
-    success_url="/user-dashboard/"
+    success_url="/user/user-dashboard/"
     template_name="user-edit-form.html"
     form_class=AccountEditForm
     def get_initial(self):
@@ -150,15 +180,15 @@ class  EditFormView(LoginRequiredMixin,FormView):
                                                         Customer_Email=form.cleaned_data["email"],
                                                         Address_Line1=form.cleaned_data["address_line_1"],
                                                         Address_Line2=form.cleaned_data["address_line_2"],
-                                                        City=form.cleaned_data["city"],
-                                                        State=form.cleaned_data["state"],
+                                                        City=form.cleaned_data["Region"],
+                                                        State="DELHI",
                                                         ZIP=form.cleaned_data["ZIP"],
                                                         Customer_Contact_Number=form.cleaned_data["contact_number"] )
           messages.success(self.request, 'Details Updated')
           return super(EditFormView, self).form_valid(form)
 
 class SecurityView(LoginRequiredMixin,FormView):
-    success_url="/user-dashboard/"
+    success_url="/user/user-dashboard/"
     template_name="security.html"
     form_class=PasswordChange
     def form_valid(self,form):
@@ -170,6 +200,8 @@ class SecurityView(LoginRequiredMixin,FormView):
                 user_obj.save()
                 messages.success(self.request, 'Password Changed')
                 return super(SecurityView, self).form_valid(form)
+
+
 
 class FashVoltsCreditView(LoginRequiredMixin,View):
      def get(self,request):
@@ -188,17 +220,18 @@ class  CoupounAppliedView(LoginRequiredMixin,View):
 
 class UserReviewList(LoginRequiredMixin,View):
     def get(self,request):
-       user_obj=request.user
-       context={"siteuser":user_obj,"reviews":user_obj.customer.review_set.all()}
-       context.update(menu_product_view_context)
-       return render(request,"user-reviews.html",context)
+         user_obj=request.user
+         context={"siteuser":user_obj,"reviews":user_obj.customer.review_set.all()}
+         context.update(menu_product_view_context)
+         return render(request,"user-reviews.html",context)
 
 class UserOrderList(LoginRequiredMixin,View):
     def get(self,request):
-        user_obj=request.user
-        context={"siteuser":user_obj,"orders":user_obj.customer.order_set.all()}
-        context.update(menu_product_view_context)
-        return render(request,"user-orders.html",context)
+          user_obj=request.user
+          context={"siteuser":user_obj,"orders":user_obj.customer.order_set.all()}
+          context.update(menu_product_view_context)
+          return render(request,"user-orders.html",context)
+
 
 #AJAX calls classes
 
@@ -207,7 +240,6 @@ class PostGetCartView(View):
      """post and get products to cart"""
      CART_ID="CART_ID"
      def get(self,request):
-             print("inside the cart view not checkput view")
              cart=request.COOKIES.get(self.CART_ID)
              if cart:
                      new_cart_obj=Cart.objects.get(id=cart)
@@ -215,23 +247,24 @@ class PostGetCartView(View):
                      cart_list=[]
                      for items in cart_items:
                          if items.coupon_code:
-                            code=items.coupon_code
-                            product_details={"Product_name":items.Product_In_Cart.Product_Name,
+                            code=items.coupon_code.Code
+                            product_details={ "Product_name":items.Product_In_Cart.Product_Name,
+                                                             "Product_id":items.Product_In_Cart.pk,
                                                              "Price":items.Total_Price(),
                                                              "Quantity":items.Product_Quantity,
                                                              "code":code,
+                                                             "discount":items.coupon_code.Discount,
                                                             }
                          else:
                              product_details={"Product_name":items.Product_In_Cart.Product_Name,
+                                                             "Product_id":items.Product_In_Cart.pk,
                                                              "Price":items.Total_Price(),
                                                              "Quantity":items.Product_Quantity
                                                              }
                          cart_list.append(product_details)
-                         print("this bloody shit is responsible for this json")
                      return  JsonResponse(cart_list,safe=False)
              else :
                      return  JsonResponse({"message":"no cookie present"})
-
      def post(self,request):
              cart=request.COOKIES.get(self.CART_ID)
              if cart:
@@ -264,34 +297,11 @@ class DeleteCartView(View):
                      Cartitem.objects.filter(Product_In_Cart=product).delete()
                else:
                       return JsonResponse({"message":"no cookie present"})
-               return JsonResponse({"product deleted"},safe=False)
-
-class CheckoutView(LoginRequiredMixin,View):
-     CART_ID="CART_ID"
-     print("isnide checkout vierw")
-     def get(self,request):
-            print("inside the get fucntionality")
-            cart=request.COOKIES.get(self.CART_ID)
-            print(cart)
-            if cart:
-                 user=request.user
-                 cart_obj=Cart.objects.get(pk=cart)
-                 cart_items=cart_obj.cartitem_set.all()
-                 context={"siteuser":user,"cart_items":cart_items}
-                 print(context)
-                 return render(request,"checkout.html",context)
-            else:
-                #disable checkout button
-                return JsonResponse({"error":"nothing in cart"})
-     def post(self,request):
-         print("inside post")
-
+               return JsonResponse({"message":"product deleted"})
 
 #yet to be tested
 class ApplyCoupon(View):
   CART_ID="CART_ID"
-
-  @method_decorator(csrf_exempt)
   def post(self,request):
         cart=request.COOKIES.get(self.CART_ID)
         if cart:
@@ -315,11 +325,27 @@ class RemoveCoupoun(LoginRequiredMixin,View):
     pass
 
 
+
+class CheckoutView(LoginRequiredMixin,View):
+     CART_ID="CART_ID"
+     def get(self,request):
+            cart=request.COOKIES.get(self.CART_ID)
+            if cart:
+                 user=request.user
+                 cart_obj=Cart.objects.get(pk=cart)
+                 cart_items=cart_obj.cartitem_set.all()
+                 context={"siteuser":user,"cart_items":cart_items}
+                 print (context)
+                 return render(request,"checkout.html",context)
+            else:
+                #disable checkout button
+                return JsonResponse({"error":"nothing in cart"})
+
 class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
      #paytm redirect url
-     success_url="/"
+     success_url="/user/orders/"
      def get_context_data(self, **kwargs):
         context = super(PlaceOrder, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
@@ -327,7 +353,7 @@ class PlaceOrder(LoginRequiredMixin,FormView):
         return context
      def form_valid(self,form):
            """make an  order"""
-           print(form.cleaned_data["Delivery_Type"])
+           print (form.cleaned_data["Delivery_Type"])
            order=Order.objects.create(
                                                  Order_In_Name_Of=form.cleaned_data["Order_In_Name_Of"],
                                                  Order_Customer=self.request.user.customer,
@@ -335,7 +361,8 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                  Order_Date_Time=timezone.now(),
                                                  Order_Address_Line1=form.cleaned_data["Order_Address_Line1"],
                                                  Order_Address_Line2=form.cleaned_data["Order_Address_Line2"],
-                                                 Order_City=form.cleaned_data["Order_City"],
+                                                 Order_City=form.cleaned_data["Order_Region"],
+                                                 Order_State="DELHI",
                                                  Order_ZIP=form.cleaned_data["Order_ZIP"],
                                                  Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
                                                  Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
@@ -366,7 +393,7 @@ class PlaceOrder(LoginRequiredMixin,FormView):
 
 class OrderProcessCompleted(LoginRequiredMixin,View):
      pass
-     #delete cart id and revive paytm crdentials
+     #delete cart id and revive paytm crdentials and dadd coupon to used
 
 
 
@@ -375,3 +402,68 @@ class CancelOrder(LoginRequiredMixin,View):
         order_id and order product as parameter in post request"""
    def post(self,request):
       pass
+
+
+class AdminSignin(FormView):
+    """admin login form and validation"""
+    template_name="admin-login.html"
+    form_class=SignInForm
+    success_url="adminsite/panel"
+    def form_valid(self,form):
+           user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
+           if user is not None:
+                 if user.is_active and user.is_superuser:
+                     login(self.request,user)
+                     return super(AdminSignin, self).form_valid(form)
+                 else:
+                       messages.error(self.request, 'Invalid username or password')
+                       return redirect(reverse("admin-login"))
+           else:
+               messages.error(self.request, 'Invalid username or password')
+               return redirect(reverse("admin-login"))
+
+
+class AdminSignOut(LoginRequiredMixin,View):
+    def get(self,request):
+          logout(request)
+          return redirect(reverse("admin-login"))
+
+##admin panel
+class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
+     """admin panel landing page"""
+     def test_func(self):
+           return self.request.user.is_superuser
+     def get(self,request):
+        order_count=Order.objects.all().count()
+        #ask for sales
+        customer_count=Customer.objects.all().count()
+        recent_order=Order.objects.all()[0:10]
+        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user}
+
+        return render(request,"admin-index.html",context)
+
+
+
+
+class AdminBaseCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+     """base categoty handling"""
+     def test_func(self):
+           return self.request.user.is_superuser
+     def get(self,request):
+         base_category=BaseCategory.objects.all()
+         paginator = Paginator(base_category, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-catelog-basecategory.html', {'contacts':contacts})
+
+
+
+class AdminBasecategoryFormView(LoginRequiredMixin,UserPassesTestMixin,View):
+   """admin base categort form handling"""
+   def test_func(self):
+           return self.request.user.is_superuser

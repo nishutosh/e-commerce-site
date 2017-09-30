@@ -70,3 +70,55 @@ h1,h2,h3,h4,h5,h6,div
 {
   color: orange;
 }
+
+
+/*for tables and orders list*/
+
+.orders-container
+{
+    box-shadow: 1px 1px 2px #ccc;
+}
+
+.orders-container .header
+{
+  background-color: #f6f6f6;
+}
+
+.header .table th
+{
+  text-transform: uppercase;
+}
+
+
+
+.main-content
+{
+  border-bottom: 1px solid #ccc;
+}
+.main-content div
+{
+  display: inline-block;
+  margin: 0px 30px;
+}
+
+.image-container
+{
+  width: 100px;
+}
+
+.product-details
+{
+      width: 50%;
+}
+
+.action-btns
+{
+  width: 200px;
+}
+
+.action-btns .btn
+{
+  width: 150px;
+  font-size: 16px;
+  margin: 5px 0;
+}

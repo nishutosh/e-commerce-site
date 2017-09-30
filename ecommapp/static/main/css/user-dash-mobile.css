@@ -67,4 +67,10 @@
 
   }
 
+  .user-main-screen
+  {
+    padding-top: 80px;
+    min-height:calc(100% - 200px);
+  }
+
 }

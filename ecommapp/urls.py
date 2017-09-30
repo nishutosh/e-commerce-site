@@ -5,12 +5,12 @@ from django.conf.urls.static import static
 
 userurls=[
    url(r'user-dashboard/$',UserDashboard.as_view(),name="user-dashboard"),
-   url(r'edit-info$',EditFormView.as_view(),name="edit-form"),
-   url(r'security$',SecurityView.as_view(),name="security"),
-   url(r'credits$',FashVoltsCreditView.as_view(),name="credits"),
-   url(r'coupon-applied$',CoupounAppliedView.as_view(),name="coupons"),
-   url(r'reviews$',UserReviewList.as_view(),name="user-reviews"),
-   url(r'orders$',UserOrderList.as_view(),name="user-orders")
+   url(r'edit-info/$',EditFormView.as_view(),name="edit-form"),
+   url(r'security/$',SecurityView.as_view(),name="security"),
+   url(r'credits/$',FashVoltsCreditView.as_view(),name="credits"),
+   url(r'coupon-applied/$',CoupounAppliedView.as_view(),name="coupons"),
+   url(r'reviews/$',UserReviewList.as_view(),name="user-reviews"),
+   url(r'orders/$',UserOrderList.as_view(),name="user-orders")
 ]
 
 authurls=[

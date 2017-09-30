@@ -2,7 +2,58 @@
 {% load static %}
 {% block body_block %}
     <h3>Your past orders:</h3>
-    <ul>
+
+    <div class="container-fluid">
+      {% for order in orders%}
+      <div class="orders-container">
+          <div class="header">
+              <table class="table table-responsive">
+                <thead>
+                  <tr>
+                    <th>order placed</th>
+                    <th>total</th>
+                    <th>shipped to</th>
+                    <th>Order</th>
+                    <th>payment status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td>{{order.Order_Date_Time}}</td>
+                      <td>{{ order.Order_Total_Price}}</td>
+                      <td>{{ order.Order_In_Name_Of}}</td>
+                      <td>#{{ order.Transaction_Id}}</td>
+                      <td>{{ order.Order_Payment_status.payment_status}}</td>
+                    </tr>
+                </tbody>
+              </table>
+          </div>
+          {%for product in  order.order_product_specs_set.all %}
+          <div class="main-content">
+              <div class="image-container">
+                    <img src="{{product.Ordered_Product.Main_Image.url}}" alt="">
+              </div>
+              <div class="product-details">
+                  <h3>{{product.Ordered_Product.Product_Name}}</h3>
+                  <h4>₹{{product.Ordered_Product.Price}}</h4>
+
+              </div>
+              <div class="action-btns">
+                    <a href="#" class="btn btn-default alternate-cta-btn">Track Package</a>
+                    <a href="#" class="btn btn-default">Cancel Package</a>
+              </div>
+          </div>
+          {%endfor%}
+      </div>
+
+      {%endfor%}
+    </div>
+
+
+
+
+
+    <!-- <ul>
         {% for order in orders%}
             <li>
                    {{ order.Order_In_Name_Of}}
@@ -13,7 +64,7 @@
 
                      {{order.Order_Date_Time}}
 
-                      {% for product in order.order_list.all%}
+                      {%for product in  order.order_product_specs_set.all %}
                         <p>{{product.Ordered_Product.Product_Name}}</p>
                       {%endfor%}
 
@@ -21,5 +72,5 @@
 
             </li>
         {% endfor %}
-    </ul>
+    </ul> -->
 {% endblock %}

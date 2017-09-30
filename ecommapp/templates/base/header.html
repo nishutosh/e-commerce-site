@@ -107,7 +107,10 @@
 
         <div class="main-navbar-more-buttons">
             <button class="btn btn-default small-button navbar-cart-btn" data-target="#mainNavbar">
+              <a href="{%url "checkout"%}">
                   <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+              </a>
+
             </button>
             <div class="dropdown">
               {% if siteuser %}
@@ -117,7 +120,7 @@
                 <i class="fa fa-caret-down" aria-hidden="true"></i>
               </a>
               <ul class="dropdown-menu user-action-list">
-                <li><a href="/user-dashboard/">Dashboard</a></li>
+                <li><a href="{%url "user-dashboard"%}">Dashboard</a></li>
                 <li><a href="{%url "user-orders" %}">Orders</a></li>
                 <li><a href="{%url "coupons" %}">Your Coupons</a></li>
                 <li><a href="{%url "credits" %}">Your Credits</a></li>

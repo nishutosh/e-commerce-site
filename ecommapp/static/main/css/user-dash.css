@@ -158,3 +158,54 @@ transition: margin ease 0.5s;
   width: 200px;
   display:inline;
 }
+
+.orders-container
+{
+    width: 90%;
+    margin:10px auto;
+}
+
+.orders-container .header
+{
+  text-align:left;
+}
+
+.header .table th
+{
+  text-transform: uppercase;
+}
+
+
+
+.main-content
+{
+  text-align: left;
+  padding: 10px 0;
+}
+.main-content div
+{
+  display: inline-block;
+  margin: 0px 30px;
+}
+
+.image-container
+{
+  width: 100px;
+}
+
+.product-details
+{
+      width: 50%;
+}
+
+.action-btns
+{
+  width: 200px;
+}
+
+.action-btns .btn
+{
+  width: 150px;
+  font-size: 16px;
+  margin: 5px 0;
+}

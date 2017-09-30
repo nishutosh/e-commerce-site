@@ -226,7 +226,7 @@ class Cartitem(models.Model):
              return None
   def OrderReferenceCheck(self):
         if self.coupon_code:
-             return self.coupoun_code.Sales_Member
+             return self.coupon_code.Sales_Member
         else:
              return None
   # def CalculateEstimateDate(self):
