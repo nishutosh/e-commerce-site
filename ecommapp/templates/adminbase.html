@@ -12,9 +12,10 @@
     <body>
        <div  class="container">
        <div class="col-md-4">
+       {%if siteadmin %}
                   <a href={% url  "admin-signout"  %} >Logout</a>
                   <li>Hi {{siteadmin.username}}  </li>
-          
+          {%endif%}
            {% block body %}
            {%endblock%}
   <!--   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->

@@ -1,5 +1,14 @@
-{% extends "adminbase.html" %}
-{% block body %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     <link href={%static "css/bootstrap.min.css" %}  rel="stylesheet">
+      </head>
+    <body>
+
 <h1>ADMIN LOGIN</h1>
 {% if messages %}
 <ul class="messages">
@@ -14,5 +23,8 @@
     <input type="submit" value="Sign In" />
 </form>
 
-</div>
-{% endblock %}
+  <!--   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+    <script src={%static "js/bootstrap.min.js" %}></script>
+  </body>
+</html>
+

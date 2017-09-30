@@ -180,8 +180,8 @@ class  EditFormView(LoginRequiredMixin,FormView):
                                                         Customer_Email=form.cleaned_data["email"],
                                                         Address_Line1=form.cleaned_data["address_line_1"],
                                                         Address_Line2=form.cleaned_data["address_line_2"],
-                                                        City=form.cleaned_data["city"],
-                                                        State=form.cleaned_data["state"],
+                                                        City=form.cleaned_data["Region"],
+                                                        State="DELHI",
                                                         ZIP=form.cleaned_data["ZIP"],
                                                         Customer_Contact_Number=form.cleaned_data["contact_number"] )
           messages.success(self.request, 'Details Updated')
@@ -345,7 +345,7 @@ class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
      #paytm redirect url
-     success_url=""
+     success_url="user/orders/"
      def get_context_data(self, **kwargs):
         context = super(PlaceOrder, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
@@ -447,6 +447,8 @@ class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
 
 class AdminBaseCategory(LoginRequiredMixin,UserPassesTestMixin,View):
      """base categoty handling"""
+     def test_func(self):
+           return self.request.user.is_superuser
      def get(self,request):
          base_category=BaseCategory.objects.all()
          paginator = Paginator(base_category, 25)
@@ -457,7 +459,15 @@ class AdminBaseCategory(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(1)
          except EmptyPage:
             contacts = paginator.page(paginator.num_pages)
-         return render(request, 'admin-catelog-basecategory.html', {'base_category': base_category})
+         return render(request, 'admin-catelog-basecategory.html', {'contacts':contacts})
+
+
+
+class AdminBasecategoryFormView(LoginRequiredMixin,UserPassesTestMixin,View):
+   """admin base categort form handling"""
+   def test_func(self):
+           return self.request.user.is_superuser
+   
 
 
 

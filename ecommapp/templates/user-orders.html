@@ -10,8 +10,13 @@
     <h3>Orders</h3>
     <ul>
         {% for order in orders%}
+        {{order.pk}}
             <li>
-                   {{ order}}               
+            <ul>
+                   {%for product in  order.order_product_specs_set.all %}
+                 <li>    {{product.Ordered_Product.Product_Name}}</li>
+                   {%endfor%} 
+                   </ul>             
             </li>
         {% endfor %}
     </ul>
