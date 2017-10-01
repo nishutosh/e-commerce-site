@@ -1,22 +1,22 @@
 {% extends "adminbase.html" %}
 {% block body %}
+<h1>SUB CATEGORY</h1>
 {% if messages %}
-<h1>BASE CATEGORY</h1>
 <ul class="messages">
     {% for message in messages %}
     <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
     {% endfor %}
 </ul>
 {% endif %}
-<a href={% url "admin-catalog-base-edit"  "new"  %}>+ADD</a>
+<a href={% url "admin-catalog-sub-edit"  "new"  %}>+ADD</a>
 
-<a href={% url "admin-catalog-base"  %}>()REBUILD</a>
+<a href={% url "admin-catalog-sub"  %}>()REBUILD</a>
 <br>
-<form action={% url "admin-catalog-base-delete"  %} method="post">
+<form action={% url "admin-catalog-sub-delete"  %} method="post">
 {%csrf_token %}
 {% for contact in contacts %}
     
-    <input type="checkbox" value={{contact.pk}} name="selected">{{ contact.Base_Category }}  <a href={%url "admin-catalog-base-edit"  contact.id  %}>edit</a><br />
+    <input type="checkbox" value={{contact.pk}} name="selected">{{ contact.Sub_Category }}  <a href={%url "admin-catalog-sub-edit"  contact.id  %}>edit</a><br />
 
 {% endfor %}
 <input type="submit" value="DELETE">
