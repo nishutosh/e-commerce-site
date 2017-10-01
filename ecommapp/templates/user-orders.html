@@ -10,7 +10,7 @@
     <h3>Orders</h3>
     <ul>
         {% for order in orders%}
-        {{order.pk}}<button>CANCEL ORDER(ajax work)</button>
+        {{order.pk}}<button class="order-can" data-order-id={{order.pk}} >CANCEL ORDER(ajax work)</button>
             <li>
             <ul>
                    {%for product in  order.order_product_specs_set.all %}

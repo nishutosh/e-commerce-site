@@ -117,7 +117,7 @@ class Shipment_Orgs(models.Model):
 
 
 class Product(models.Model):
-  Produce_Base_Category=models.ForeignKey(BaseCategory)
+  Product_Base_Category=models.ForeignKey(BaseCategory)
   product_Sub_Category=models.ForeignKey(SubCategory)
   Product_Name=models.CharField(max_length=200)
   Discount=models.FloatField(default=0)
@@ -249,6 +249,9 @@ class Payment_Method(models.Model):
 class Payment_Status(models.Model):
   payment_status=models.CharField(max_length=100,unique=True)
 
+class Order_Status_Model(models.Model):
+  status_for_order=models.CharField(max_length=100,unique=True)
+  #delivered,shipped,outfordelivery,cancelled
 class Order(models.Model):
    Order_In_Name_Of=models.CharField(max_length=100)
    Order_Customer=models.ForeignKey(Customer)
@@ -272,7 +275,7 @@ class Order(models.Model):
        return total  
    def Cancel_Order(self):
         product_in_order=self.order_product_specs_set.all()
-        for order_item in order_list:
+        for order_item in product_in_order:
            order_item.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
            order_item.save()
 
@@ -282,9 +285,7 @@ def OrderPaymentOptionCheck(method_request):
           else:
                 return None 
 
-class Order_Status_Model(models.Model):
-  status_for_order=models.CharField(max_length=100,unique=True)
-  #delivered,shipped,outfordelivery,cancelled
+
 
 class Order_Product_Specs(models.Model):
   Order=models.ForeignKey(Order)

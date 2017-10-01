@@ -151,3 +151,20 @@ $.ajax({
                                           });
 
 
+
+$(".order-can").click(function(){
+
+$.ajax({
+                   type: "POST",
+                   url:"/order/cancel-order/",
+                   data:{
+                 "order_id":2,            
+                     },
+                                          success: function(result){
+                                          console.log(result)
+
+
+                                           }
+
+                                          })
+                                          });
