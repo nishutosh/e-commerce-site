@@ -272,7 +272,7 @@ $(".discount-form").each(function(){
       type: "POST",
       url: url,
       data:{
-           "product":orderId,
+           "order_id":orderId,
 
            }
     });

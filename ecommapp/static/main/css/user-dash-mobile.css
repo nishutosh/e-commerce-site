@@ -73,4 +73,27 @@
     min-height:calc(100% - 200px);
   }
 
+  .orders-container .table thead, .orders-container .table tbody
+  {
+    display:inline-block;
+  }
+
+  .orders-container .table th, .orders-container .table td
+  {
+    display: block;
+    border-bottom: 1px solid #ccc;
+    border-top:none;
+  }
+  .product-details
+  {
+    width:90%;
+    margin: 10px auto;
+  }
+  .main-content div
+  {
+    text-align:center;
+    display:block;
+    margin: 5px auto;
+  }
+
 }

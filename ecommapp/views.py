@@ -37,7 +37,7 @@ class ProductList(ListView):
   template_name="product-list.html"
   def get_queryset(self):
         try:
-              return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
+              return  Product.objects.filter(Product_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
         except:
               raise Http404
   def get_context_data(self, **kwargs):
@@ -55,7 +55,7 @@ class ProductDetails(DetailView):
    template_name="product-detail.html"
    def get_queryset(self):
         try:
-            return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"],pk=self.kwargs["pk"])
+            return  Product.objects.filter(Product_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"],pk=self.kwargs["pk"])
         except:
               raise Http404
 
@@ -87,14 +87,14 @@ class RegisterView(FormView):
    def form_valid(self, form):
         user_made=CustomUser.objects.create_user(username=form.cleaned_data["username"],password=form.cleaned_data["password"])
         Customer.objects.create(
-                                       User_customer=user_made,
+                                      User_customer=user_made,
                                        Customer_First_Name=form.cleaned_data["first_name"],
                                        Customer_Last_Name=form.cleaned_data["last_name"],
                                        Customer_Email=form.cleaned_data["email"],
                                        Address_Line1=form.cleaned_data["address_line_1"],
                                        Address_Line2=form.cleaned_data["address_line_2"],
-                                       City=form.cleaned_data["city"],
-                                       State=form.cleaned_data["state"],
+                                       City=form.cleaned_data["Region"],
+                                       State="DELHI",
                                        ZIP=form.cleaned_data["ZIP"],
                                        Customer_Contact_Number=form.cleaned_data["contact_number"] )
         messages.success(self.request, 'User Registered')
@@ -239,6 +239,7 @@ class PostGetCartView(View):
      """post and get products to cart"""
      CART_ID="CART_ID"
      def get(self,request):
+             print("inside get cart")
              cart=request.COOKIES.get(self.CART_ID)
              if cart:
                      new_cart_obj=Cart.objects.get(id=cart)
@@ -265,8 +266,10 @@ class PostGetCartView(View):
              else :
                      return  JsonResponse({"message":"no cookie present"})
      def post(self,request):
+             print("isnisde post vcart")
              cart=request.COOKIES.get(self.CART_ID)
              if cart:
+                 print("inside if cart:")
                  cart_obj=Cart.objects.get(pk=cart)
                  product=Product.objects.get(pk=request.POST["product"])
                  if cart_obj.cartitem_set.filter(Product_In_Cart=product).exists():
@@ -284,7 +287,6 @@ class PostGetCartView(View):
                           response=JsonResponse({"message":"product unavailable... unable to add"})
                   response.set_cookie(self.CART_ID,new_cart_obj.pk)
              return response
-
 
 class DeleteCartView(View):
      """delete product from cart"""
@@ -402,8 +404,11 @@ class CancelOrder(LoginRequiredMixin,View):
    """take ajax calls to cancel order with
         order_id and order product as parameter in post request"""
    def post(self,request):
+      print("isnide cancelorder view")
       order=request.POST.get("order_id")
+      print("receiverd id of order")
       order_obj=get_object_or_404(Order,pk=order)
+      print("cancelling")
       order_obj.Cancel_Order()
       return redirect(reverse("user-orders"))
 
@@ -605,7 +610,7 @@ class AdminProductFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
    def form_valid(self,form):
          if self.kwargs["p_id"]=="new":
 
-             SubCategory.objects.create(Produce_Base_Category=form.cleaned_data["Base_Category"],product_Sub_Category=form.cleaned_data["Sub_Category"],Product_Name=form.cleaned_data["Product_Name"],Discount=form.cleaned_data["Discount"],Base_Price=form.cleaned_data["Base_Price"],Availiability=form.cleaned_data["Availiability"],Description=form.cleaned_data["Description"],Features=form.cleaned_data["Features"],TechnicalSpecs=form.cleaned_data["TechnicalSpecs"],Main_Image=form.cleaned_data["Main_Image"],Shipment_Authority=form.cleaned_data["Shipment_Authority"])
+             SubCategory.objects.create(Product_Base_Category=form.cleaned_data["Base_Category"],product_Sub_Category=form.cleaned_data["Sub_Category"],Product_Name=form.cleaned_data["Product_Name"],Discount=form.cleaned_data["Discount"],Base_Price=form.cleaned_data["Base_Price"],Availiability=form.cleaned_data["Availiability"],Description=form.cleaned_data["Description"],Features=form.cleaned_data["Features"],TechnicalSpecs=form.cleaned_data["TechnicalSpecs"],Main_Image=form.cleaned_data["Main_Image"],Shipment_Authority=form.cleaned_data["Shipment_Authority"])
              messages.success(self.request, 'Product created')
          else:
              product=SubCategory.objects.get(pk=self.kwargs["p_id"])

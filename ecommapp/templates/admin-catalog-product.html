@@ -42,7 +42,7 @@
                 <tr>
                   <td><input type="checkbox" value={{contact.pk}} name="selected"></td>
                   <td>{{ contact.Product_Name }}</td>
-                  <td>{{contact.Produce_Base_Category.Base_Category}}</td>
+                  <td>{{contact.Product_Base_Category.Base_Category}}</td>
                   <td>{{contact.product_Sub_Category.Sub_Category}}</td>
                   <td>{{contact.price_after_discount}}</td>
                   <td><a href={%url "admin-catalog-base-edit"  contact.id  %} class="btn btn-primary">Edit</a></td>

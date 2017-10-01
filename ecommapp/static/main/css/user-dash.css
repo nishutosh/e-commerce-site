@@ -185,7 +185,8 @@ transition: margin ease 0.5s;
 .main-content div
 {
   display: inline-block;
-  margin: 0px 30px;
+  margin: 0px 20px;
+  vertical-align: top;
 }
 
 .main-content .modal

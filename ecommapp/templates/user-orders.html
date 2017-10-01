@@ -34,10 +34,30 @@
                     <img src="{{product.Ordered_Product.Main_Image.url}}" alt="">
               </div>
               <div class="product-details">
-                  <h3>{{product.Ordered_Product.Product_Name}}</h3>
-                  <h4>₹{{product.Ordered_Product.price_after_discount}}</h4>
+                <table class="table table-responsive">
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Final Price</th>
+                            <th>Order Status</th>
+
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{{product.Ordered_Product.Product_Name}}</td>
+                            <td>₹{{product.Ordered_Product.price_after_discount}}</td>
+                            <td>{{product.Quantity}}</td>
+                            <td>₹{{product.Final_Ordered_Product_price}}</td>
+                            <td>{{product.Order_Status.status_for_order}}</td>
+                          </tr>
+                        </tbody>
+                </table>
 
               </div>
+
               <div class="action-btns">
                     <a href="#" class="btn btn-default alternate-cta-btn">Track Package</a>
                     <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal" data-url="{%url "cancel-order"%}" data-id="">Cancel Package</a>
