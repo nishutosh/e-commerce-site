@@ -313,7 +313,9 @@ class ApplyCoupon(View):
                        d_cart_item=cart_obj.cartitem_set.get(Product_In_Cart=product)
                        d_cart_item.coupon_code=coupon
                        d_cart_item.save()
-                       return JsonResponse({"message":"coupon code applied"})         
+                       return JsonResponse({"message":"coupon code applied"})
+                    else:
+                       return JsonResponse({"message":"coupon code exist on this product"})          
                else :
                      return JsonResponse({"message":"coupon code expired"})
         else:
@@ -400,7 +402,10 @@ class CancelOrder(LoginRequiredMixin,View):
    """take ajax calls to cancel order with 
         order_id and order product as parameter in post request"""
    def post(self,request):
-      pass
+        order=request.POST.get("order_id")
+        order_obj=get_object_or_404(Order,pk=order)
+        order_obj.Cancel_Order()
+        return redirect(reverse("user-orders"))
    
 
 class AdminSignin(FormView):
