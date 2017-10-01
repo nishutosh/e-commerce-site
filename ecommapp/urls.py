@@ -38,10 +38,12 @@ adminurls=[
    url(r'panel/$',AdminPanel.as_view(),name="admin-panel"),
    url(r'signout/$',AdminSignOut.as_view(),name="admin-signout"),
    url(r'catalog/basecategories/$',AdminBaseCategory.as_view(),name="admin-catalog-base"),
-   url(r'catalog/edit-basecategories/(?P<bcat_id>[\w-]+)$',AdminBasecategoryFormView.as_view(),name="admin-catalog-base-edit"),
+   url(r'catalog/create-basecategories/$',AdminBasecategoryCreateView.as_view(),name="admin-catalog-base-new"),
+   url(r'catalog/edit-basecategories/(?P<pk>[0-9]+)$',AdminBasecategoryUpdateView.as_view(),name="admin-catalog-base-edit"),
    url(r'catalog/edit-basecategories/delete/$',AdminBasecategoryDeleteView.as_view(),name="admin-catalog-base-delete"),
    url(r'catalog/subcategories/$',AdminSubCategory.as_view(),name="admin-catalog-sub"),
-   url(r'catalog/edit-subcategories/(?P<scat_id>[\w-]+)$',AdminSubcategoryFormView.as_view(),name="admin-catalog-sub-edit"),
+   url(r'catalog/create-subcategories/$',AdminSubcategoryCreateView.as_view(),name="admin-catalog-sub-new"),
+   url(r'catalog/edit-subcategories/(?P<pk>[0-9]+)$',AdminSubcategoryUpdateView.as_view(),name="admin-catalog-sub-edit"),
    url(r'catalog/edit-subcategories/delete/$',AdminSubcategoryDeleteView.as_view(),name="admin-catalog-sub-delete"),
 
 ]
