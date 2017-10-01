@@ -39,10 +39,25 @@ url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
 
 ]
 
+adminurls=[
+   url(r'signin/$',AdminSignin.as_view(),name="admin-login"),
+   url(r'^$',AdminPanel.as_view(),name="admin-panel"),
+   url(r'signout/$',AdminSignOut.as_view(),name="admin-signout"),
+   url(r'catalog/basecategories/$',AdminBaseCategory.as_view(),name="admin-catalog-base"),
+   url(r'catalog/edit-basecategories/(?P<bcat_id>[\w-]+)$',AdminBasecategoryFormView.as_view(),name="admin-catalog-base-edit"),
+   url(r'catalog/edit-basecategories/delete/$',AdminBasecategoryDeleteView.as_view(),name="admin-catalog-base-delete"),
+   url(r'catalog/subcategories/$',AdminSubCategory.as_view(),name="admin-catalog-sub"),
+   url(r'catalog/edit-subcategories/(?P<scat_id>[\w-]+)$',AdminSubcategoryFormView.as_view(),name="admin-catalog-sub-edit"),
+   url(r'catalog/edit-subcategories/delete/$',AdminSubcategoryDeleteView.as_view(),name="admin-catalog-sub-delete"),
+   url(r'catalog/products/$',AdminProduct.as_view(),name="admin-products"),
+
+]
+
 urlpatterns = [
     url(r'^',include(commonurls)),
     url(r'^',include(authurls)),
     url(r'cart/',include(carturls)),
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
+    url(r'admin-panel/',include(adminurls))
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

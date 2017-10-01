@@ -31,7 +31,7 @@
 
 
               <div class="thumbnail small-image col-md-2 col-xs-2 col-centered active">
-                <img src="{% static "main/images/product.jpg" %}"/>
+                <img src="{{product.Main_Image.url}}"/>
               </div>
               {%for image in product.pics_set.all%}
               <div class="thumbnail small-image col-md-2 col-xs-2 col-centered">
@@ -56,9 +56,9 @@
           <div class="product-details">
               <h3>{{product.Product_Name}}</h3>
 
-              <span class="original-price"><strike>₹500</strike></span>
-              <span class="discount">(20% off)</span>
-              <span class="current-price">₹{{product.Price}}</span>
+              <span class="original-price"><strike>₹{{product.Base_Price}}</strike></span>
+              <span class="discount">({{product.Discount| floatformat}}% off)</span>
+              <span class="current-price">₹{{product.price_after_discount}}</span>
 
           </div>
           <div class="size-list row">

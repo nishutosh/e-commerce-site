@@ -1,5 +1,6 @@
 $(document).ready(function(){
   billCalculate();
+  getCartItems();
 });
 
 
@@ -55,20 +56,20 @@ $.ajaxSetup({
 //               });
 // });
 
-$.ajax({
-             type: "GET",
-             url: "/cart/",
-              success: function(result){
-                console.log(result)
-             for(i=0;i<result.length;i++){
-                 prod=result[i].Product_name;
-                 console.log(prod)
 
 
-             }
 
-              }
-              });
+
+function getCartItems()
+{
+  $.ajax({
+               type: "GET",
+               url: "/cart/",
+                success: function(result){
+                          console.log(result);
+                }
+                });
+}
 /////////////////////////////////////
 // for adding to cart on list page
 //////////////////////////////////////
@@ -259,3 +260,20 @@ $(".discount-form").each(function(){
     $billAmount_element.text("₹"+totalBill);
 
   }
+
+  //////////////////////////////////////////
+  //Cancel Order
+  //////////////////////////////////////////
+
+  $(".cancel-package-btn").click(function(){
+    var orderId = $(this).attr("data-id");
+    var url = $(this).attr("data-url");
+    $.ajax({
+      type: "POST",
+      url: url,
+      data:{
+           "product":orderId,
+
+           }
+    });
+  });

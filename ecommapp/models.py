@@ -73,7 +73,7 @@ class BaseCategory(models.Model):
   Base_Category_Pic=models.ImageField(upload_to="BaseCatPic/")
   Base_Slug_Field=models.SlugField(max_length=120,blank=True)
   def save(self, *args, **kwargs):
-        print(self.Base_Category)
+        print (self.Base_Category)
         self.Base_Slug_Field=slugify(self.Base_Category)
         super(BaseCategory, self).save()
 
@@ -120,14 +120,18 @@ class Product(models.Model):
   Produce_Base_Category=models.ForeignKey(BaseCategory)
   product_Sub_Category=models.ForeignKey(SubCategory)
   Product_Name=models.CharField(max_length=200)
-  Price=models.FloatField()
+  Discount=models.FloatField(default=0)
+  Base_Price=models.FloatField()
   Availiability=models.BooleanField(default=True)
   Description=models.TextField(max_length=10000)
   Features=models.TextField(max_length=10000)
   TechnicalSpecs=models.CharField(max_length=10000)
-  Product_Filter=models.ManyToManyField(Filter_Category)
+  # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  def price_after_discount(self):
+      Actual_Price=((100-self.Discount)/100)* self.Base_Price
+      return  Actual_Price
 
 
 class Flash_Sale(models.Model):
@@ -204,7 +208,7 @@ class Cart(models.Model):
    date_of_creation=models.DateField(auto_now_add=True)
    checkout_date=models.DateField(blank=True,null=True)
    def Total_Price(self):
-        Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+        Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
         return Total
 
 class Cartitem(models.Model):
@@ -215,9 +219,9 @@ class Cartitem(models.Model):
   def Total_Price(self):
           if self.coupon_code:
             #write discount function
-             Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+             Total=((self.Product_In_Cart.price_after_discount())*(self.Product_Quantity))-self.coupon_code.Discount
           else:
-             Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+             Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
           return Total
   def ProductAvailibiltyCheck(self):
          if self.Product_In_Cart.Availiability:
@@ -253,18 +257,24 @@ class Order(models.Model):
    Order_Address_Line1=models.CharField(max_length=200)
    Order_Address_Line2=models.CharField(max_length=200)
    Order_City=models.CharField(max_length=200)
-   Order_State=models.CharField(max_length=200,default="DelhiNCR")
+   Order_State=models.CharField(max_length=200)
    Order_ZIP=models.IntegerField()
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
-
    Transaction_Id=models.CharField(max_length=100)
+   class Meta:
+       ordering=['pk']
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0
        for order_item in order_list:
            total=total+order_item.Final_Ordered_Product_price
        return total
+   def Cancel_Order(self):
+        product_in_order=self.order_product_specs_set.all()
+        for order_item in order_list:
+           order_item.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
+           order_item.save()
 
 def OrderPaymentOptionCheck(method_request):
           if Payment_Method.objects.filter(payment_type=method_request).exists():

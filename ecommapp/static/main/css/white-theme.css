@@ -50,13 +50,20 @@ h1,h2,h3,h4,h5,h6
 {
   background-color:orange;
   color: white;
+  color: #333;
 }
 .navbar-cart-btn a
 {
   color: white;
+  color: #333;
   text-decoration: none;
   text-shadow: 0 0 1px #ccc;
 }
+.cart-item-number
+{
+
+}
+
 .navbar-user-btn
 {
 

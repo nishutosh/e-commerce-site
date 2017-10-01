@@ -80,9 +80,10 @@
                             <a href="{{product.product_id}}">{{product.Product_Name}}</a>
                           </div>
                           <div class="product-price">
-                            <span class="current-price">₹{{product.Price}}</span>
-                            <span class="original-price"><strike>₹500</strike></span>
-                            <span class="discount">20% off</span>
+                            <span class="current-price">₹{{product.price_after_discount}}</span>
+                            <br>
+                            <span class="original-price"><strike>₹{{product.Base_Price}}</strike></span>
+                            <span class="discount">{{product.Discount| floatformat}}% off</span>
                           </div>
                           <div class="product-ctas">
                             <div class="product-add-to-cart">
