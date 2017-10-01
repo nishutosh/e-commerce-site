@@ -50,6 +50,7 @@ adminurls=[
    url(r'catalog/edit-subcategories/(?P<scat_id>[\w-]+)$',AdminSubcategoryFormView.as_view(),name="admin-catalog-sub-edit"),
    url(r'catalog/edit-subcategories/delete/$',AdminSubcategoryDeleteView.as_view(),name="admin-catalog-sub-delete"),
    url(r'catalog/products/$',AdminProduct.as_view(),name="admin-products"),
+   url(r'catalog/edit-products/(?P<p_id>[\w-]+)$',AdminProductFormView.as_view(),name="admin-catalog-base-edit"),
 
 ]
 

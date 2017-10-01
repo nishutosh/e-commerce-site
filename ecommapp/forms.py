@@ -136,4 +136,8 @@ class SubCategoryForm(ModelForm):
       class Meta:
            model=SubCategory
            fields=["Base_category_Key","Sub_Category","Sub_Category_Pic"]
-           
+
+class ProductForm(ModelForm):
+      class Meta:
+           model=Product
+           fields=["Produce_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority"]

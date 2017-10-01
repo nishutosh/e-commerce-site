@@ -412,7 +412,7 @@ class AdminSignin(FormView):
     """admin login form and validation"""
     template_name="admin-login.html"
     form_class=SignInForm
-    success_url="adminsite/panel"
+    success_url="admin-panel/panel"
     def form_valid(self,form):
            user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
            if user is not None:
@@ -470,7 +470,7 @@ class AdminBaseCategory(LoginRequiredMixin,UserPassesTestMixin,View):
 class AdminBasecategoryFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
    """admin base categort form handling"""
    template_name="admin-base-category-edit.html"
-   success_url="/adminsite/catelog/basecategories/"
+   success_url="/admin-panel/catelog/basecategories/"
    form_class=BaseCategoryForm
    def test_func(self):
            return self.request.user.is_superuser
@@ -524,7 +524,7 @@ class AdminSubCategory(LoginRequiredMixin,UserPassesTestMixin,View):
 class AdminSubcategoryFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
    """admin base categort form handling"""
    template_name="admin-sub-category-edit.html"
-   success_url="/adminsite/catalog/subcategories/"
+   success_url="/admin-panel/catalog/subcategories/"
    form_class=SubCategoryForm
    def test_func(self):
            return self.request.user.is_superuser
@@ -577,3 +577,46 @@ class AdminProduct(LoginRequiredMixin,UserPassesTestMixin,View):
          except EmptyPage:
             contacts = paginator.page(paginator.num_pages)
          return render(request, 'admin-catalog-product.html', {'contacts':contacts})
+
+class AdminProductFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
+   """admin products form handling"""
+   template_name="admin-product-edit.html"
+   success_url="/admin-panel/catalog/products/"
+   form_class=ProductForm
+   def test_func(self):
+           return self.request.user.is_superuser
+   def get_initial(self):
+        if  self.kwargs["p_id"]=="new":
+             initial={}
+             return initial
+        else:
+            product=Product.objects.get(pk=self.kwargs["p_id"])
+            initial={"Product_Name":product.Product_Name,
+                     "Discount":product.Discount,
+                     "Base_Price":product.Base_Price,
+                     "Availiability":product.Availiability,
+                     "Description":product.Description,
+                     "Features":product.Features,
+                     "TechnicalSpecs":product.TechnicalSpecs,
+                     "Main_Image":product.Main_Image,
+                    }
+
+            return initial
+   def form_valid(self,form):
+         if self.kwargs["p_id"]=="new":
+
+             SubCategory.objects.create(Produce_Base_Category=form.cleaned_data["Base_Category"],product_Sub_Category=form.cleaned_data["Sub_Category"],Product_Name=form.cleaned_data["Product_Name"],Discount=form.cleaned_data["Discount"],Base_Price=form.cleaned_data["Base_Price"],Availiability=form.cleaned_data["Availiability"],Description=form.cleaned_data["Description"],Features=form.cleaned_data["Features"],TechnicalSpecs=form.cleaned_data["TechnicalSpecs"],Main_Image=form.cleaned_data["Main_Image"],Shipment_Authority=form.cleaned_data["Shipment_Authority"])
+             messages.success(self.request, 'Product created')
+         else:
+             product=SubCategory.objects.get(pk=self.kwargs["p_id"])
+             product.Product_Name=form.cleaned_data["Product_Name"]
+             product.Discount=form.cleaned_data["Discount"]
+             product.Base_Price=form.cleaned_data["Base_Price"]
+             product.Availiability=form.cleaned_data["Availiability"]
+             product.Description=form.cleaned_data["Description"]
+             product.Features=form.cleaned_data["Features"]
+             product.TechnicalSpecs=form.cleaned_data["TechnicalSpecs"]
+             product.Main_Image=form.cleaned_data["Main_Image"]
+             product.save()
+             messages.success(self.request, 'Product updated')
+         return super(AdminProductFormView, self).form_valid(form)
