@@ -273,11 +273,6 @@ class Order(models.Model):
        for order_item in order_list:
            total=total+order_item.Final_Ordered_Product_price
        return total  
-   def Cancel_Order(self):
-        product_in_order=self.order_product_specs_set.all()
-        for order_item in product_in_order:
-           order_item.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
-           order_item.save()
 
 def OrderPaymentOptionCheck(method_request):
           if Payment_Method.objects.filter(payment_type=method_request).exists():
