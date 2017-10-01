@@ -117,5 +117,8 @@ class BaseCategoryForm(ModelForm):
           model = BaseCategory
           fields=["Base_Category","Base_Category_Pic"]
 
-
-   
+class SubCategoryForm(ModelForm):
+      class Meta:
+           model=SubCategory
+           fields=["Base_category_Key","Sub_Category","Sub_Category_Pic"]
+ 

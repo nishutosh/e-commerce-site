@@ -40,6 +40,9 @@ adminurls=[
    url(r'catelog/basecategories/$',AdminBaseCategory.as_view(),name="admin-catalog-base"),
    url(r'catelog/edit-basecategories/(?P<bcat_id>[\w-]+)$',AdminBasecategoryFormView.as_view(),name="admin-catalog-base-edit"),
    url(r'catelog/edit-basecategories/delete/$',AdminBasecategoryDeleteView.as_view(),name="admin-catalog-base-delete"),
+   url(r'catelog/subcategories/$',AdminSubCategory.as_view(),name="admin-catalog-sub"),
+   url(r'catelog/edit-subcategories/(?P<scat_id>[\w-]+)$',AdminSubcategoryFormView.as_view(),name="admin-catalog-sub-edit"),
+   url(r'catelog/edit-subcategories/delete/$',AdminSubcategoryDeleteView.as_view(),name="admin-catalog-sub-delete"),
 
 ]
 urlpatterns = [

@@ -506,52 +506,59 @@ class AdminBasecategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
              return redirect(reverse("admin-catalog-base"))     
                  
 
-# class AdminSubCategory(LoginRequiredMixin,UserPassesTestMixin,View):
-#      """sub categoty handling"""
-#      def test_func(self):
-#            return self.request.user.is_superuser
-#      def get(self,request):
-#          sub_category=SubCategory.objects.all()
-#          paginator = Paginator(sub_category, 25)
-#          page = request.GET.get('page')
-#          try:
-#             contacts = paginator.page(page)
-#          except PageNotAnInteger:
-#             contacts = paginator.page(1)
-#          except EmptyPage:
-#             contacts = paginator.page(paginator.num_pages)
-#          return render(request, 'admin-catelog-subcategory.html', {'contacts':contacts})
+class AdminSubCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+     """sub categoty handling"""
+     def test_func(self):
+           return self.request.user.is_superuser
+     def get(self,request):
+         sub_category=SubCategory.objects.all()
+         paginator = Paginator(sub_category, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-catelog-subcategory.html', {'contacts':contacts})
    
-# class AdminSubcategoryFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
-#    """admin base categort form handling"""
-#    template_name="sub-category-edit.html"
-#    success_url="/adminsite/catelog/subcategories/"
-#    form_class=SubCategoryForm
-#    def test_func(self):
-#            return self.request.user.is_superuser
-#    def get_initial(self):
-#         if  self.kwargs["scat_id"]=="new":
-#              initial={}
-#              return initial   
-#         else:
-#             sub_cat=SubCategory.objects.get(pk=self.kwargs["scat_id"])
-#             initial={"Sub_Category":sub_cat.Sub_Category,
-#                            "Sub_Category_Pic":sub_cat.Sub_Category_Pic}
-#             return initial 
-#    def form_valid(self,form):
-#          if self.kwargs["bcat_id"]=="new":
-#             #fix needed
-#              Base_Category.objects.create(Base_Category=form.cleaned_data["Base_Category"],Base_Category_Pic=form.cleaned_data["Base_Category_Pic"])
-#          else:
-#              base_cat=BaseCategory.objects.get(pk=self.kwargs["bcat_id"])
-#              base_cat.Base_Category=form.cleaned_data["Base_Category"]
-#              base_cat.Base_Category_Pic=form.cleaned_data["Base_Category_Pic"]
-#              base_cat.save()             
-#          return super(AdminBasecategoryFormView, self).form_valid(form)
-#    def form_invalid(self,form):
-#         print form
-#         return super(AdminBasecategoryFormView, self).form_invalid(form)
-
+class AdminSubcategoryFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
+   """admin base categort form handling"""
+   template_name="sub-category-edit.html"
+   success_url="/adminsite/catelog/subcategories/"
+   form_class=SubCategoryForm
+   def test_func(self):
+           return self.request.user.is_superuser
+   def get_initial(self):
+        if  self.kwargs["scat_id"]=="new":
+             initial={}
+             return initial   
+        else:
+            sub_cat=SubCategory.objects.get(pk=self.kwargs["scat_id"])
+            initial={"Sub_Category":sub_cat.Sub_Category,
+                           "Sub_Category_Pic":sub_cat.Sub_Category_Pic}
+            return initial 
+   def form_valid(self,form):
+         if self.kwargs["bcat_id"]=="new":
+            #fix needed
+             Base_Category.objects.create(Base_Category_Key=form.cleaned_data["Base_Category"],Sub_Category=form.cleaned_data["Sub_Category"])
+         else:
+             base_cat=BaseCategory.objects.get(pk=self.kwargs["bcat_id"])
+             base_cat.Base_Category=form.cleaned_data["Base_Category"]
+             base_cat.Base_Category_Pic=form.cleaned_data["Base_Category_Pic"]
+             base_cat.save()             
+         return super(AdminBasecategoryFormView, self).form_valid(form)
+   def form_invalid(self,form):
+        print form
+        return super(AdminBasecategoryFormView, self).form_invalid(form)
+        
+class AdminSubcategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+           return self.request.user.is_superuser
+      def post(self,request):
+             for id in  request.POST.getlist("selected"):
+                  BaseCategory.objects.filter(pk=id).delete()
+             return redirect(reverse("admin-catalog-base"))
 
 
 

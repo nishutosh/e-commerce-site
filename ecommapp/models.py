@@ -208,7 +208,7 @@ class Cart(models.Model):
    date_of_creation=models.DateField(auto_now_add=True)
    checkout_date=models.DateField(blank=True,null=True)
    def Total_Price(self):
-        Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+        Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
         return Total
 
 class Cartitem(models.Model):
@@ -219,9 +219,9 @@ class Cartitem(models.Model):
   def Total_Price(self):
           if self.coupon_code:
             #write discount function
-             Total=((self.Product_In_Cart.Price)*(self.Product_Quantity))-self.coupon_code.Discount
+             Total=((self.Product_In_Cart.price_after_discount())*(self.Product_Quantity))-self.coupon_code.Discount
           else:     
-             Total=(self.Product_In_Cart.Price)*(self.Product_Quantity)
+             Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
           return Total  
   def ProductAvailibiltyCheck(self):
          if self.Product_In_Cart.Availiability:
