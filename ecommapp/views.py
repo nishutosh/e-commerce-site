@@ -29,7 +29,7 @@ class HomeView(ListView):
     template_name ="index.html"
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        flash_sale=Flash_Sale.objects.all(active=True)
+        flash_sale=Flash_Sale.objects.filter(active=True)
         context["flash_sale"]=flash_sale
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user          
@@ -336,14 +336,22 @@ class CheckoutView(LoginRequiredMixin,View):
             cart=request.COOKIES.get(self.CART_ID)
             if cart:
                  user=request.user
-                 cart_obj=Cart.objects.get(pk=cart)
-                 cart_items=cart_obj.cartitem_set.all()
-                 context={"siteuser":user,"cart_items":cart_items}
-                 print context
-                 return render(request,"checkout.html",context)
+                 if Cart.objects.filter(pk=cart).exists():
+                       cart_obj=Cart.objects.get(pk=cart)
+                       cart_items=cart_obj.cartitem_set.all()
+                       context={"siteuser":user,"cart_items":cart_items}
+                       print context
+                       return render(request,"checkout.html",context)
+                 else:   
+                       messages.error(self.request, 'no cart')
+                       response =  redirect(reverse("home"))
+                       response.delete_cookie(CART_ID)
+                       return response                               
             else:
                 #disable checkout button
-                return JsonResponse({"error":"nothing in cart"})
+                messages.error(self.request, 'nothing in cart')
+                return  redirect(reverse("home"))
+
 
 class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
@@ -375,29 +383,28 @@ class PlaceOrder(LoginRequiredMixin,FormView):
            CART_ID="CART_ID"
            cart=self.request.COOKIES.get(CART_ID)
            if cart:
-              cart_obj=Cart.objects.get(pk=cart)
-              cart_items=cart_obj.cartitem_set.all()
-              for cart_item in cart_items:
-                   order_item=Order_Product_Specs.objects.create( 
-                                                                              Order=order,
-                                                                              Ordered_Product=cart_item.ProductAvailibiltyCheck(),
-                                                                              Quantity=cart_item.Product_Quantity,
-                                                                              Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
-                                                                              Order_Reference=cart_item.OrderReferenceCheck(),
-                                                                              Final_Ordered_Product_price=cart_item.Total_Price(),
-                                                                              Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED"),
-                                                                               )
-              # if(order.Order_Payment_Type.payment_type=="CASH ON DELIVERY"):
-              #             messages.success(self.request, 'Order Placed succesfully')
-              #             return super(PlaceOrder, self).form_valid(form)
-              # else:
-                         #redirect to paytm gateway
+              if cart.objects.filter(pk=cart).exists():
+                    cart_obj=Cart.objects.get(pk=cart)
+                    cart_items=cart_obj.cartitem_set.all()
+                    for cart_item in cart_items:
+                         order_item=Order_Product_Specs.objects.create( 
+                                                                                    Order=order,
+                                                                                    Ordered_Product=cart_item.ProductAvailibiltyCheck(),
+                                                                                    Quantity=cart_item.Product_Quantity,
+                                                                                    Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
+                                                                                    Order_Reference=cart_item.OrderReferenceCheck(),
+                                                                                    Final_Ordered_Product_price=cart_item.Total_Price(),
+                                                                                    Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED"),
+                                                                                     )
               else:
+                 messages.error(self.request, 'no cart')
                  response = redirect(reverse("home"))
                  response.delete_cookie(CART_ID)
                  return response           
               return super(PlaceOrder, self).form_valid(form)
-
+           else:
+                messages.error(self.request, 'nothing in cart')
+                return redirect(reverse("home")) 
 
 class OrderProcessCompleted(LoginRequiredMixin,View):
      pass
@@ -411,7 +418,7 @@ class CancelOrder(LoginRequiredMixin,View):
    def post(self,request):
         order=request.POST.get("order_id")
         order_obj=get_object_or_404(Order,pk=order)
-        if (request.user==order_obj.Order_Customer):
+        if (request.user==order_obj.Order_Customer.customer.User_customer):
              order_items_id=request.POST.getlist("order_product_id")
              for product_id in order_items_id:
                   order_product=get_object_or_404(Order_Product_Specs,pk=product_id)
@@ -559,11 +566,11 @@ class AdminSubcategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
 
 #####order stuff admin
 
-class AdminCustomerView(LoginRequiredMixin,UserPassesTestMixin,View):
+class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
     def test_func(self):
         return self.request.user.is_superuser
     def get(self,request):
-         customer_list=Customer.objects.all()
+         order_list=Order.objects.all()
          paginator = Paginator(customer_list, 25)
          page = request.GET.get('page')
          try:
@@ -572,8 +579,26 @@ class AdminCustomerView(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(1)
          except EmptyPage:
             contacts = paginator.page(paginator.num_pages)
-         return render(request,"admin-customer.html",{"contact":contacts})        
+         return render(request,"admin-order.html",{"contact":contacts}) 
 
+class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
+  """ use  order_product_id and order_id """
+  def test_func(self):
+        return self.request.user.is_superuser
+  def post(self,request):
+       order_id=request.POST.get("order_id")
+       if Order.objects.filter(pk=order_id).exists():
+          order=Order.objects.get(pk=order_id)
+          product_id=request.POST.get("order_product_id")
+          ordered_product=Order_Product_Specs.objects.get(pk=product_id)
+          ordered_product.Order_Status=Order_Status_Model.objects.get(status_for_order=request.POST.get("status")),
+          return JsonResponse({"message":"status changed"})
+       else:
+          return JsonResponse({"message":"order does not exist"})
+class OrderFilter(LoginRequiredMixin,UserPassesTestMixin,View):
+  def test_func(self):
+        return self.request.user.is_superuser
+  
 
 
 

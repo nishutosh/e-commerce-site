@@ -45,7 +45,7 @@ adminurls=[
    url(r'catalog/create-subcategories/$',AdminSubcategoryCreateView.as_view(),name="admin-catalog-sub-new"),
    url(r'catalog/edit-subcategories/(?P<pk>[0-9]+)$',AdminSubcategoryUpdateView.as_view(),name="admin-catalog-sub-edit"),
    url(r'catalog/edit-subcategories/delete/$',AdminSubcategoryDeleteView.as_view(),name="admin-catalog-sub-delete"),
-   url(r'customer/$',AdminCustomerView.as_view(),name="admin-customer"),
+   url(r'admin-order/$',AdminOrderView.as_view(),name="admin-order"),
 
 ]
 urlpatterns = [
