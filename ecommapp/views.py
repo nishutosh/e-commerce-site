@@ -467,8 +467,7 @@ class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
         #ask for sales
         customer_count=Customer.objects.all().count()
         recent_order=Order.objects.all()[0:10]
-        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user}
-        
+        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user}       
         return render(request,"admin-index.html",context)      
 
 
@@ -570,6 +569,7 @@ class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
     def test_func(self):
         return self.request.user.is_superuser
     def get(self,request):
+         status=Order_Status_Model.objects.all()
          order_list=Order.objects.all()
          paginator = Paginator(customer_list, 25)
          page = request.GET.get('page')
@@ -579,7 +579,7 @@ class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(1)
          except EmptyPage:
             contacts = paginator.page(paginator.num_pages)
-         return render(request,"admin-order.html",{"contact":contacts}) 
+         return render(request,"admin-order.html",{"contact":contacts,"status":status}) 
 
 class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
   """ use  order_product_id and order_id """
@@ -595,10 +595,15 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
           return JsonResponse({"message":"status changed"})
        else:
           return JsonResponse({"message":"order does not exist"})
+
 class OrderFilter(LoginRequiredMixin,UserPassesTestMixin,View):
   def test_func(self):
         return self.request.user.is_superuser
-  
+ 
+from .orderfilters import OrderFilter
+def product_list(request):
+    f = OrderFilter(request.GET, queryset=Order.objects.all())
+    return render(request, 'template.html', {'fil': f}) 
 
 
 

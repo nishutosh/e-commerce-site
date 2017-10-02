@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ecommapp',
     'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -110,7 +111,7 @@ AUTH_USER_MODEL = 'ecommapp.CustomUser'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

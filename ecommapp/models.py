@@ -197,7 +197,7 @@ class Sales_Team(models.Model):
 #coupon stuff
 class CouponCode(models.Model):
     Code=models.TextField(max_length=100)
-    Sales_Member=models.ForeignKey(Sales_Team)
+    Sales_Member=models.ForeignKey(Sales_Team,null=True)
     Discount=models.FloatField(default=0)
 
 

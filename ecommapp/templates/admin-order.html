@@ -8,19 +8,16 @@
     {% endfor %}
 </ul>
 {% endif %}
-<!-- <a href={% url "admin-catalog-sub-new" %}>+ADD</a>
 
-<a href={% url "admin-catalog-sub"  %}>()REBUILD</a>
-<br>
-<form action={% url "admin-catalog-sub-delete"  %} method="post">
-{%csrf_token %} -->
+{% for status in status%}
+{{status}}
+{% endfor %}
 {% for contact in contacts %}
     
     <input type="checkbox" value={{contact.pk}} name="selected">{{ contact }}  <a href={%url "admin-customer-edit"  contact.id  %}>EDIT</a><br />
 
 {% endfor %}
-<!-- <input type="submit" value="DELETE">
-</form> -->
+
 
 <div class="pagination">
     <span class="step-links">
