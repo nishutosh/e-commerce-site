@@ -1,0 +1,40 @@
+{% extends "adminbase.html" %}
+{% block body %}
+<h1>ADMIN  CUSTOMER LIST</h1>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<!-- <a href={% url "admin-catalog-sub-new" %}>+ADD</a>
+
+<a href={% url "admin-catalog-sub"  %}>()REBUILD</a>
+<br>
+<form action={% url "admin-catalog-sub-delete"  %} method="post">
+{%csrf_token %} -->
+{% for contact in contacts %}
+    
+    <input type="checkbox" value={{contact.pk}} name="selected">{{ contact }}  <a href={%url "admin-customer-edit"  contact.id  %}>EDIT</a><br />
+
+{% endfor %}
+<!-- <input type="submit" value="DELETE">
+</form> -->
+
+<div class="pagination">
+    <span class="step-links">
+        {% if contacts.has_previous %}
+            <a href="?page={{ contacts.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
+        </span>
+
+        {% if contacts.has_next %}
+            <a href="?page={{ contacts.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

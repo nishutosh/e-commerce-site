@@ -129,6 +129,7 @@ class Product(models.Model):
   # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  Product_Seller=models.ForeignKey(Seller)
   def price_after_discount(self):
       Actual_Price=((100-self.Discount)/100)* self.Base_Price
       return  Actual_Price
@@ -137,6 +138,7 @@ class Product(models.Model):
 class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
    Products_In_Sale=models.ManyToManyField(Product)
+   active=models.BooleanField(default=False)
    Main_Banner=models.ImageField(upload_to="FlashSaleBanner/")
    Flash_slug=models.SlugField()
 

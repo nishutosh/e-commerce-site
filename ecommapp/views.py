@@ -29,6 +29,8 @@ class HomeView(ListView):
     template_name ="index.html"
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
+        flash_sale=Flash_Sale.objects.all(active=True)
+        context["flash_sale"]=flash_sale
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user          
         return context
@@ -553,6 +555,24 @@ class AdminSubcategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
                   messages.success(self.request, 'Sub Category Deleted')
              return redirect(reverse("admin-catalog-sub"))
 
+
+
+#####order stuff admin
+
+class AdminCustomerView(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         customer_list=Customer.objects.all()
+         paginator = Paginator(customer_list, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request,"admin-customer.html",{"contact":contacts})        
 
 
 
