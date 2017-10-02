@@ -2,7 +2,7 @@
 {% block body %}
 <div class="container-fluid">
   <div class="main-screen-header">
-      <h2>Sub Category</h2>
+      <h2>Seller Panel</h2>
   </div>
   <div class="messages">
       {%if messages%}
@@ -15,23 +15,25 @@
   </div>
   <div class="main-container">
     <div class="form-options">
-      <a href="{% url "admin-catalog-sub-new"  %}" class="btn btn-success">ADD</a>
+      <a href="{% url "admin-customer-sellers-new"  %}" class="btn btn-success">ADD</a>
 
-      <a href="{% url "admin-catalog-sub"  %}" class="btn btn-warning">REBUILD</a>
+      <a href="{% url "admin-customer-sellers"  %}" class="btn btn-warning">RELOAD</a>
     </div>
     <div class="form-container">
       <div class="form-header">
-        <h3>Current Categories</h3>
+        <h3>Current Products</h3>
       </div>
           {{ form.non_field_errors }}
-          <form action={% url "admin-catalog-sub-delete"  %} method="post" class="form-horizontal">
+          <form action={% url "admin-customer-sellers-delete"  %} method="post" class="form-horizontal">
           {%csrf_token %}
           <table class="table table-responsive">
               <thead>
                   <tr>
                       <th>Select</th>
-                      <th>Base Category</th>
-                      <th>Sub Category</th>
+                      <th>Id</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Contact_Number</th>
                       <th></th>
                   </tr>
               </thead>
@@ -39,14 +41,21 @@
                   {% for contact in contacts %}
                 <tr>
                   <td><input type="checkbox" value={{contact.pk}} name="selected"></td>
-                  <td>{{contact.Base_category_Key.Base_Category}}</td>
-                  <td>{{ contact.Sub_Category }}</td>
-                  <td><a href={%url "admin-catalog-sub-edit"  contact.id  %} class="btn btn-primary">edit</a></td>
+                  <td>{{ contact.Seller_Id }}</td>
+                  <td>{{contact.Seller_Name}}</td>
+                  <td>{{contact.email}}</td>
+                  <td>{{contact.Contact_Number}}</td>
+                  <td><a href={%url "admin-customer-sellers-edit"  contact.pk  %} class="btn btn-primary">Edit</a></td>
                 </tr>
                 {%endfor%}
 
               </tbody>
           </table>
+          <!-- {% for contact in contacts %}
+
+              <input type="checkbox" value={{contact.pk}} name="selected">{{ contact.Base_Category }}  <a href={%url "admin-catalog-base-edit"  contact.id  %}>edit</a><br />
+
+          {% endfor %} -->
           <button type="button" name="button" class="btn btn-danger" data-toggle="modal" data-target="#warningModal">Delete</button>
 
           <!-- Warning Modal -->
@@ -60,8 +69,8 @@
                               <h4 class="modal-title">Warning</h4>
                             </div>
                             <div class="modal-body">
-                              <p>Once deleted these categories nor their products will exist!!!!!</p>
-                              <p>Are You sure you want to delete the selected categories?</p>
+                              <p>Once deleted these products will not exist!!!!!</p>
+                              <p>Are You sure you want to delete the selected products?</p>
                             </div>
                             <div class="modal-footer">
                               <input type="submit" value="DELETE" class="btn btn-danger">

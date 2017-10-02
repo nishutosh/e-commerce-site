@@ -1,10 +1,31 @@
 {% extends "base/admin-dash.html" %}
 {% block body %}
-<h1>SUB CATEGORY EDIT</h1>
-<form action="" method="post" style="text-align: center;">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="SUBMIT" />
-</form>
+<div class="catalog-form-container">
+  <div class="header">
+    <h2>Sub Category Details</h2>
+  </div>
+      {{ form.non_field_errors }}
+  <div class="form-container">
+    <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <table class="table table-striped">
+        <tbody>
+          {% for field in form %}
+          <tr>
+            {{ field.errors }}
+            <th><label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}:</label></th>
+            <td>{{ field }}</td>
+          </tr>
+          {%endfor%}
+        </tbody>
+      </table>
+
+          <input type="submit" class="btn btn-primary submit-btn" value="SUBMIT" />
+
+
+    </form>
+
+  </div>
+
 </div>
 {% endblock %}

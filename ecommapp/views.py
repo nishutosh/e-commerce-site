@@ -16,6 +16,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all()
@@ -453,7 +454,6 @@ class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
 
 
 
-
 class AdminBaseCategory(LoginRequiredMixin,UserPassesTestMixin,View):
      """base categoty handling"""
      def test_func(self):
@@ -468,39 +468,25 @@ class AdminBaseCategory(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(1)
          except EmptyPage:
             contacts = paginator.page(paginator.num_pages)
-         return render(request, 'admin-catelog-base-category.html', {'contacts':contacts})
+         return render(request, 'admin-catalog-base-category.html', {'contacts':contacts})
 
 
 
-class AdminBasecategoryFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
-   """admin base categort form handling"""
+class AdminBasecategoryCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
+   model = BaseCategory
+   fields = ["Base_Category","Base_Category_Pic"]
    template_name="admin-base-category-edit.html"
-   success_url="/admin-panel/catelog/basecategories/"
-   form_class=BaseCategoryForm
+   success_url="/admin-panel/catalog/basecategories/"
    def test_func(self):
            return self.request.user.is_superuser
-   def get_initial(self):
-        if  self.kwargs["bcat_id"]=="new":
-             initial={}
-             return initial
-        else:
-            base_cat=BaseCategory.objects.get(pk=self.kwargs["bcat_id"])
-            initial={"Base_Category":base_cat.Base_Category,
-                          "Base_Category_Pic":base_cat.Base_Category_Pic}
-            return initial
-   def form_valid(self,form):
-         if self.kwargs["bcat_id"]=="new":
-            #fix needed
-             Base_Category.objects.create(Base_Category=form.cleaned_data["Base_Category"],Base_Category_Pic=form.cleaned_data["Base_Category_Pic"])
-         else:
-             base_cat=BaseCategory.objects.get(pk=self.kwargs["bcat_id"])
-             base_cat.Base_Category=form.cleaned_data["Base_Category"]
-             base_cat.Base_Category_Pic=form.cleaned_data["Base_Category_Pic"]
-             base_cat.save()
-         return super(AdminBasecategoryFormView, self).form_valid(form)
-   def form_invalid(self,form):
-        print (form)
-        return super(AdminBasecategoryFormView, self).form_invalid(form)
+
+class AdminBasecategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+   model = BaseCategory
+   fields = ["Base_Category","Base_Category_Pic"]
+   template_name="admin-base-category-edit.html"
+   success_url="/admin-panel/catalog/basecategories/"
+   def test_func(self):
+           return self.request.user.is_superuser
 
 class AdminBasecategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
       def test_func(self):
@@ -508,6 +494,7 @@ class AdminBasecategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
       def post(self,request):
              for id in  request.POST.getlist("selected"):
                   BaseCategory.objects.filter(pk=id).delete()
+                  messages.success(self.request, 'Base Category Deleted')
              return redirect(reverse("admin-catalog-base"))
 
 class AdminSubCategory(LoginRequiredMixin,UserPassesTestMixin,View):
@@ -526,35 +513,23 @@ class AdminSubCategory(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(paginator.num_pages)
          return render(request, 'admin-catalog-sub-category.html', {'contacts':contacts})
 
-class AdminSubcategoryFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
-   """admin base categort form handling"""
+class AdminSubcategoryCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
+   """admin sub category form handling"""
+   model=SubCategory
    template_name="admin-sub-category-edit.html"
    success_url="/admin-panel/catalog/subcategories/"
-   form_class=SubCategoryForm
+   fields=["Base_category_Key","Sub_Category","Sub_Category_Pic"]
    def test_func(self):
            return self.request.user.is_superuser
-   def get_initial(self):
-        if  self.kwargs["scat_id"]=="new":
-             initial={}
-             return initial
-        else:
-            sub_cat=SubCategory.objects.get(pk=self.kwargs["scat_id"])
-            initial={"Sub_Category":sub_cat.Sub_Category,
-                           "Sub_Category_Pic":sub_cat.Sub_Category_Pic}
-            return initial
-   def form_valid(self,form):
-         if self.kwargs["bcat_id"]=="new":
 
-             SubCategory.objects.create(Base_Category_Key=form.cleaned_data["Base_Category"],Sub_Category=form.cleaned_data["Sub_Category"],Sub_Category_Pic=form.cleaned_data["Sub_Category_Pic"])
-             messages.success(self.request, 'Sub Category created')
-         else:
-             print("order id is:" + self.kwargs["scat_id"])
-             sub_cat=SubCategory.objects.get(pk=self.kwargs["scat_id"])
-             sub_cat.Sub_Category=form.cleaned_data["Sub_Category"]
-             sub_cat.Sub_Category_Pic=form.cleaned_data["Sub_Category_Pic"]
-             sub_cat.save()
-             messages.success(self.request, 'Sub Category updated')
-         return super(AdminSubcategoryFormView, self).form_valid(form)
+class AdminSubcategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+   """admin sub category form handling"""
+   model=SubCategory
+   template_name="admin-sub-category-edit.html"
+   fields=["Base_category_Key","Sub_Category","Sub_Category_Pic"]
+   success_url="/admin-panel/catalog/subcategories/"
+   def test_func(self):
+           return self.request.user.is_superuser
 
 
 class AdminSubcategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
@@ -568,7 +543,7 @@ class AdminSubcategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
 
 
 class AdminProduct(LoginRequiredMixin,UserPassesTestMixin,View):
-     """product handling"""
+     """sub categoty handling"""
      def test_func(self):
            return self.request.user.is_superuser
      def get(self,request):
@@ -583,45 +558,179 @@ class AdminProduct(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(paginator.num_pages)
          return render(request, 'admin-catalog-product.html', {'contacts':contacts})
 
-class AdminProductFormView(LoginRequiredMixin,UserPassesTestMixin,FormView):
-   """admin products form handling"""
+class AdminProductCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
+   """admin sub category form handling"""
+   model=Product
    template_name="admin-product-edit.html"
    success_url="/admin-panel/catalog/products/"
-   form_class=ProductForm
+   fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority"]
    def test_func(self):
            return self.request.user.is_superuser
-   def get_initial(self):
-        if  self.kwargs["p_id"]=="new":
-             initial={}
-             return initial
-        else:
-            product=Product.objects.get(pk=self.kwargs["p_id"])
-            initial={"Product_Name":product.Product_Name,
-                     "Discount":product.Discount,
-                     "Base_Price":product.Base_Price,
-                     "Availiability":product.Availiability,
-                     "Description":product.Description,
-                     "Features":product.Features,
-                     "TechnicalSpecs":product.TechnicalSpecs,
-                     "Main_Image":product.Main_Image,
-                    }
 
-            return initial
-   def form_valid(self,form):
-         if self.kwargs["p_id"]=="new":
+class AdminProductUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+   """admin sub category form handling"""
+   model=Product
+   template_name="admin-product-edit.html"
+   fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority"]
+   success_url="/admin-panel/catalog/products/"
+   def test_func(self):
+           return self.request.user.is_superuser
 
-             SubCategory.objects.create(Product_Base_Category=form.cleaned_data["Base_Category"],product_Sub_Category=form.cleaned_data["Sub_Category"],Product_Name=form.cleaned_data["Product_Name"],Discount=form.cleaned_data["Discount"],Base_Price=form.cleaned_data["Base_Price"],Availiability=form.cleaned_data["Availiability"],Description=form.cleaned_data["Description"],Features=form.cleaned_data["Features"],TechnicalSpecs=form.cleaned_data["TechnicalSpecs"],Main_Image=form.cleaned_data["Main_Image"],Shipment_Authority=form.cleaned_data["Shipment_Authority"])
-             messages.success(self.request, 'Product created')
-         else:
-             product=SubCategory.objects.get(pk=self.kwargs["p_id"])
-             product.Product_Name=form.cleaned_data["Product_Name"]
-             product.Discount=form.cleaned_data["Discount"]
-             product.Base_Price=form.cleaned_data["Base_Price"]
-             product.Availiability=form.cleaned_data["Availiability"]
-             product.Description=form.cleaned_data["Description"]
-             product.Features=form.cleaned_data["Features"]
-             product.TechnicalSpecs=form.cleaned_data["TechnicalSpecs"]
-             product.Main_Image=form.cleaned_data["Main_Image"]
-             product.save()
-             messages.success(self.request, 'Product updated')
-         return super(AdminProductFormView, self).form_valid(form)
+
+class AdminProductDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+           return self.request.user.is_superuser
+      def post(self,request):
+             for id in  request.POST.getlist("selected"):
+                  Product.objects.filter(pk=id).delete()
+                  messages.success(self.request, 'Product Deleted')
+             return redirect(reverse("admin-catalog-product"))
+
+class AdminProductPics(LoginRequiredMixin,UserPassesTestMixin,View):
+     """sub categoty handling"""
+     def test_func(self):
+           return self.request.user.is_superuser
+     def get(self,request):
+         pics=Pics.objects.all()
+         paginator = Paginator(pics, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-catalog-product-pics.html', {'contacts':contacts})
+
+class AdminProductPicsCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
+   """admin sub category form handling"""
+   model=Pics
+   template_name="admin-product-pics-edit.html"
+   success_url="/admin-panel/catalog/products-pics/"
+   fields=["ProductPics","Images"]
+   def test_func(self):
+           return self.request.user.is_superuser
+
+class AdminProductPicsUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+   """admin sub category form handling"""
+   model=Pics
+   template_name="admin-product-pics-edit.html"
+   fields=["ProductPics","Images"]
+   success_url="/admin-panel/catalog/products-pics/"
+   def test_func(self):
+           return self.request.user.is_superuser
+
+
+class AdminProductPicsDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+           return self.request.user.is_superuser
+      def post(self,request):
+             for id in  request.POST.getlist("selected"):
+                  Pics.objects.filter(pk=id).delete()
+                  messages.success(self.request, 'Pic Deleted')
+             return redirect(reverse("admin-catalog-product-pics"))
+
+class AdminSellers(LoginRequiredMixin,UserPassesTestMixin,View):
+     """sellers handling"""
+     def test_func(self):
+           return self.request.user.is_superuser
+     def get(self,request):
+         seller=Seller.objects.all()
+         paginator = Paginator(seller, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-customer-sellers.html', {'contacts':contacts})
+
+class AdminSellersCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
+   """admin sub category form handling"""
+   model=Seller
+   template_name="admin-customer-sellers-edit.html"
+   success_url="/admin-panel/customer/sellers/"
+   fields=["Seller_Id","Seller_Name","Address","Profile","email","Contact_Number"]
+   def test_func(self):
+           return self.request.user.is_superuser
+
+class AdminSellersUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+   """admin sub category form handling"""
+   model=Seller
+   template_name="admin-customer-sellers-edit.html"
+   fields=["Seller_Id","Seller_Name","Address","Profile","email","Contact_Number"]
+   success_url="/admin-panel/customer/sellers/"
+   def test_func(self):
+           return self.request.user.is_superuser
+
+
+class AdminSellersDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+           return self.request.user.is_superuser
+      def post(self,request):
+             for id in  request.POST.getlist("selected"):
+                  Seller.objects.filter(pk=id).delete()
+                  messages.success(self.request, 'Pic Deleted')
+             return redirect(reverse("admin-customer-sellers"))
+
+class AdminCustomer(LoginRequiredMixin,UserPassesTestMixin,View):
+     """sellers handling"""
+     def test_func(self):
+           return self.request.user.is_superuser
+     def get(self,request):
+         customer=Customer.objects.all()
+         paginator = Paginator(customer, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-customer-enduser.html', {'contacts':contacts})
+
+
+class AdminCoupon(LoginRequiredMixin,UserPassesTestMixin,View):
+     """sellers handling"""
+     def test_func(self):
+           return self.request.user.is_superuser
+     def get(self,request):
+         coupon=CouponCode.objects.all()
+         paginator = Paginator(coupon, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-marketing-coupon.html', {'contacts':contacts})
+
+class AdminCouponCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
+   """admin sub category form handling"""
+   model=CouponCode
+   template_name="admin-marketing-coupon-edit.html"
+   success_url="/admin-panel/marketing/coupon/"
+   fields=["Code","Sales_Member","Discount"]
+   def test_func(self):
+           return self.request.user.is_superuser
+
+class AdminCouponUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+   """admin sub category form handling"""
+   model=CouponCode
+   template_name="admin-marketing-coupon-edit.html"
+   fields=["Code","Sales_Member","Discount"]
+   success_url="/admin-panel/marketing/coupon/"
+   def test_func(self):
+           return self.request.user.is_superuser
+
+
+class AdminCouponDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+           return self.request.user.is_superuser
+      def post(self,request):
+             for id in  request.POST.getlist("selected"):
+                  CouponCode.objects.filter(pk=id).delete()
+                  messages.success(self.request, 'Pic Deleted')
+             return redirect(reverse("admin-marketing-coupon"))

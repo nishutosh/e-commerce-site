@@ -15,16 +15,16 @@
   </div>
   <div class="main-container">
     <div class="form-options">
-      <a href={% url "admin-catalog-base-edit"  "new"  %} class="btn btn-success">ADD</a>
+      <a href="{% url "admin-catalog-product-new"  %}" class="btn btn-success">ADD</a>
 
-      <a href={% url "admin-catalog-base"  %} class="btn btn-warning">REBUILD</a>
+      <a href="{% url "admin-catalog-product"  %}" class="btn btn-warning">RELOAD</a>
     </div>
     <div class="form-container">
       <div class="form-header">
         <h3>Current Products</h3>
       </div>
           {{ form.non_field_errors }}
-          <form action={% url "admin-catalog-base-delete"  %} method="post" class="form-horizontal">
+          <form action={% url "admin-catalog-product-delete"  %} method="post" class="form-horizontal">
           {%csrf_token %}
           <table class="table table-responsive">
               <thead>
@@ -45,7 +45,7 @@
                   <td>{{contact.Product_Base_Category.Base_Category}}</td>
                   <td>{{contact.product_Sub_Category.Sub_Category}}</td>
                   <td>{{contact.price_after_discount}}</td>
-                  <td><a href={%url "admin-catalog-base-edit"  contact.id  %} class="btn btn-primary">Edit</a></td>
+                  <td><a href={%url "admin-catalog-product-edit"  contact.pk  %} class="btn btn-primary">Edit</a></td>
                 </tr>
                 {%endfor%}
 

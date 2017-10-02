@@ -2,7 +2,7 @@
 {% block body %}
 <div class="container-fluid">
   <div class="main-screen-header">
-      <h2>Base Category</h2>
+      <h2>Coupon Codes</h2>
   </div>
   <div class="messages">
       {%if messages%}
@@ -15,22 +15,25 @@
   </div>
   <div class="main-container">
     <div class="form-options">
-      <a href={% url "admin-catalog-base-edit"  "new"  %} class="btn btn-success">ADD</a>
+      <a href="{% url "admin-marketing-coupon-new"  %}" class="btn btn-success">ADD</a>
 
-      <a href={% url "admin-catalog-base"  %} class="btn btn-warning">REBUILD</a>
+      <a href="{% url "admin-marketing-coupon"  %}" class="btn btn-warning">RELOAD</a>
     </div>
     <div class="form-container">
       <div class="form-header">
-        <h3>Current Categories</h3>
+        <h3>Current Coupons</h3>
       </div>
           {{ form.non_field_errors }}
-          <form action={% url "admin-catalog-base-delete"  %} method="post" class="form-horizontal">
+          <form action={% url "admin-customer-sellers-delete"  %} method="post" class="form-horizontal">
           {%csrf_token %}
           <table class="table table-responsive">
               <thead>
                   <tr>
                       <th>Select</th>
-                      <th>Category</th>
+                      <th>Coupon Code</th>
+                      <th>Discount</th>
+                      <th>Sales_Member</th>
+                      <th>Intern?</th>
                       <th></th>
                   </tr>
               </thead>
@@ -38,8 +41,11 @@
                   {% for contact in contacts %}
                 <tr>
                   <td><input type="checkbox" value={{contact.pk}} name="selected"></td>
-                  <td>{{ contact.Base_Category }}</td>
-                  <td><a href={%url "admin-catalog-base-edit"  contact.id  %} class="btn btn-primary">edit</a></td>
+                  <td>{{ contact.Code }}</td>
+                  <td>{{contact.Discount}}</td>
+                  <td>{{contact.Sales_Member.Sales_First_Name}} {{contact.Sales_Member.Sales_Last_Name}}</td>
+                  <td>{{contact.Sales_Member.is_intern}}</td>
+                  <td><a href={%url "admin-customer-sellers-edit"  contact.pk  %} class="btn btn-primary">Edit</a></td>
                 </tr>
                 {%endfor%}
 
@@ -63,8 +69,8 @@
                               <h4 class="modal-title">Warning</h4>
                             </div>
                             <div class="modal-body">
-                              <p>Once deleted these categories nor their products will exist!!!!!</p>
-                              <p>Are You sure you want to delete the selected categories?</p>
+                              <p>Once deleted these coupons will not be applicable!!!!!</p>
+                              <p>Are You sure you want to delete the selected coupons?</p>
                             </div>
                             <div class="modal-footer">
                               <input type="submit" value="DELETE" class="btn btn-danger">
@@ -99,41 +105,5 @@
   </div>
 
 </div>
-<!-- {% if messages %}
-<h1>BASE CATEGORY</h1>
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-<a href={% url "admin-catalog-base-edit"  "new"  %}>+ADD</a>
 
-<a href={% url "admin-catalog-base"  %}>()REBUILD</a>
-<br>
-<form action={% url "admin-catalog-base-delete"  %} method="post">
-{%csrf_token %}
-{% for contact in contacts %}
-
-    <input type="checkbox" value={{contact.pk}} name="selected">{{ contact.Base_Category }}  <a href={%url "admin-catalog-base-edit"  contact.id  %}>edit</a><br />
-
-{% endfor %}
-<input type="submit" value="DELETE">
-</form>
-
-<div class="pagination">
-    <span class="step-links">
-        {% if contacts.has_previous %}
-            <a href="?page={{ contacts.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
-        </span>
-
-        {% if contacts.has_next %}
-            <a href="?page={{ contacts.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-</div> -->
 {% endblock %}
