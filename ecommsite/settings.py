@@ -102,14 +102,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_URL="/signin/"
-#default user model 
+#default user model
 AUTH_USER_MODEL = 'ecommapp.CustomUser'
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 

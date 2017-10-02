@@ -73,11 +73,9 @@ class BaseCategory(models.Model):
   Base_Category_Pic=models.ImageField(upload_to="BaseCatPic/")
   Base_Slug_Field=models.SlugField(max_length=120,blank=True)
   def save(self, *args, **kwargs):
+        print (self.Base_Category)
         self.Base_Slug_Field=slugify(self.Base_Category)
         super(BaseCategory, self).save()
-
-  def __str__(self):
-        return self.Base_Category
 
 
 
@@ -90,8 +88,6 @@ class SubCategory(models.Model):
         self.Sub_Category_Slug_Field=slugify(self.Sub_Category)
         super(SubCategory, self).save()
 
-  def __str__(self):
-        return self.Sub_Category
 
 
 class Filter_Name(models.Model):
@@ -133,17 +129,16 @@ class Product(models.Model):
   # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  Product_Seller=models.ForeignKey(Seller)
   def price_after_discount(self):
       Actual_Price=((100-self.Discount)/100)* self.Base_Price
       return  Actual_Price
-
-  def __str__(self):
-        return self.Product_Name
 
 
 class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
    Products_In_Sale=models.ManyToManyField(Product)
+   active=models.BooleanField(default=False)
    Main_Banner=models.ImageField(upload_to="FlashSaleBanner/")
    Flash_slug=models.SlugField()
 
@@ -280,11 +275,6 @@ class Order(models.Model):
        for order_item in order_list:
            total=total+order_item.Final_Ordered_Product_price
        return total
-   def Cancel_Order(self):
-        product_in_order=self.order_product_specs_set.all()
-        for order_item in product_in_order:
-           order_item.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
-           order_item.save()
 
 def OrderPaymentOptionCheck(method_request):
           if Payment_Method.objects.filter(payment_type=method_request).exists():

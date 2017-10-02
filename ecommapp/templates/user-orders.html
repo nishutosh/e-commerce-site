@@ -1,6 +1,7 @@
 {% extends 'base/user-dash.html' %}
 {% load static %}
 {% block body_block %}
+{%csrf_token%}
     <h3>Your past orders:</h3>
 
     <div class="container-fluid">
@@ -60,12 +61,12 @@
 
               <div class="action-btns">
                     <a href="#" class="btn btn-default alternate-cta-btn">Track Package</a>
-                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal" data-url="{%url "cancel-order"%}" data-id="">Cancel Package</a>
+                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal{{order.pk}}" data-url="{%url "cancel-order"%}" data-id="">Cancel Package</a>
 
               </div>
           </div>
           <!--cancel warning Modal -->
-            <div id="cancelPackageModal" class="modal fade" role="dialog">
+            <div id="cancelPackageModal{{order.pk}}" class="modal fade" role="dialog">
               <div class="modal-dialog">
 
                 <!-- Modal content-->
@@ -78,7 +79,7 @@
                     <p>Are you sure that you want to cancel the order!!</p>
                   </div>
                   <div class="modal-footer">
-                    <button data-url="{%url "cancel-order"%}" class="btn btn-danger  cancel-package-btn" data-url="{%url "cancel-order"%}" data-id="{{order.pk}}">Cancel Package</button>
+                    <button data-url="{%url "cancel-order"%}" class="btn btn-danger  cancel-package-btn" data-url="{%url "cancel-order"%}" data-id="{{order.pk}}" data-product-id="{{product.pk}}">Cancel Package</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                   </div>
                 </div>

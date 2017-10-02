@@ -5,7 +5,7 @@ from django.shortcuts import render,get_object_or_404
 from django.views import View
 from django.views.generic import DetailView,ListView
 from .models import *
-from django.http import Http404,JsonResponse
+from django.http import Http404,JsonResponse,HttpResponse
 from django.views.generic.edit import FormView
 from .forms import *
 from django.contrib.auth import authenticate, login,logout
@@ -349,7 +349,7 @@ class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
      #paytm redirect url
-     success_url="/user/orders/"
+     success_url="user/orders/"
      def get_context_data(self, **kwargs):
         context = super(PlaceOrder, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
@@ -392,8 +392,11 @@ class PlaceOrder(LoginRequiredMixin,FormView):
               #             return super(PlaceOrder, self).form_valid(form)
               # else:
                          #redirect to paytm gateway
+              else:
+                 response = redirect(reverse("home"))
+                 response.delete_cookie(CART_ID)
+                 return response
               return super(PlaceOrder, self).form_valid(form)
-
 
 class OrderProcessCompleted(LoginRequiredMixin,View):
      pass
@@ -403,15 +406,26 @@ class OrderProcessCompleted(LoginRequiredMixin,View):
 
 class CancelOrder(LoginRequiredMixin,View):
    """take ajax calls to cancel order with
-        order_id and order product as parameter in post request"""
+        order_id and order_product_id as parameter in post request"""
    def post(self,request):
-      print("isnide cancelorder view")
-      order=request.POST.get("order_id")
-      print("receiverd id of order")
-      order_obj=get_object_or_404(Order,pk=order)
-      print("cancelling")
-      order_obj.Cancel_Order()
-      return redirect(reverse("user-orders"))
+        order=request.POST.get("order_id")
+        order_obj=get_object_or_404(Order,pk=order)
+        #print(order_obj.Order_Customer.Customer_First_Name + "=" + request.user.Customer_First_Name)
+        if (request.user==order_obj.Order_Customer.User_customer):
+             order_items_id=request.POST.getlist("order_product_id")
+             for product_id in order_items_id:
+                  order_product=get_object_or_404(Order_Product_Specs,pk=product_id)
+                  if order_product.Order_Status.status_for_order=="DELIVERED":
+                     messages.error(self.request, 'order delivered')
+                     return redirect(reverse("user-orders"))
+                  else:
+                     print("cancelling now")
+                     order_product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
+                     print(order_product.Order_Status.status_for_order)
+                     order_product.save()
+        else:
+            return  HttpResponse(status=401)
+        return redirect(reverse("user-orders"))
 
 
 class AdminSignin(FormView):
