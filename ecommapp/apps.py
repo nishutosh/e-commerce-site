@@ -5,4 +5,6 @@ from django.apps import AppConfig
 
 
 class EcommappConfig(AppConfig):
-    name = 'ecommapp'
+    name = 'ecommapp'  
+    def ready(self):
+        import elasticsearchapp.signals

@@ -11,6 +11,7 @@ from django.template.defaultfilters import slugify
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 
+
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
     def _create_user(self, username, password, **extra_fields):
@@ -88,7 +89,9 @@ class SubCategory(models.Model):
         self.Sub_Category_Slug_Field=slugify(self.Sub_Category)
         super(SubCategory, self).save()
 
- 
+class Tax(models.Model):
+    Prducts=models.ForeignKey(SubCategory)
+    Tax_Percentage=models.FloatField()
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)
@@ -130,10 +133,21 @@ class Product(models.Model):
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   Product_Seller=models.ForeignKey(Seller)
+  TaxOnProduct=models.ForeignKey(Tax)
   def price_after_discount(self):
       Actual_Price=((100-self.Discount)/100)* self.Base_Price
       return  Actual_Price
-
+  def indexing(self):
+     from .search import ProductIndex
+     obj = ProductIndex(
+        meta={'id': self.id},
+        Product_Name=self.Product_Name,
+        Description=self.Description,
+        Features=self.Features,
+        TechnicalSpecs=self.TechnicalSpecs
+     )
+     obj.save()
+     return obj.to_dict(include_meta=True)
 
 class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
@@ -151,9 +165,6 @@ class Pics(models.Model):
   ProductPics=models.ForeignKey(Product)
   Images=models.ImageField(upload_to="ProductImages/")
 
-class Tax(models.Model):
-    Prducts=models.ForeignKey(SubCategory)
-    Tax_Percentage=models.FloatField()
 
 class Customer(models.Model):
    User_customer=models.OneToOneField(CustomUser)
@@ -267,6 +278,7 @@ class Order(models.Model):
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
    Transaction_Id=models.CharField(max_length=100)
+   Whole_Order_Status=models.ForeignKey(Order_Status_Model)
    class Meta:
        ordering=['pk']
    def Order_Total_Price(self):
@@ -275,6 +287,11 @@ class Order(models.Model):
        for order_item in order_list:
            total=total+order_item.Final_Ordered_Product_price
        return total  
+   def  Order_Status_sync(self):
+       order_list=self.order_product_specs_set.all()
+       for order_item in order_list:
+           total=total+order_item.Final_Ordered_Product_price
+       return total   
 
 def OrderPaymentOptionCheck(method_request):
           if Payment_Method.objects.filter(payment_type=method_request).exists():

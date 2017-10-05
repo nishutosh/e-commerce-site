@@ -17,11 +17,17 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-
+from .search import search
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
 }
 
+def ElasticSearch(request):
+  if request.method=="GET":
+    results=search(product=request.GET["product"])
+    print results
+    return render(request,"product_list.html",{"product_list":results})
+  
 
 class HomeView(ListView):
     model=BaseCategory
