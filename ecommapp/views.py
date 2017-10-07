@@ -18,6 +18,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .search import search
+from .orderfilters import OrderFilter
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
 }
@@ -575,9 +576,10 @@ class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
     def test_func(self):
         return self.request.user.is_superuser
     def get(self,request):
+         filter = OrderFilter(request.GET, queryset=Order.objects.all())
          status=Order_Status_Model.objects.all()
          order_list=Order.objects.all()
-         paginator = Paginator(customer_list, 25)
+         paginator = Paginator(order_list, 25)
          page = request.GET.get('page')
          try:
             contacts = paginator.page(page)
@@ -585,7 +587,7 @@ class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(1)
          except EmptyPage:
             contacts = paginator.page(paginator.num_pages)
-         return render(request,"admin-order.html",{"contact":contacts,"status":status}) 
+         return render(request,"admin-order.html",{"contact":contacts,"status":status,'filter': filter}) 
 
 class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
   """ use  order_product_id and order_id """
@@ -602,14 +604,10 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
        else:
           return JsonResponse({"message":"order does not exist"})
 
-class OrderFilter(LoginRequiredMixin,UserPassesTestMixin,View):
-  def test_func(self):
-        return self.request.user.is_superuser
+
+
  
-from .orderfilters import OrderFilter
-def product_list(request):
-    f = OrderFilter(request.GET, queryset=Order.objects.all())
-    return render(request, 'template.html', {'fil': f}) 
+
 
 
 

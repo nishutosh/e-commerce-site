@@ -55,6 +55,5 @@ urlpatterns = [
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
     url(r'adminsite/',include(adminurls)),
-    url(r'test/',product_list),
     url(r'search/',ElasticSearch,name="search")
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
