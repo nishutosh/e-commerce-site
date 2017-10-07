@@ -14,7 +14,7 @@
        <div class="col-md-8">
        <a href={% url "admin-login" %}>admin</a>
        <form action={% url "search" %} method="get">
-       <input type="text" name="product">
+       <input type="text" name="search_term">
        <input type="submit" value="search">
        </form>
           {% for base in base_category_list%}
@@ -27,7 +27,7 @@
                              {%endfor%}
                        </ul>
             </li>
-       }
+       
        
         {% endfor %}
        </div>

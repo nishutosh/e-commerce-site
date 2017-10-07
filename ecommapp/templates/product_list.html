@@ -6,6 +6,7 @@
         {% for products in product_list%}
             <li>
                 {{products.Product_Name}}
+                {{products.id}}
                 <img src={{products.Main_Image.url}}   />
             </li>
         {% endfor %}

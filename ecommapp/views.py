@@ -24,7 +24,7 @@ menu_product_view_context={
 
 def ElasticSearch(request):
   if request.method=="GET":
-    results=search(product=request.GET["product"])
+    results=search(search_term=request.GET["search_term"])
     print results
     return render(request,"product_list.html",{"product_list":results})
   
