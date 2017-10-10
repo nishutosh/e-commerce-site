@@ -1,11 +1,24 @@
 {% extends "base.html" %}
-{% block body %}
-
+{% block body %} 
+ <ul> 
+    {% for filter in filters %}
+      <li>{{filter.Filter_Name}}
+        <ul>
+        {%for filter_sub in filter.filter_category_set.all %}
+        <li>
+        <lable>{{filter_sub.Filter_Category_Name}}</lable>
+             <input value={{filter_sub.Filter_Category_Name}} type="checkbox">
+           </li>
+        {% endfor %}
+      </ul>
+      </li>
+    {% endfor %}
+  </ul>
     <h2>PRODUCT LIST</h2>
     <ul>
         {% for products in product_list%}
             <li>
-                {{products.Product_Name}}
+                 {{products.Product_Name}}
                 {{products.id}}
                 <img src={{products.Main_Image.url}}   />
             </li>

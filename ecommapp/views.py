@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+#check for 404 in all views 
 from django.shortcuts import render,get_object_or_404
 from django.views import View
 from django.views.generic import DetailView,ListView
@@ -23,12 +23,14 @@ menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
 }
 
+#use filter tems like term1+term2 in search_term filter 
 def ElasticSearch(request):
   if request.method=="GET":
     results=search(search_term=request.GET["search_term"])
     print results
     return render(request,"product_list.html",{"product_list":results})
-  
+
+    
 
 class HomeView(ListView):
     model=BaseCategory
@@ -47,12 +49,13 @@ class ProductList(ListView):
   template_name="product_list.html"
   def get_queryset(self):
         try: 
-              return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
+              return  Product.objects.filter(Product_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
         except:
               raise Http404
   def get_context_data(self, **kwargs):
         context = super(ProductList, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
+        context.update({"filters":context["product_list"][0].product_Sub_Category.filter_name_set.all()})
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user        
         return context
@@ -65,13 +68,13 @@ class ProductDetails(DetailView):
    template_name="product.html"
    def get_queryset(self):
         try:
-            return  Product.objects.filter(Produce_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"],pk=self.kwargs["pk"])
+            return  Product.objects.filter(Product_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"],pk=self.kwargs["pk"])
         except:
-              raise Http404
-
+            raise Http404
    def get_context_data(self, **kwargs):
         context = super(ProductDetails, self).get_context_data(**kwargs)
         context["pics"]=context["product"].pics_set.all()
+        context["review"]=Review.objects.all()
         context.update(menu_product_view_context)
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user      
@@ -143,18 +146,34 @@ class SignOutView(LoginRequiredMixin,View):
           return redirect(reverse("home"))
 
 
-# class ReviewFormView(LoginRequiredMixin,FormView):
-#     """user submit review"""
-#     template_name="user-review"
-#     form_class=ReviewForm
-#     def form_valid(self,form):
-#         Review.objects.create(Reviewer=self.request.user,
-#                                                Product=self.kwargs["product"],
-#                                                Review_Title=form.cleaned_data["Review_titile"],
-#                                                Review_Body=form.cleaned_data["Review_Body"],
-#                                                show_review=True)
-#         messages.success(self.request, 'Review Submitted')
-#         return super(RegisterView, self).form_valid(form)
+class ReviewSubmitView(LoginRequiredMixin,View):
+    def post(self,request):
+        """user submit review"""
+        if request.POST.get("review_id")=="new":
+            Review.objects.create(Reviewer=self.request.user,
+                                   Product=request.POST.get["product"],
+                                   Review_Title=request.POST.get["Review_titile"],
+                                   Review_Body=request.POST.get["Review_Body"],
+                                   show_review=True)       
+            return JsonResponse({"message":"review submitted"})
+        else:
+            if Review.objects.filter(pk=request.Post.get("review_id")).exists():
+               Review.objects.filter(pk=request.Post.get("review_id")).update(Review_Title=request.POST.get("review_title"),Review_Body=request.POST.get("review_body"))
+               return JsonResponse({"message":"review updated"})
+            else:
+               return JsonResponse({"message":"review does not exist"}) 
+
+
+class ReviewDelete(LoginRequiredMixin,View):
+    def post(self,request):
+       if Review.objects.filter(pk=request.POST.get("review_id")).exists():
+           Review.objects.filter(pk=request.POST.get("review_id")).delete()
+           return JsonResponse({"message":"review deleted"})
+       else:
+           return JsonResponse({"message":"review does not exist"})
+
+            
+
 
 
 class UserDashboard(LoginRequiredMixin,View):
@@ -331,9 +350,7 @@ class ApplyCoupon(View):
         else:
            return  JsonResponse({"response":"no cookie present"}) 
 
-class RemoveCoupoun(LoginRequiredMixin,View):
-    """removes coupon code"""
-    pass
+
 
 
 
@@ -374,18 +391,18 @@ class PlaceOrder(LoginRequiredMixin,FormView):
            """make an  order"""
            print form.cleaned_data["Delivery_Type"]
            order=Order.objects.create( 
-                                                 Order_In_Name_Of=form.cleaned_data["Order_In_Name_Of"],
-                                                 Order_Customer=self.request.user.customer,
-                                                 Order_Delivery_Type=Delivery_Type.objects.get(type=form.cleaned_data["Delivery_Type"]),
-                                                 Order_Date_Time=timezone.now(),
-                                                 Order_Address_Line1=form.cleaned_data["Order_Address_Line1"],
-                                                 Order_Address_Line2=form.cleaned_data["Order_Address_Line2"],
-                                                 Order_City=form.cleaned_data["Order_Region"],
-                                                 Order_State="DELHI",
-                                                 Order_ZIP=form.cleaned_data["Order_ZIP"],
-                                                 Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
-                                                 Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
-                                                 Transaction_Id="null",
+                                       Order_In_Name_Of=form.cleaned_data["Order_In_Name_Of"],
+                                       Order_Customer=self.request.user.customer,
+                                       Order_Delivery_Type=Delivery_Type.objects.get(type=form.cleaned_data["Delivery_Type"]),
+                                       Order_Date_Time=timezone.now(),
+                                       Order_Address_Line1=form.cleaned_data["Order_Address_Line1"],
+                                       Order_Address_Line2=form.cleaned_data["Order_Address_Line2"],
+                                       Order_City=form.cleaned_data["Order_Region"],
+                                       Order_State="DELHI",
+                                       Order_ZIP=form.cleaned_data["Order_ZIP"],
+                                       Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
+                                       Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
+                                       Transaction_Id="null",
                                               )
            CART_ID="CART_ID"
            cart=self.request.COOKIES.get(CART_ID)
@@ -395,14 +412,14 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                     cart_items=cart_obj.cartitem_set.all()
                     for cart_item in cart_items:
                          order_item=Order_Product_Specs.objects.create( 
-                                                                                    Order=order,
-                                                                                    Ordered_Product=cart_item.ProductAvailibiltyCheck(),
-                                                                                    Quantity=cart_item.Product_Quantity,
-                                                                                    Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
-                                                                                    Order_Reference=cart_item.OrderReferenceCheck(),
-                                                                                    Final_Ordered_Product_price=cart_item.Total_Price(),
-                                                                                    Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED"),
-                                                                                     )
+                                                                      Order=order,
+                                                                      Ordered_Product=cart_item.ProductAvailibiltyCheck(),
+                                                                      Quantity=cart_item.Product_Quantity,
+                                                                      Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
+                                                                      Order_Reference=cart_item.OrderReferenceCheck(),
+                                                                      Final_Ordered_Product_price=cart_item.Total_Price(),
+                                                                      Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED"),
+                                                                        )
               else:
                  messages.error(self.request, 'no cart')
                  response = redirect(reverse("home"))
@@ -413,9 +430,24 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                 messages.error(self.request, 'nothing in cart')
                 return redirect(reverse("home")) 
 
-class OrderProcessCompleted(LoginRequiredMixin,View):
-     pass
-     #delete cart id and revive paytm crdentials and dadd coupon to used
+#callbackview
+class OrderProcessCompleted(View):
+     def post(self,request):
+       CART_ID="CART_ID"
+       cart=request.COOKIES.get(CART_ID)
+       if cart:
+         cart_obj=Cart.objects.get(pk=cart)
+         for cart_product in cart_obj.cartitem_set.all():
+            if cart_product.coupon_code:
+              CustomerCouponUsedTrack.objects.create(customer=request.user,coupon_code=cart_product.coupon_code)
+         cart_obj=Cart.objects.filter(pk=cart).delete()
+         messages.success(self.request,'order placed buddy')
+         # paytm crdentials and redirection
+         response = redirect(reverse("user-orders"))
+         response.delete_cookie(CART_ID)
+         return response
+       else:
+         return Http404
 
 
 
@@ -569,9 +601,7 @@ class AdminSubcategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,View):
              return redirect(reverse("admin-catalog-sub"))
 
 
-
 #####order stuff admin
-
 class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
     def test_func(self):
         return self.request.user.is_superuser
@@ -600,7 +630,7 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
           product_id=request.POST.get("order_product_id")
           ordered_product=Order_Product_Specs.objects.get(pk=product_id)
           ordered_product.Order_Status=Order_Status_Model.objects.get(status_for_order=request.POST.get("status")),
-          return JsonResponse({"message":"status changed"})
+          return JsonResponse({"message":"status changed"+"to"+request.POST.get["status"]})
        else:
           return JsonResponse({"message":"order does not exist"})
 

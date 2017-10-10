@@ -95,6 +95,7 @@ class Tax(models.Model):
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)
+   Filter_Subcategory_Type=models.ForeignKey(SubCategory)
 
 class Filter_Category(models.Model):
    Filter=models.ForeignKey(Filter_Name)

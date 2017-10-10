@@ -2,7 +2,9 @@ from django.conf.urls import url,include
 from .views import *
 from django.conf import settings
 from django.conf.urls.static import static
-
+reviewurls=[
+ url(r'(?P<review_id>[\w-]+)/$',ReviewSubmitView.as_view(),name="review")
+]
 userurls=[
    url(r'edit-info/$',EditFormView.as_view(),name="edit-form"),
    url(r'security/$',SecurityView.as_view(),name="security"),
@@ -32,6 +34,7 @@ commonurls=[
 orderurls=[
     url(r'place-order/$',PlaceOrder.as_view(),name="place-order"),
     url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
+    url(r'order-placed-status/$',OrderProcessCompleted.as_view(),name="order-status"),#callabackurl
 ]
 adminurls=[
    url(r'signin/$',AdminSignin.as_view(),name="admin-login"),
@@ -55,5 +58,6 @@ urlpatterns = [
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
     url(r'adminsite/',include(adminurls)),
-    url(r'search/',ElasticSearch,name="search")
+    url(r'search/',ElasticSearch,name="search"),
+    url(r'review/',include(reviewurls))
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
