@@ -66,6 +66,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELD=['']
 
     objects=CustomUserManager()
+    def __str__(self):
+        return self.username 
 
 
 
@@ -77,6 +79,8 @@ class BaseCategory(models.Model):
         print self.Base_Category 
         self.Base_Slug_Field=slugify(self.Base_Category)
         super(BaseCategory, self).save()
+  def __str__(self):
+     return self.Base_Category     
 
 
 
@@ -88,22 +92,31 @@ class SubCategory(models.Model):
   def save(self, *args, **kwargs):
         self.Sub_Category_Slug_Field=slugify(self.Sub_Category)
         super(SubCategory, self).save()
+  def __str__(self):
+    return self.Sub_Category     
 
 class Tax(models.Model):
     Prducts=models.ForeignKey(SubCategory)
     Tax_Percentage=models.FloatField()
+    def __str__(self):
+        return self.Tax_Percentage
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)
    Filter_Subcategory_Type=models.ForeignKey(SubCategory)
+   def __str__(self):
+        return self.Filter_Name
 
 class Filter_Category(models.Model):
    Filter=models.ForeignKey(Filter_Name)
    Filter_Category_Name=models.CharField(max_length=100)  
-
+   def __str__(self):
+        return self.Filter_Category_Name
 
 class Availibilty_status(models.Model):
-  status=models.CharField(max_length=50,unique=True)  
+  status=models.CharField(max_length=50,unique=True)
+  def __str__(self):
+        return self.status  
 
 class Seller(models.Model):
   Seller_Id=models.CharField(max_length=100,unique=True)
@@ -112,11 +125,14 @@ class Seller(models.Model):
   Profile=models.TextField(max_length=1000)
   email=models.EmailField()
   Contact_Number=models.IntegerField()
-
+  def __str__(self):
+        return self.Seller_Id 
 
 class Shipment_Orgs(models.Model):
   Shipping_Company_Name=models.CharField(max_length=100)
   Shipping_Company_Id=models.CharField(max_length=100,unique=True)
+  def __str__(self):
+        return self.Shipping_Company_Name
   #shipping company details will be added as per requirements
 
 
@@ -135,6 +151,8 @@ class Product(models.Model):
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
+  def __str__(self):
+     return str(self.pk)+str(self.Product_Name)
   def price_after_discount(self):
       Actual_Price=((100-self.Discount)/100)* self.Base_Price
       return  Actual_Price
@@ -155,16 +173,22 @@ class Flash_Sale(models.Model):
    Products_In_Sale=models.ManyToManyField(Product)
    active=models.BooleanField(default=False)
    Main_Banner=models.ImageField(upload_to="FlashSaleBanner/")
-   Flash_slug=models.SlugField()
+   Flash_slug=models.SlugField(blank=True)
+   def __str__(self):
+     return self.Flash_Sale_Name
 
 class Flash_Sale_Banner(models.Model):
    Flash_Sale_Ancess=models.ForeignKey(Flash_Sale)
    Banner_Pics=models.ImageField(upload_to="FlashSaleBanner/")
+   def __str__(self):
+     return self.Banner_Pics.name
 
 
 class Pics(models.Model):
   ProductPics=models.ForeignKey(Product)
   Images=models.ImageField(upload_to="ProductImages/")
+  def __str__(self):
+     return self.Images.name
 
 
 class Customer(models.Model):
@@ -180,6 +204,8 @@ class Customer(models.Model):
    Customer_Contact_Number=models.IntegerField()
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
+   def __str__(self):
+     return self.Customer_First_Name
 
 class Review(models.Model):
   Reviewer=models.ForeignKey(Customer)
@@ -205,12 +231,16 @@ class Sales_Team(models.Model):
    is_intern=models.BooleanField(default=False)
    Sales_Contact_Number=models.IntegerField()
    Sales_Points=models.IntegerField(default=0)
+   def __str__(self):
+     return self.Sales_First_Name
 
 #coupon stuff
 class CouponCode(models.Model):
-    Code=models.TextField(max_length=100)
+    Code=models.CharField(max_length=100)
     Sales_Member=models.ForeignKey(Sales_Team,null=True)
     Discount=models.FloatField(default=0)
+    def __str__(self):
+       return self.Code
 
 
 class CustomerCouponUsedTrack(models.Model):
@@ -224,6 +254,8 @@ class Cart(models.Model):
    def Total_Price(self):
         Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
         return Total
+   def __str__(self):
+       return self.pk     
 
 class Cartitem(models.Model):
   Cart_Product_Belongs_To=models.ForeignKey(Cart)
@@ -236,7 +268,9 @@ class Cartitem(models.Model):
              Total=((self.Product_In_Cart.price_after_discount())*(self.Product_Quantity))-self.coupon_code.Discount
           else:     
              Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
-          return Total  
+          return Total 
+  def __str__(self):
+       return self.pk          
   def ProductAvailibiltyCheck(self):
          if self.Product_In_Cart.Availiability:
              return self.Product_In_Cart
@@ -255,16 +289,24 @@ class Cartitem(models.Model):
 
 class Delivery_Type(models.Model):
    type=models.CharField(max_length=100,unique=True)
+   def __str__(self):
+       return self.type
    #normal #express
 
 class Payment_Method(models.Model):
   payment_type=models.CharField(max_length=100,unique=True)
+  def __str__(self):
+       return self.payment_type
 
 class Payment_Status(models.Model):
   payment_status=models.CharField(max_length=100,unique=True)
+  def __str__(self):
+       return self.payment_status
 
 class Order_Status_Model(models.Model):
   status_for_order=models.CharField(max_length=100,unique=True)
+  def __str__(self):
+       return self.status_for_order
   #delivered,shipped,outfordelivery,cancelled
 class Order(models.Model):
    Order_In_Name_Of=models.CharField(max_length=100)
@@ -282,6 +324,8 @@ class Order(models.Model):
    Whole_Order_Status=models.ForeignKey(Order_Status_Model)
    class Meta:
        ordering=['pk']
+   def __str__(self):
+       return self.pk
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0
@@ -314,6 +358,8 @@ class Order_Product_Specs(models.Model):
   Final_Ordered_Product_price=models.FloatField()
   Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
   Order_Volts_Credit_Used=models.IntegerField(default=0)
+  def __str__(self):
+       return self.pk
 
 
 
