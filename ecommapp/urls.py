@@ -51,13 +51,21 @@ adminurls=[
    url(r'admin-order/$',AdminOrderView.as_view(),name="admin-order"),
 
 ]
+
+salesurls=[
+ url(r'signin/$',SalesSignin.as_view(),name="sales-signin"),
+ url(r'user/$',SalesPanel.as_view(),name="sales-panel"),
+ url(r'signout/$',SalesSignOut.as_view(),name="sales-signout"),
+
+]
 urlpatterns = [
+    url(r'search/',ElasticSearch,name="search"),
     url(r'home/',include(commonurls)),
     url(r'auth/',include(authurls)),   
     url(r'cart/',include(carturls)),
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
     url(r'adminsite/',include(adminurls)),
-    url(r'search/',ElasticSearch,name="search"),
-    url(r'review/',include(reviewurls))
+    url(r'review/',include(reviewurls)),
+    url(r'salessite/',include(salesurls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

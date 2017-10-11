@@ -1,0 +1,28 @@
+{% extends "sales-base.html" %}
+{% load static %}
+{%block body%}
+
+   <p>emailid: {{sales.Sales_Email}}</p>
+  <p>ARE YOU INTERNING : 
+  {% if sales.is_intern %}
+    YUP
+    {%else%}
+    NOPE
+  {%endif%}
+</p>
+  <p> contact no: {{sales.Sales_Contact_Number}}</p>
+ 
+<h2>Points: {{sales.Sales_Points}}</h2>
+  <p> CODES </p>
+  <ul>
+   {% for sales_coupon_code in sales.couponcode_set.all %}
+   <li>code: {{sales_coupon_code.Code}}</li>
+   {%endfor%}
+ </ul>
+   <p>SALES STUFF</p>
+   <ul>
+   {% for coupon_code_obj in coupon_used_list %}
+  <li> code: {{coupon_code_obj.coupon_code.Code}}   customer:{{coupon_code_obj.customer.Customer_First_Name}}</li>
+   {%endfor%}
+ </ul>
+{%endblock%}

@@ -634,10 +634,54 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
        else:
           return JsonResponse({"message":"order does not exist"})
 
-
+#sales panel stuff----------------------------------------------->
+class SalesSignin(FormView):
+    """sales login form and validation"""
+    template_name="sales-login.html"
+    form_class=SignInForm
+    success_url="siteuser/user"
+    def form_valid(self,form):
+           user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
+           if Sales_Team.objects.filter(Sales_user__username=form.cleaned_data["username"]).exists():
+               if user is not None:
+                     if user.is_active:
+                         login(self.request,user)
+                         return super(SalesSignin, self).form_valid(form)
+                     else:
+                           messages.error(self.request, 'Invalid username or password')
+                           return redirect(reverse("sales-signin"))    
+               else:
+                   messages.error(self.request, 'Invalid username or password')
+                   return redirect(reverse("sales-signin"))
+           else:
+               messages.error(self.request, 'Invalid username or password')
+               return redirect(reverse("sales-signin"))
+   
+                 
+                     
 
  
+class SalesPanel(LoginRequiredMixin,UserPassesTestMixin,View):
+  """sales panel"""
+  templat_name="sales-panel.html"
+  def test_func(self):
+     return Sales_Team.objects.filter(Sales_user=self.request.user).exists()
+  def get(self,request):
+      """sales panel landing page"""
+      coupon_used_list=[]
+      sales=Sales_Team.objects.get(Sales_user=request.user)
+      for code in sales.couponcode_set.all():
+         if CustomerCouponUsedTrack.objects.filter(coupon_code=code).exists():
+             coupon_used=CustomerCouponUsedTrack.objects.filter(coupon_code=code)
+             coupon_used_list.append(coupon_used)
+      return render(request,"sales-index.html",{"sales":sales,"coupon_used_list":coupon_used_list}) 
 
+
+class SalesSignOut(LoginRequiredMixin,View):
+    def get(self,request):
+          logout(request)
+          return redirect(reverse("sales-signin"))
+         
 
 
 

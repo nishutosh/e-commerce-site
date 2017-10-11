@@ -258,7 +258,7 @@ class Delivery_Type(models.Model):
    #normal #express
 
 class Payment_Method(models.Model):
-   payment_type=models.CharField(max_length=100,unique=True)
+  payment_type=models.CharField(max_length=100,unique=True)
 
 class Payment_Status(models.Model):
   payment_status=models.CharField(max_length=100,unique=True)
