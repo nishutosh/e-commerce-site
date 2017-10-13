@@ -438,6 +438,7 @@ class OrderProcessCompleted(View):
      def invoce_genrator(order_id):
          pass
          """
+         pip install fpdf
          link to this lib :http://pyfpdf.readthedocs.io/en/latest/Tutorial/index.html
          pdf =FPDF()
          pdf.add_page()
@@ -522,8 +523,11 @@ class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
         order_count=Order.objects.all().count()
         #ask for sales
         customer_count=Customer.objects.all().count()
-        recent_order=Order.objects.all()[0:10]
-        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user}       
+        recent_order=Order.objects.all()[0:10]  
+        order_per_month=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__month=request.GET.get("month"))
+        order_per_year=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__year=request.GET.get("year"))
+        order_per_day=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__day=request.GET.get("day"))
+        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user,"order_per_month":order_per_month,"order_per_year":order_per_year,"order_per_day":order_per_day}  
         return render(request,"admin-index.html",context)      
 
 
