@@ -3,8 +3,12 @@
 {%block body%}
 
    <p> {{seller}}</p>
+   <a href={% url "seller-product-add" %}> ADD</a>
    {% for product in seller.product_set.all %}
-      {{product}}
+     <li>{{product}}
+      <a href={% url "seller-product-update"  product.pk %}>EDIT</a>
+      <a href={% url "seller-product-delete"  product.pk %}>DELETE</a>
+    </li>
    {%endfor%}
 
 {%endblock%}

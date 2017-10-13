@@ -14,7 +14,8 @@
        <div class="col-md-4">
         <h1>SALES PANEL</h1>
                   <a href={% url "sales-signout" %} >Logout</a>
-                  <li>Hi   </li>
+                  <li>Hi {{sales.Sales_First_Name}}
+   {{sales.Sales_Last_Name}}  </li>
            {% block body %}
            {%endblock%}
   <!--   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
