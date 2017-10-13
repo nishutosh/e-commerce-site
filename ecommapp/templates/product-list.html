@@ -5,59 +5,21 @@
   {%csrf_token%}
   <div class="page-content">
     <div class="product-filters">
-      <button class="btn btn-default main-filter-btn filter-btn" data-toggle="collapse" data-target="#full-filter-list">
-        <h3>
-          Filters
-          <i class="fa fa-chevron-down" aria-hidden="true"></i>
-        </h3>
-      </button>
-      <div id="full-filter-list" class="main-filter-list collapse">
-        <div id="filter1-list" class="filter-list">
-          <button class="btn btn-default filter-btn" data-toggle="collapse" data-target="#type-list">
-            Type
-
-              <i class="fa fa-chevron-down" aria-hidden="true"></i>
-          </button>
-          <div id="type-list" class="collapse type-list">
-              <ul class="filter-type-list">
-                      <li>
-                        <input type="checkbox" value="t-shirt"> T-shirt
-                      </li>
-                      <li>
-                        <input type="checkbox" value="shirt"> Shirt
-                      </li>
-                      <li>
-                        <input type="checkbox" value="trouser"> Trouser
-                      </li>
-                      <li>
-                        <input type="checkbox" value="blazer"> Blazers
-                      </li>
-              </ul>
-          </div>
-        </div>
-          <div id="filter1-list" class="filter-list">
-            <button class="btn btn-default filter-btn" data-toggle="collapse" data-target="#type2-list">
-              Type
-                <i class="fa fa-chevron-down" aria-hidden="true"></i>
-            </button>
-            <div id="type2-list" class="collapse type-list">
-                <ul class="filter-type-list">
-                        <li>
-                          <input type="checkbox" value="t-shirt"> T-shirt
-                        </li>
-                        <li>
-                          <input type="checkbox" value="shirt"> Shirt
-                        </li>
-                        <li>
-                          <input type="checkbox" value="trouser"> Trouser
-                        </li>
-                        <li>
-                          <input type="checkbox" value="blazer"> Blazers
-                        </li>
-                </ul>
-            </div>
-          </div>
-        </div>
+      Filters
+      <ul>
+        {% for filter in filters %}
+       <li>{{filter.Filter_Name}}
+         <ul>
+         {%for filter_sub in filter.filter_category_set.all %}
+         <li>
+         <lable>{{filter_sub.Filter_Category_Name}}</lable>
+              <input value={{filter_sub.Filter_Category_Name}} type="checkbox">
+            </li>
+         {% endfor %}
+       </ul>
+       </li>
+     {% endfor %}
+      </ul>
       </div>
 
     <!--filter ends-->

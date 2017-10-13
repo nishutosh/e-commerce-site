@@ -1,0 +1,55 @@
+{% extends "base/sales-base.html" %}
+{% load static %}
+{%block body%}
+
+<div class="container-fluid">
+  <div class="main-container">
+    <div class="account-details">
+      <div class="user-icon">
+          <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+      </div>
+      <div class="details">
+          <h3><strong>{{sales.Sales_First_Name}} {{sales.Sales_Last_Name}}</strong></h3>
+          <h5>{{sales.Sales_Email}}</h5>
+          <h5>{{sales.Sales_Contact_Number}}</h5>
+          <h5>Profile:
+            {% if sales.is_intern %}
+              Intern
+              {%else%}
+              Team Member
+            {%endif%}
+          </h5>
+      </div>
+    </div>
+    <div class="box">
+        <h3>Points: {{sales.Sales_Points}}</h3>
+    </div>
+
+    
+    </div>
+</div>
+
+   <!-- <p>emailid: {{sales.Sales_Email}}</p>
+  <p>ARE YOU INTERNING :
+  {% if sales.is_intern %}
+    YUP
+    {%else%}
+    NOPE
+  {%endif%}
+</p>
+  <p> contact no: {{sales.Sales_Contact_Number}}</p>
+
+<h2>Points: {{sales.Sales_Points}}</h2>
+  <p> CODES </p>
+  <ul>
+   {% for sales_coupon_code in sales.couponcode_set.all %}
+   <li>code: {{sales_coupon_code.Code}}</li>
+   {%endfor%}
+ </ul>
+   <p>SALES STUFF</p>
+   <ul>
+   {% for coupon_code_obj in coupon_used_list %}
+  <li> code: {{coupon_code_obj.coupon_code.Code}}   customer:{{coupon_code_obj.customer.Customer_First_Name}}</li>
+   {%endfor%}
+ </ul> -->
+{%endblock%}

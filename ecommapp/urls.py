@@ -68,6 +68,15 @@ adminurls=[
    url(r'marketing/edit-coupon/$',AdminCouponCreateView.as_view(),name="admin-marketing-coupon-new"),
    url(r'marketing/edit-coupon/(?P<pk>[\w-]+)$',AdminCouponUpdateView.as_view(),name="admin-marketing-coupon-edit"),
    url(r'marketing/edit-coupon/delete/$',AdminCouponDeleteView.as_view(),name="admin-marketing-coupon-delete"),
+   url(r'admin-order/$',AdminOrderView.as_view(),name="admin-order"),
+   url(r'admin-order/change-product-status$',AdminOrderView.as_view(),name="admin-order-product-status"),
+
+]
+
+salesurls=[
+ url(r'signin/$',SalesSignin.as_view(),name="sales-signin"),
+ url(r'^$',SalesPanel.as_view(),name="sales-panel"),
+ url(r'signout/$',SalesSignOut.as_view(),name="sales-signout"),
 
 ]
 
@@ -77,5 +86,7 @@ urlpatterns = [
     url(r'cart/',include(carturls)),
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
-    url(r'admin-panel/',include(adminurls))
+    url(r'search/',ElasticSearch,name="search"),
+    url(r'admin-panel/',include(adminurls)),
+    url(r'sales-panel/',include(salesurls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

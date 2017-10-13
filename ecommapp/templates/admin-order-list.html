@@ -1,7 +1,17 @@
-{%extends 'admin-dash.html'%}
+{%extends 'base/admin-dash.html'%}
 {% load static %}
 {%block body%}
+{% csrf_token %}
 <div class="container-fluid">
+  <div class="messages">
+      {%if messages%}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {%endif%}
+  </div>
   <div class="data-container detail-box">
       <div class="header">
         <i class="fa fa-list" aria-hidden="true"></i>
@@ -13,43 +23,104 @@
                 <tr>
                   <th>Order Id</th>
                   <th>Customer</th>
-                  <th>Status</th>
+                  <th>Payment Status</th>
                   <th>Order Date</th>
                   <th>Last Modified</th>
                   <th>Total Cost</th>
                   <th>View Order</th>
-                  <th>Status Options</th>
                 </tr>
               </thead>
               <tbody>
+                {% for contact in contacts %}
                 <tr>
-                  <td>0001</td>
-                  <td>John Doe</td>
-                  <td>Pending</td>
-                  <td>21/08/17</td>
+                  <td>{{contact.id}}</td>
+                  <td>{{contact.Order_In_Name_Of}}</td>
+                  <td>{{contact.Order_Payment_status.payment_status}}</td>
+                  <td>{{contact.Order_Date_Time}}</td>
                   <td>22/08/17</td>
-                  <td>2000</td>
+                  <td>{{contact.Order_Total_Price}}</td>
                   <td>
-                    <a class="view-btn btn btn-default" href="/admin-dashboard/order-details"><i class="fa fa-eye" aria-hidden="true"></i></a>
-                  </td>
-                  <td>
-                    <div class="dropdown">
-                      <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-                        Change Status <span class="caret"></span>
-                      </button>
-                      <ul class="dropdown-menu status-list">
-                          <li><a href="#">Pending</a></li>
-                          <li><a href="#">Confirm</a></li>
-                          <li><a href="#">Delivered</a></li>
-                          <li><a href="#">Returned</a></li>
-                      </ul>
-                    </div>
+                    <a class="view-btn btn btn-default" data-toggle="modal" data-target="#productModal{{contact.id}}"><i class="fa fa-eye" aria-hidden="true"></i></a>
+
+                    <!-- Modal -->
+                      <div id="productModal{{contact.id}}" class="modal fade" role="dialog">
+                        <div class="modal-dialog modal-lg">
+
+                          <!-- Modal content-->
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h4 class="modal-title">Products</h4>
+                            </div>
+                            <div class="modal-body">
+                              <table class="table table-responsive">
+                                <thead>
+                                    <tr>
+                                      <th>Product</th>
+                                      <th>Name</th>
+                                      <th>Price</th>
+                                      <th>Quantity</th>
+                                      <th>Final Price</th>
+                                      <th>Status</th>
+                                      <th>Change Status</th>
+                                      <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {%for product in  contact.order_product_specs_set.all %}
+                                        <tr>
+                                          <td><img src="{{product.Ordered_Product.Main_Image.url}}" alt=""></td>
+                                          <td>{{product.Ordered_Product.Product_Name}}</td>
+                                          <td>₹{{product.Ordered_Product.price_after_discount}}</td>
+                                          <td>{{product.Quantity}}</td>
+                                          <td>₹{{product.Final_Ordered_Product_price}}</td>
+                                          <td>{{product.Order_Status.status_for_order}}</td>
+                                          <td>
+                                            <select id="status-list-{{contact.pk}}-{{product.pk}}" class="status-list" name="">
+                                                  {%for status in status%}
+                                                    <option value="{{status.status_for_order}}">{{status.status_for_order}}</option>
+                                                  {%endfor%}
+                                            </select>
+                                          </td>
+                                          <td>
+                                            <button type="button" name="button" class="status-change-btn btn btn-primary" data-order-id="{{contact.pk}}" data-product-id="{{product.pk}}" data-url="{%url "admin-order-product-status"%}">Change</button>
+                                          </td>
+                                        </tr>
+                                    {%endfor%}
+                                </tbody>
+                              </table>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+
                   </td>
                 </tr>
-
+                {%endfor%}
               </tbody>
           </table>
       </div>
+  </div>
+  <div class="pagination">
+      <span class="step-links">
+          {% if contacts.has_previous %}
+              <a href="?page={{ contacts.previous_page_number }}">previous</a>
+          {% endif %}
+
+          <span class="current">
+              Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
+          </span>
+
+          {% if contacts.has_next %}
+              <a href="?page={{ contacts.next_page_number }}">next</a>
+          {% endif %}
+      </span>
   </div>
 </div>
 {%endblock%}

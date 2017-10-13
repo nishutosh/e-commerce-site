@@ -60,6 +60,7 @@ $.ajaxSetup({
 
 
 
+
 function getCartItems()
 {
   $.ajax({
@@ -67,6 +68,32 @@ function getCartItems()
                url: "/cart/",
                 success: function(result){
                           console.log(result);
+                          if(result.length == 0)
+                          {
+                            var element = '<h3>Oops! Your cart is empty... </h3>';
+                            $(".continue-shopping-cta").before(element);
+                            $("#order-btn").addClass("disabled");
+                            $("#order-btn").parents(".order-cta").css({
+                              "cursor": "not-allowed"
+                            });
+                          }
+                          else if(result.message == "no cookie present")
+                              {
+                                var cartItems = 0;
+                                $(".cart-item-number").text(cartItems);
+                              }
+                              
+                          else{
+                            var cartItems = result.length;
+                            $(".cart-item-number").text(cartItems);
+                          }
+
+
+
+
+
+
+
                 }
                 });
 }
@@ -89,7 +116,11 @@ $(".cart-btn").click(function(){
                                          type: "GET",
                                          url: $(this).attr("data-ajax-url"),
                                           success: function(result){
-                                         console.log(result)
+                                         console.log(result);
+                                         if(result.length == 0)
+                                         {
+                                           console.log("cart is empty");
+                                         }
 
                                           }
                                           });
@@ -279,7 +310,7 @@ $(".discount-form").each(function(){
          },
       success: function(){
              location.reload();
-             
+
            }
     });
   });

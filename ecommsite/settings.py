@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ecommapp',
+    'rest_framework',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +83,11 @@ DATABASES = {
     }
 }
 
-
+ELASTICSEARCH_DSL={
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -101,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL="/signin/"
+LOGIN_URL="auth/signin/"
 #default user model
 AUTH_USER_MODEL = 'ecommapp.CustomUser'
 # Internationalization

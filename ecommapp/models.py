@@ -11,6 +11,7 @@ from django.template.defaultfilters import slugify
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 
+
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
     def _create_user(self, username, password, **extra_fields):
@@ -73,7 +74,7 @@ class BaseCategory(models.Model):
   Base_Category_Pic=models.ImageField(upload_to="BaseCatPic/")
   Base_Slug_Field=models.SlugField(max_length=120,blank=True)
   def save(self, *args, **kwargs):
-        print (self.Base_Category)
+        #print ("self.Base_Category")
         self.Base_Slug_Field=slugify(self.Base_Category)
         super(BaseCategory, self).save()
 
@@ -88,10 +89,13 @@ class SubCategory(models.Model):
         self.Sub_Category_Slug_Field=slugify(self.Sub_Category)
         super(SubCategory, self).save()
 
-
+class Tax(models.Model):
+    Prducts=models.ForeignKey(SubCategory)
+    Tax_Percentage=models.FloatField()
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)
+   Filter_Subcategory_Type=models.ForeignKey(SubCategory,default=1)
 
 class Filter_Category(models.Model):
    Filter=models.ForeignKey(Filter_Name)
@@ -130,10 +134,21 @@ class Product(models.Model):
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   Product_Seller=models.ForeignKey(Seller)
+  TaxOnProduct=models.ForeignKey(Tax,default=1)
   def price_after_discount(self):
       Actual_Price=((100-self.Discount)/100)* self.Base_Price
       return  Actual_Price
-
+  def indexing(self):
+     from .search import ProductIndex
+     obj = ProductIndex(
+        meta={'id': self.id},
+        Product_Name=self.Product_Name,
+        Description=self.Description,
+        Features=self.Features,
+        TechnicalSpecs=self.TechnicalSpecs
+     )
+     obj.save()
+     return obj.to_dict(include_meta=True)
 
 class Flash_Sale(models.Model):
    Flash_Sale_Name=models.CharField(max_length=100)
@@ -151,9 +166,6 @@ class Pics(models.Model):
   ProductPics=models.ForeignKey(Product)
   Images=models.ImageField(upload_to="ProductImages/")
 
-class Tax(models.Model):
-    Prducts=models.ForeignKey(SubCategory)
-    Tax_Percentage=models.FloatField()
 
 class Customer(models.Model):
    User_customer=models.OneToOneField(CustomUser)
@@ -197,7 +209,7 @@ class Sales_Team(models.Model):
 #coupon stuff
 class CouponCode(models.Model):
     Code=models.TextField(max_length=100)
-    Sales_Member=models.ForeignKey(Sales_Team)
+    Sales_Member=models.ForeignKey(Sales_Team,null=True)
     Discount=models.FloatField(default=0)
 
 
@@ -246,7 +258,7 @@ class Delivery_Type(models.Model):
    #normal #express
 
 class Payment_Method(models.Model):
-   payment_type=models.CharField(max_length=100,unique=True)
+  payment_type=models.CharField(max_length=100,unique=True)
 
 class Payment_Status(models.Model):
   payment_status=models.CharField(max_length=100,unique=True)
@@ -267,11 +279,17 @@ class Order(models.Model):
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
    Transaction_Id=models.CharField(max_length=100)
+   Whole_Order_Status=models.ForeignKey(Order_Status_Model,default=1)
    class Meta:
        ordering=['pk']
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0
+       for order_item in order_list:
+           total=total+order_item.Final_Ordered_Product_price
+       return total
+   def  Order_Status_sync(self):
+       order_list=self.order_product_specs_set.all()
        for order_item in order_list:
            total=total+order_item.Final_Ordered_Product_price
        return total

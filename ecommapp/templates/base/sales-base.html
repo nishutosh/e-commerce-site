@@ -11,7 +11,10 @@
      <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-colors.css' %}" />
      <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-form.css' %}" />
      <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-form-colors.css' %}" />
-
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/user-dash.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/user-dash-colors.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/user-dash-mobile.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/sales.css' %}" />
      <script src="{% static 'main/js/jquery-3.2.1.js' %}"></script>
      <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
      <script src="{% static 'main/js/bootstrap-dropdownhover.min.js' %}"></script>
@@ -29,11 +32,11 @@
           <div class="icon-tray">
                 <div class="admin-user">
                 <a href="#" class="btn btn-default">
-                    <i class="fa fa-user" aria-hidden="true"></i> Ankit
+                    <i class="fa fa-user" aria-hidden="true"></i> {{sales.Sales_First_Name}}
                 </a>
                 </div>
                 <div class="logout">
-                <a href="{%url "admin-signout"%}" class="btn btn-default">
+                <a href="{%url "sales-signout"%}" class="btn btn-default">
                     <i class="fa fa-sign-out" aria-hidden="true"></i> LOGOUT
                 </a>
                 </div>
@@ -52,38 +55,12 @@
                 DASHBOARD</a>
                 <!-- <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i> -->
               </li>
-              <li class="side-nav-li">
-                <i class="fa fa-tags" aria-hidden="true"></i>
-                Catalog
-                <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
-                <ul class="side-nav-sub-list">
-                          <li>
-                            <a href="{% url "admin-catalog-base" %}">
-                              Main Category
-                            </a>
-                          </li>
-                          <li>
-                            <a href="{%url "admin-catalog-sub"%}">
-                              Sub Category
-                            </a>
-                          </li>
-                          <li>
-                            <a href="{%url "admin-catalog-product"%}">
-                              Products
-                            </a>
-                          </li>
-                          <li>
-                            <a href="{%url "admin-catalog-product-pics"%}">
-                                Product Pics
-                            </a>
-                          </li>
-                </ul>
-              </li>
+
               <li class="side-nav-li">
                 <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                 ORDERS
                 <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
-                <ul class="side-nav-sub-list">
+                <!-- <ul class="side-nav-sub-list">
                           <li>
                             <a href="{%url "admin-order"%}">
                               All Orders
@@ -104,41 +81,13 @@
                               Orders by Category
                             </a>
                           </li>
-                </ul>
+                </ul> -->
               </li>
+
               <li class="side-nav-li">
-                <i class="fa fa-users" aria-hidden="true"></i>
-                CUSTOMERS
+                <i class="fa fa-tags" aria-hidden="true"></i>
+                Coupons
                 <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
-                <ul class="side-nav-sub-list">
-                          <li>
-                            <a href="{%url "admin-customer-enduser"%}">
-                              End Users
-                            </a>
-                          </li>
-                          <li>
-                            <a href="{%url "admin-customer-sellers"%}">
-                              Vendors
-                            </a>
-                          </li>
-                </ul>
-              </li>
-              <li class="side-nav-li">
-                <i class="fa fa-share-alt" aria-hidden="true"></i>
-                MARKETING
-                <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
-                <ul class="side-nav-sub-list">
-                          <li>
-                            <a href="{%url "admin-marketing-coupon"%}">
-                              Coupons
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              Ads
-                            </a>
-                          </li>
-                </ul>
               </li>
               <li class="side-nav-li">
                 <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
@@ -150,19 +99,21 @@
                               Total Sales
                             </a>
                           </li>
+                </ul>
+              </li>
+              <li class="side-nav-li">
+                <i class="fa fa-user" aria-hidden="true"></i>
+                Your Details
+                <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
+                <ul class="side-nav-sub-list">
                           <li>
                             <a href="#">
-                              Intern Sales
+                              Edit Details
                             </a>
                           </li>
                           <li>
                             <a href="#">
-                              Team Sales
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              Total End Users
+                              Security
                             </a>
                           </li>
                 </ul>

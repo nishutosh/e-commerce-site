@@ -1,0 +1,12 @@
+.main-container
+{
+  text-align: center;
+}
+
+.box, .box h3
+{
+  margin: auto;
+  padding: 20px;
+  background-color: orange;
+  color: white;
+}

@@ -24,8 +24,8 @@
                     <div class="search-form">
                       <form class="main-navbar-form">
                         <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Search">
-                          <button type="button" name="button" class="btn btn-default search-btn">
+                          <input type="text" class="form-control" placeholder="Search" name="search_term">
+                          <button type="button" name="button" class="btn btn-default search-btn" data-url="{% url "search" %}">
                             <i class="fa fa-search" aria-hidden="true"></i>
                           </button>
                         </div>
