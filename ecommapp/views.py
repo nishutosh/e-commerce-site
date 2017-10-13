@@ -19,6 +19,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .search import search
 from .orderfilters import OrderFilter
+from fpdf import FPDF
+
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all() 
 }
@@ -430,8 +432,20 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                 messages.error(self.request, 'nothing in cart')
                 return redirect(reverse("home")) 
 
+
 #callbackview
 class OrderProcessCompleted(View):
+     def invoce_genrator(order_id):
+         pass
+         """
+         link to this lib :http://pyfpdf.readthedocs.io/en/latest/Tutorial/index.html
+         pdf =FPDF()
+         pdf.add_page()
+         pdf.set_font('Arial', 'B', 16)
+         pdf.cell(40, 10, 'Hola Mundo!')
+         pdf.output('path_to_invoice_folder.pdf', 'F')
+         will continue after stats
+         """
      def post(self,request):
        CART_ID="CART_ID"
        cart=request.COOKIES.get(CART_ID)
@@ -441,6 +455,8 @@ class OrderProcessCompleted(View):
             if cart_product.coupon_code:
               CustomerCouponUsedTrack.objects.create(customer=request.user,coupon_code=cart_product.coupon_code)
          cart_obj=Cart.objects.filter(pk=cart).delete()
+         #order_id=request.POST["order_id_from_paytm"]
+         #invoice_genrator(order_id)
          messages.success(self.request,'order placed buddy')
          # paytm crdentials and redirection
          response = redirect(reverse("user-orders"))
@@ -474,6 +490,7 @@ class CancelOrder(LoginRequiredMixin,View):
 
 class AdminSignin(FormView):
     """admin login form and validation"""
+
     template_name="admin-login.html"
     form_class=SignInForm
     success_url="adminsite/panel"
