@@ -119,6 +119,7 @@ class Availibilty_status(models.Model):
         return self.status  
 
 class Seller(models.Model):
+  seller_user=models.OneToOneField(CustomUser)
   Seller_Id=models.CharField(max_length=100,unique=True)
   Seller_Name=models.CharField(max_length=100)
   Address=models.TextField(max_length=500)
@@ -149,6 +150,7 @@ class Product(models.Model):
   # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  is_displayed=models.BooleanField(default=True)
   Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
   def __str__(self):
@@ -325,7 +327,7 @@ class Order(models.Model):
    class Meta:
        ordering=['pk']
    def __str__(self):
-       return self.pk
+       return self.Order_In_Name_Of
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0

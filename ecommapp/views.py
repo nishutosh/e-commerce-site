@@ -49,7 +49,7 @@ class ProductList(ListView):
   template_name="product_list.html"
   def get_queryset(self):
         try: 
-              return  Product.objects.filter(Product_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
+              return  Product.objects.filter(is_displayed=True,Product_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"])
         except:
               raise Http404
   def get_context_data(self, **kwargs):
@@ -68,7 +68,7 @@ class ProductDetails(DetailView):
    template_name="product.html"
    def get_queryset(self):
         try:
-            return  Product.objects.filter(Product_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"],pk=self.kwargs["pk"])
+            return  Product.objects.filter(is_displayed=True,Product_Base_Category__Base_Slug_Field=self.kwargs["basefield"],product_Sub_Category__Sub_Category_Slug_Field=self.kwargs["subfield"],pk=self.kwargs["pk"])
         except:
             raise Http404
    def get_context_data(self, **kwargs):
@@ -663,7 +663,6 @@ class SalesSignin(FormView):
  
 class SalesPanel(LoginRequiredMixin,UserPassesTestMixin,View):
   """sales panel"""
-  templat_name="sales-panel.html"
   def test_func(self):
      return Sales_Team.objects.filter(Sales_user=self.request.user).exists()
   def get(self,request):
@@ -674,18 +673,72 @@ class SalesPanel(LoginRequiredMixin,UserPassesTestMixin,View):
          if CustomerCouponUsedTrack.objects.filter(coupon_code=code).exists():
              coupon_used=CustomerCouponUsedTrack.objects.filter(coupon_code=code)
              coupon_used_list.append(coupon_used)
-      return render(request,"sales-index.html",{"sales":sales,"coupon_used_list":coupon_used_list}) 
+      return render(request,"sales-panel.html",{"sales":sales,"coupon_used_list":coupon_used_list}) 
 
 
 class SalesSignOut(LoginRequiredMixin,View):
     def get(self,request):
           logout(request)
           return redirect(reverse("sales-signin"))
-         
 
+#seller stuff--------------------------> 
+class SellerPanel(LoginRequiredMixin,UserPassesTestMixin,View):
+  """sales panel"""
+  def test_func(self):
+      return Seller.objects.filter(seller_user=self.request.user).exists()
+  def get(self,request):
+      """seller panel landing page"""
+      seller=Seller.objects.get(seller_user=request.user)
+      return render(request,"seller-panel.html",{"seller":seller})
 
+class SellerSignin(FormView):
+    """sales login form and validation"""
+    template_name="seller-login.html"
+    form_class=SignInForm
+    success_url="sellersite/panel"
+    def form_valid(self,form):
+           user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
+           if Seller.objects.filter(seller_user__username=form.cleaned_data["username"]).exists():
+               if user is not None:
+                     if user.is_active:
+                         login(self.request,user)
+                         return super(SellerSignin, self).form_valid(form)
+                     else:
+                           messages.error(self.request, 'Invalid username or password')
+                           return redirect(reverse("seller-signin"))    
+               else:
+                   messages.error(self.request, 'Invalid username or password')
+                   return redirect(reverse("seller-signin"))
+           else:
+               messages.error(self.request, 'Invalid username or password')
+               return redirect(reverse("seller-signin"))
 
+class SellerSignOut(LoginRequiredMixin,View):
+    def get(self,request):
+          logout(request)
+          return redirect(reverse("seller-signin"))
 
+class SellerProductAdd(LoginRequiredMixin,CreateView,UserPassesTestMixin):
+   model=Product
+   template_name="seller-product-cu.html"
+   fields="__all__"
+   success_url="sellersite/panel"
+   def test_func(self):
+      return Seller.objects.filter(seller_user=self.request.user).exists()
+
+class SellerProductUpdate(LoginRequiredMixin,UpdateView,UserPassesTestMixin):
+   model=Product
+   fields="__all__"
+   template_name="seller-product-cu.html"
+   success_url="sellersite/panel"
+   def test_func(self):
+      return Seller.objects.filter(seller_user=self.request.user).exists()
+
+class SellerProductDelete(LoginRequiredMixin,DeleteView,UserPassesTestMixin):
+   model=Product
+   success_url="sellersite/panel"
+   def test_func(self):
+      return Seller.objects.filter(seller_user=self.request.user).exists()
 
 
 

@@ -1,0 +1,10 @@
+{% extends "seller-base.html" %}
+{% load static %}
+{%block body%}
+
+   <p> {{seller}}</p>
+   {% for product in seller.product_set.all %}
+      {{product}}
+   {%endfor%}
+
+{%endblock%}

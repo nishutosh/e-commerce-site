@@ -56,7 +56,15 @@ salesurls=[
  url(r'signin/$',SalesSignin.as_view(),name="sales-signin"),
  url(r'user/$',SalesPanel.as_view(),name="sales-panel"),
  url(r'signout/$',SalesSignOut.as_view(),name="sales-signout"),
+]
 
+sellerurls=[
+ url(r'signin/$',SellerSignin.as_view(),name="seller-signin"),
+ url(r'panel/$',SellerPanel.as_view(),name="seller-panel"),
+ url(r'signout/$',SellerSignOut.as_view(),name="seller-signout"),
+ url(r'create/$',SellerProductAdd.as_view(),name="seller-product-add"),
+ url(r'update/(?P<pk>[0-9]+)$',SellerProductUpdate.as_view(),name="seller-product-update"),
+ url(r'delete/(?P<pk>[0-9]+)$',SellerProductDelete.as_view(),name="seller-product-delete"),
 ]
 urlpatterns = [
     url(r'search/',ElasticSearch,name="search"),
@@ -68,4 +76,5 @@ urlpatterns = [
     url(r'adminsite/',include(adminurls)),
     url(r'review/',include(reviewurls)),
     url(r'salessite/',include(salesurls)),
+    url(r'sellersite/',include(sellerurls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
