@@ -521,9 +521,9 @@ class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
            return self.request.user.is_superuser
      def get(self,request):
         order_count=Order.objects.all().count()
-        #ask for sales
         customer_count=Customer.objects.all().count()
-        recent_order=Order.objects.all()[0:10]  
+        recent_order=Order.objects.all()[0:10] 
+        #get request for sales para: "month" "date" "year" 
         order_per_month=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__month=request.GET.get("month"))
         order_per_year=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__year=request.GET.get("year"))
         order_per_day=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__day=request.GET.get("day"))
