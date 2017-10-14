@@ -491,7 +491,6 @@ class CancelOrder(LoginRequiredMixin,View):
 
 class AdminSignin(FormView):
     """admin login form and validation"""
-
     template_name="admin-login.html"
     form_class=SignInForm
     success_url="adminsite/panel"
@@ -524,10 +523,11 @@ class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
         customer_count=Customer.objects.all().count()
         recent_order=Order.objects.all()[0:10] 
         #get request for sales para: "month" "date" "year" 
-        order_per_month=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__month=request.GET.get("month"))
-        order_per_year=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__year=request.GET.get("year"))
-        order_per_day=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__day=request.GET.get("day"))
-        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user,"order_per_month":order_per_month,"order_per_year":order_per_year,"order_per_day":order_per_day}  
+        # order_per_month=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__month=request.GET.get("month"))
+        # order_per_year=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__year=request.GET.get("year"))
+        # order_per_day=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__day=request.GET.get("day"))
+        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user} 
+        # "order_per_month":order_per_month,"order_per_year":order_per_year,"order_per_day":order_per_day 
         return render(request,"admin-index.html",context)      
 
 
@@ -638,7 +638,10 @@ class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(1)
          except EmptyPage:
             contacts = paginator.page(paginator.num_pages)
-         return render(request,"admin-order.html",{"contact":contacts,"status":status,'filter': filter}) 
+         return render(request,"admin-order.html",{"contacts":contacts,"status":status,'filter': filter}) 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 
 class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
   """ use  order_product_id and order_id """
@@ -646,12 +649,16 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
         return self.request.user.is_superuser
   def post(self,request):
        order_id=request.POST.get("order_id")
+       print order_id
        if Order.objects.filter(pk=order_id).exists():
           order=Order.objects.get(pk=order_id)
           product_id=request.POST.get("order_product_id")
           ordered_product=Order_Product_Specs.objects.get(pk=product_id)
-          ordered_product.Order_Status=Order_Status_Model.objects.get(status_for_order=request.POST.get("status")),
-          return JsonResponse({"message":"status changed"+"to"+request.POST.get["status"]})
+          print isinstance(ordered_product.Order_Status,Order_Status_Model)
+          print isinstance(Order_Status_Model.objects.get(status_for_order=request.POST.get("status")),Order_Status_Model)
+          ordered_product.Order_Status=Order_Status_Model.objects.get(status_for_order=request.POST.get("status"))
+          ordered_product.save()
+          return JsonResponse({"message":"status changed"})
        else:
           return JsonResponse({"message":"order does not exist"})
 

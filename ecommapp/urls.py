@@ -49,7 +49,7 @@ adminurls=[
    url(r'catalog/edit-subcategories/(?P<pk>[0-9]+)$',AdminSubcategoryUpdateView.as_view(),name="admin-catalog-sub-edit"),
    url(r'catalog/edit-subcategories/delete/$',AdminSubcategoryDeleteView.as_view(),name="admin-catalog-sub-delete"),
    url(r'admin-order/$',AdminOrderView.as_view(),name="admin-order"),
-   url(r'order-status-change/$'OrderStatusChange.as_view(),name="order-status-change")
+   url(r'order-status-change/$',OrderStatusChange.as_view(),name="order-status-change")
 
 ]
 

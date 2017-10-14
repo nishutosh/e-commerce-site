@@ -360,8 +360,7 @@ class Order_Product_Specs(models.Model):
   Final_Ordered_Product_price=models.FloatField()
   Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
   Order_Volts_Credit_Used=models.IntegerField(default=0)
-  def __str__(self):
-       return self.pk
+  
 
 
 
