@@ -131,7 +131,7 @@ class Seller(models.Model):
 
 class Shipment_Orgs(models.Model):
   Shipping_Company_Name=models.CharField(max_length=100)
-  Shipping_Company_Id=models.CharField(max_length=100,unique=True)
+  Shipping_Company_URL=models.URLField(max_length=100)
   def __str__(self):
         return self.Shipping_Company_Name
   #shipping company details will be added as per requirements
@@ -155,6 +155,8 @@ class Product(models.Model):
   TaxOnProduct=models.ForeignKey(Tax)
   def __str__(self):
      return str(self.pk)+str(self.Product_Name)
+  def get_product_url(self):
+      return "home/"+self.Product_Base_Category.Base_Slug_Field+"/"+self.product_Sub_Category.Sub_Category_Slug_Field+"/"+self.pk   
   def price_after_discount(self):
       Actual_Price=((100-self.Discount)/100)* self.Base_Price
       return  Actual_Price
@@ -175,15 +177,11 @@ class Flash_Sale(models.Model):
    Products_In_Sale=models.ManyToManyField(Product)
    active=models.BooleanField(default=False)
    Main_Banner=models.ImageField(upload_to="FlashSaleBanner/")
-   Flash_slug=models.SlugField(blank=True)
+   Flash_Sale_URL=models.URLField()
    def __str__(self):
      return self.Flash_Sale_Name
 
-class Flash_Sale_Banner(models.Model):
-   Flash_Sale_Ancess=models.ForeignKey(Flash_Sale)
-   Banner_Pics=models.ImageField(upload_to="FlashSaleBanner/")
-   def __str__(self):
-     return self.Banner_Pics.name
+
 
 
 class Pics(models.Model):
@@ -209,12 +207,12 @@ class Customer(models.Model):
    def __str__(self):
      return self.Customer_First_Name
 
-class Review(models.Model):
-  Reviewer=models.ForeignKey(Customer)
-  Product=models.ForeignKey(Product)
-  Review_Title=models.CharField(max_length=200)
-  Review_Body=models.TextField(max_length=5000)
-  show_review=models.BooleanField(default=True)
+# class Review(models.Model):
+#   Reviewer=models.ForeignKey(Customer)
+#   Product=models.ForeignKey(Product)
+#   Review_Title=models.CharField(max_length=200)
+#   Review_Body=models.TextField(max_length=5000)
+#   show_review=models.BooleanField(default=True)
 
 class Wish_List(models.Model):
    User_Wishlist=models.OneToOneField(CustomUser)
@@ -325,7 +323,7 @@ class Order(models.Model):
    Transaction_Id=models.CharField(max_length=100)
    Whole_Order_Status=models.ForeignKey(Order_Status_Model)
    class Meta:
-       ordering=['pk']
+       ordering=['-Order_Date_Time']
    def __str__(self):
        return self.Order_In_Name_Of
    def Order_Total_Price(self):

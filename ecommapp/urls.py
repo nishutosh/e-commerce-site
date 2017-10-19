@@ -2,15 +2,15 @@ from django.conf.urls import url,include
 from .views import *
 from django.conf import settings
 from django.conf.urls.static import static
-reviewurls=[
- url(r'(?P<review_id>[\w-]+)/$',ReviewSubmitView.as_view(),name="review")
-]
+# reviewurls=[
+#  url(r'(?P<review_id>[\w-]+)/$',ReviewSubmitView.as_view(),name="review")
+# ]
 userurls=[
    url(r'edit-info/$',EditFormView.as_view(),name="edit-form"),
    url(r'security/$',SecurityView.as_view(),name="security"),
    url(r'credits/$',FashVoltsCreditView.as_view(),name="credits"),
    url(r'coupoun-applied/$',CoupounAppliedView.as_view(),name="coupouns"),
-   url(r'reviews/$',UserReviewList.as_view(),name="user-reviews"),
+   # url(r'reviews/$',UserReviewList.as_view(),name="user-reviews"),
    url(r'orders/$',UserOrderList.as_view(),name="user-orders"),
    url(r'user-dashboard/$',UserDashboard.as_view(),name="user-dashboard"),
 ]
@@ -35,6 +35,7 @@ orderurls=[
     url(r'place-order/$',PlaceOrder.as_view(),name="place-order"),
     url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
     url(r'order-placed-status/$',OrderProcessCompleted.as_view(),name="order-status"),#callabackurl
+    url(r'order-payment/(?P<order_id>\d+)/$',OrderPayment.as_view(),name="order-payment"),
 ]
 adminurls=[
    url(r'signin/$',AdminSignin.as_view(),name="admin-login"),
@@ -75,7 +76,7 @@ urlpatterns = [
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
     url(r'adminsite/',include(adminurls)),
-    url(r'review/',include(reviewurls)),
+    # url(r'review/',include(reviewurls)),
     url(r'salessite/',include(salesurls)),
     url(r'sellersite/',include(sellerurls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

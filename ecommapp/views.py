@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from .forms import *
 from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
-from django.core.urlresolvers  import reverse
+from django.core.urlresolvers  import reverse,reverse_lazy
 from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.utils import timezone
@@ -76,7 +76,7 @@ class ProductDetails(DetailView):
    def get_context_data(self, **kwargs):
         context = super(ProductDetails, self).get_context_data(**kwargs)
         context["pics"]=context["product"].pics_set.all()
-        context["review"]=Review.objects.all()
+        # context["review"]=Review.objects.all()
         context.update(menu_product_view_context)
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user      
@@ -148,31 +148,31 @@ class SignOutView(LoginRequiredMixin,View):
           return redirect(reverse("home"))
 
 
-class ReviewSubmitView(LoginRequiredMixin,View):
-    def post(self,request):
-        """user submit review"""
-        if request.POST.get("review_id")=="new":
-            Review.objects.create(Reviewer=self.request.user,
-                                   Product=request.POST.get["product"],
-                                   Review_Title=request.POST.get["Review_titile"],
-                                   Review_Body=request.POST.get["Review_Body"],
-                                   show_review=True)       
-            return JsonResponse({"message":"review submitted"})
-        else:
-            if Review.objects.filter(pk=request.Post.get("review_id")).exists():
-               Review.objects.filter(pk=request.Post.get("review_id")).update(Review_Title=request.POST.get("review_title"),Review_Body=request.POST.get("review_body"))
-               return JsonResponse({"message":"review updated"})
-            else:
-               return JsonResponse({"message":"review does not exist"}) 
+# class ReviewSubmitView(LoginRequiredMixin,View):
+#     def post(self,request):
+#         """user submit review"""
+#         if request.POST.get("review_id")=="new":
+#             Review.objects.create(Reviewer=self.request.user,
+#                                    Product=request.POST.get["product"],
+#                                    Review_Title=request.POST.get["Review_titile"],
+#                                    Review_Body=request.POST.get["Review_Body"],
+#                                    show_review=True)       
+#             return JsonResponse({"message":"review submitted"})
+#         else:
+#             if Review.objects.filter(pk=request.Post.get("review_id")).exists():
+#                Review.objects.filter(pk=request.Post.get("review_id")).update(Review_Title=request.POST.get("review_title"),Review_Body=request.POST.get("review_body"))
+#                return JsonResponse({"message":"review updated"})
+#             else:
+#                return JsonResponse({"message":"review does not exist"}) 
 
 
-class ReviewDelete(LoginRequiredMixin,View):
-    def post(self,request):
-       if Review.objects.filter(pk=request.POST.get("review_id")).exists():
-           Review.objects.filter(pk=request.POST.get("review_id")).delete()
-           return JsonResponse({"message":"review deleted"})
-       else:
-           return JsonResponse({"message":"review does not exist"})
+# class ReviewDelete(LoginRequiredMixin,View):
+#     def post(self,request):
+#        if Review.objects.filter(pk=request.POST.get("review_id")).exists():
+#            Review.objects.filter(pk=request.POST.get("review_id")).delete()
+#            return JsonResponse({"message":"review deleted"})
+#        else:
+#            return JsonResponse({"message":"review does not exist"})
 
             
 
@@ -248,12 +248,12 @@ class  CoupounAppliedView(LoginRequiredMixin,View):
          return render(request,"coupouns.html",context)
 
 
-class UserReviewList(LoginRequiredMixin,View):
-    def get(self,request):
-         user_obj=request.user
-         context={"siteuser":user_obj,"reviews":user_obj.customer.review_set.all()}
-         context.update(menu_product_view_context)
-         return render(request,"user-reviews.html",context)
+# class UserReviewList(LoginRequiredMixin,View):
+#     def get(self,request):
+#          user_obj=request.user
+#          context={"siteuser":user_obj,"reviews":user_obj.customer.review_set.all()}
+#          context.update(menu_product_view_context)
+#          return render(request,"user-reviews.html",context)
 
 class UserOrderList(LoginRequiredMixin,View):
     def get(self,request):
@@ -264,6 +264,25 @@ class UserOrderList(LoginRequiredMixin,View):
 
 
 #AJAX calls classes
+class AddToWishList(View,LoginRequiredMixin):
+  def get(self,request):
+    wish_obj=Wish_List.objects.get_or_create(User_Wishlist=request.user)
+    product_list
+    for products in wish_obj_set.all():
+      product_list.append({"product name":products.Product_Name,
+                           "product_url":product.get_product_url()
+                            })
+      return JsonResponse(product_list,safe=False)
+  def post(self,request):
+     wish_obj=Wish_List.objects.get_or_create(User_Wishlist=request.user)
+     Wish_List_Product.objects.create(Wishlist=wish_obj,Product_In_Wishlist=request.POST.get("product_id"))
+class DeleteFromWishList(View,LoginRequiredMixin):
+   def post(self,request):
+     if Wish_List_Product.objects.filter(pk=request.POST.get("product_id")).exists():
+        Wish_List_Product.objects.filter(pk=request.POST.get("product_id")).delete()
+        return JsonResponse({"message":"product removed"})
+     else:
+        return JsonResponse({"message":"does not exists"})      
 
 #add to cart view
 class PostGetCartView(View):
@@ -366,7 +385,6 @@ class CheckoutView(LoginRequiredMixin,View):
                        cart_obj=Cart.objects.get(pk=cart)
                        cart_items=cart_obj.cartitem_set.all()
                        context={"siteuser":user,"cart_items":cart_items}
-                       print context
                        return render(request,"checkout.html",context)
                  else:   
                        messages.error(self.request, 'no cart')
@@ -383,8 +401,11 @@ class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
      #paytm redirect url
-     success_url="user/orders/"
-     def get_context_data(self, **kwargs):
+
+     def get_success_url(self,**kwargs):
+        print reverse_lazy("order-payment",kwargs={"order_id":kwargs["order_id"]})
+        return reverse_lazy("order-payment",kwargs={"order_id":kwargs["order_id"]})
+     def get_context_data(self, **kwargs): 
         context = super(PlaceOrder, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
         context["siteuser"]=self.request.user      
@@ -404,12 +425,13 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                        Order_ZIP=form.cleaned_data["Order_ZIP"],
                                        Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
                                        Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
+                                       Whole_Order_Status=Order_Status_Model.objects.get(status_for_order="PENDING"),
                                        Transaction_Id="null",
                                               )
            CART_ID="CART_ID"
            cart=self.request.COOKIES.get(CART_ID)
            if cart:
-              if cart.objects.filter(pk=cart).exists():
+              if Cart.objects.filter(pk=cart).exists():
                     cart_obj=Cart.objects.get(pk=cart)
                     cart_items=cart_obj.cartitem_set.all()
                     for cart_item in cart_items:
@@ -420,22 +442,51 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                                       Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
                                                                       Order_Reference=cart_item.OrderReferenceCheck(),
                                                                       Final_Ordered_Product_price=cart_item.Total_Price(),
-                                                                      Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED"),
+                                                                      Order_Status=Order_Status_Model.objects.get(status_for_order="PENDING"),
                                                                         )
               else:
                  messages.error(self.request, 'no cart')
                  response = redirect(reverse("home"))
                  response.delete_cookie(CART_ID)
                  return response           
-              return super(PlaceOrder, self).form_valid(form)
+              return redirect(self.get_success_url(order_id=order.pk))
            else:
                 messages.error(self.request, 'nothing in cart')
                 return redirect(reverse("home")) 
 
 
+class OrderPayment(LoginRequiredMixin,View):
+  def get(self,request,order_id):
+    user_obj=request.user
+    order=Order.objects.get(pk=order_id)
+    if order.Whole_Order_Status.status_for_order=="PENDING":
+      if order.Transaction_Id=="null":
+        return render(request,"order-payment.html",{"siteuser":user_obj,"order":order})
+      else:
+        raise Http404
+    else:
+      raise Http404           
+  def post(self,request,order_id):
+    if Order.objects.filter(pk=order_id).exists():
+       order=Order.objects.get(pk=order_id)
+       """just mark cancel here the whole order will be termed as cancel"""
+       if order.Whole_Order_Status.status_for_order=="PENDING":
+         print order.Transaction_Id
+         if order.Transaction_Id=="null":
+            Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))
+            return redirect(reverse("user-orders")) 
+         else:
+            raise Http404
+       else:
+         raise Http404
+    else:
+      raise Http404            
+
+      
+
 #callbackview
 class OrderProcessCompleted(View):
-     def invoce_genrator(order_id):
+     def invoice_genrator(order_id):
          pass
          """
          pip install fpdf
@@ -455,7 +506,7 @@ class OrderProcessCompleted(View):
          for cart_product in cart_obj.cartitem_set.all():
             if cart_product.coupon_code:
               CustomerCouponUsedTrack.objects.create(customer=request.user,coupon_code=cart_product.coupon_code)
-         cart_obj=Cart.objects.filter(pk=cart).delete()
+         Cart.objects.filter(pk=cart).delete()
          #order_id=request.POST["order_id_from_paytm"]
          #invoice_genrator(order_id)
          messages.success(self.request,'order placed buddy')
