@@ -258,8 +258,6 @@ class Cart(models.Model):
    def Total_Price(self):
         Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
         return Total
-   def __str__(self):
-       return self.pk
    def OrderReferenceCheck(self):
         if self.coupon_code:
              return self.coupon_code.Sales_Member
@@ -272,9 +270,7 @@ class Cartitem(models.Model):
   Product_Quantity=models.IntegerField(default=1)
   def Total_Price(self):              
           Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
-          return Total 
-  def __str__(self):
-       return self.pk          
+          return Total          
   def ProductAvailibiltyCheck(self):
          if self.Product_In_Cart.Availiability:
              return self.Product_In_Cart
