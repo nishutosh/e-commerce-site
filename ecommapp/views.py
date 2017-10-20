@@ -519,6 +519,7 @@ class CancelOrder(LoginRequiredMixin,View):
         order=request.POST.get("order_id")
         order_obj=get_object_or_404(Order,pk=order)
         if (request.user==order_obj.Order_Customer.customer.User_customer):
+          if ((timezone.now()-timezone.timedelta(days=1))<order.Order_Date_Time):
              order_items_id=request.POST.getlist("order_product_id")
              for product_id in order_items_id:
                   order_product=get_object_or_404(Order_Product_Specs,pk=product_id)
@@ -528,6 +529,9 @@ class CancelOrder(LoginRequiredMixin,View):
                   else:
                      order_product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
                      order_product.save()
+          else:
+              messages.error(self.request, 'request timeout')
+              return redirect(reverse("user-orders"))
         else:
             return  HttpResponse(status=401)   
         return redirect(reverse("user-orders"))

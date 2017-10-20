@@ -355,7 +355,8 @@ class Order_Product_Specs(models.Model):
   Final_Ordered_Product_price=models.FloatField()
   Order_Volts_Credit_Used=models.IntegerField(default=0)
   
-
+class OrderReturn(models.Model):
+   Order=models.ForeignKey(Order)
 
 
 
