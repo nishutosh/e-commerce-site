@@ -3,10 +3,14 @@
     <h2>CHECKOUT</h2>
     <h3>cart</h3>
     <ul>
-        {% for items in cart_items%}
+       {% if cart_obj.coupon_code %}
+          {{cart_obj.coupon_code}} 
+       {%else%}
+        <input type="text"><button id="coupon">Apply Coupon Code</button>
+        {% endif %}
+        {% for items in cart_obj.cartitem_set.all %}
             <li>
-                   {{ items.Product_In_Cart.Product_Name}}  <input type="text"><button id="coupon">Apply Coupon Code</button>
-                 
+                   {{ items.Product_In_Cart.Product_Name}}  
             </li>
         {% endfor %}
         <a  href={%url "place-order" %}>Proceed to order</a>

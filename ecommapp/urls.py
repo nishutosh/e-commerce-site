@@ -34,7 +34,6 @@ commonurls=[
 orderurls=[
     url(r'place-order/$',PlaceOrder.as_view(),name="place-order"),
     url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
-    url(r'order-placed-status/$',OrderProcessCompleted.as_view(),name="order-status"),#callabackurl
     url(r'order-payment/(?P<order_id>\d+)/$',OrderPayment.as_view(),name="order-payment"),
 ]
 adminurls=[

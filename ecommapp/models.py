@@ -254,23 +254,24 @@ class CustomerCouponUsed(models.Model):
 class Cart(models.Model):
    date_of_creation=models.DateField(auto_now_add=True)
    checkout_date=models.DateField(blank=True,null=True)
+   coupon_code=models.ForeignKey(CouponCode,null=True,blank=True)
    def Total_Price(self):
         Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
         return Total
    def __str__(self):
-       return self.pk     
+       return self.pk
+   def OrderReferenceCheck(self):
+        if self.coupon_code:
+             return self.coupon_code.Sales_Member
+        else:
+             return None         
 
 class Cartitem(models.Model):
   Cart_Product_Belongs_To=models.ForeignKey(Cart)
   Product_In_Cart=models.ForeignKey(Product)
   Product_Quantity=models.IntegerField(default=1)
-  coupon_code=models.ForeignKey(CouponCode,null=True,blank=True)
-  def Total_Price(self):
-          if self.coupon_code:
-            #write discount function
-             Total=((self.Product_In_Cart.price_after_discount())*(self.Product_Quantity))-self.coupon_code.Discount
-          else:     
-             Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
+  def Total_Price(self):              
+          Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
           return Total 
   def __str__(self):
        return self.pk          
@@ -278,11 +279,6 @@ class Cartitem(models.Model):
          if self.Product_In_Cart.Availiability:
              return self.Product_In_Cart
          else:
-             return None
-  def OrderReferenceCheck(self):
-        if self.coupon_code:
-             return self.coupon_code.Sales_Member
-        else:
              return None
   # def CalculateEstimateDate(self):
   #       return timezone.now()
@@ -325,6 +321,7 @@ class Order(models.Model):
    Order_Payment_status=models.ForeignKey(Payment_Status)
    Transaction_Id=models.CharField(max_length=100)
    Whole_Order_Status=models.ForeignKey(Order_Status_Model)
+   Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
    class Meta:
        ordering=['-Order_Date_Time']
    def __str__(self):
@@ -360,7 +357,6 @@ class Order_Product_Specs(models.Model):
   #Esimated_Delivery_Date=models.DateField()
   Order_Status=models.ForeignKey(Order_Status_Model)
   Final_Ordered_Product_price=models.FloatField()
-  Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
   Order_Volts_Credit_Used=models.IntegerField(default=0)
   
 

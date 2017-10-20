@@ -243,7 +243,7 @@ class FashVoltsCreditView(LoginRequiredMixin,View):
 class  CoupounAppliedView(LoginRequiredMixin,View):
     def get(self,request):
          user_obj=request.user
-         context={"siteuser":user_obj,"coupouns":user_obj.customer.customercoupounapplied_set.all()}
+         context={"siteuser":user_obj,"coupouns":user_obj.customer.customercoupounused_set.all()}
          context.update(menu_product_view_context)
          return render(request,"coupouns.html",context)
 
@@ -291,26 +291,16 @@ class PostGetCartView(View):
      def get(self,request): 
              cart=request.COOKIES.get(self.CART_ID)
              if cart:
-                     new_cart_obj=Cart.objects.get(id=cart)
-                     cart_items=new_cart_obj.cartitem_set.all()
+                     cart_obj=Cart.objects.get(id=cart)
+                     cart_items=cart_obj.cartitem_set.all()
                      cart_list=[]
-                     for items in cart_items:
-                         if items.coupon_code:
-                            code=items.coupon_code.Code
-                            product_details={ "Product_name":items.Product_In_Cart.Product_Name,
-                                                             "Product_id":items.Product_In_Cart.pk,
-                                                             "Price":items.Total_Price(),
-                                                             "Quantity":items.Product_Quantity,
-                                                             "code":code,
-                                                             "discount":items.coupon_code.Discount,
-                                                            }
-                         else: 
-                             product_details={"Product_name":items.Product_In_Cart.Product_Name,
-                                                             "Product_id":items.Product_In_Cart.pk,
-                                                             "Price":items.Total_Price(),
-                                                             "Quantity":items.Product_Quantity
-                                                             }
-                         cart_list.append(product_details)
+                     for items in cart_items:                       
+                        product_details={ "Product_name":items.Product_In_Cart.Product_Name,
+                                           "Product_id":items.Product_In_Cart.pk,
+                                           "Price":items.Total_Price(),
+                                           "Quantity":items.Product_Quantity,
+                                                        }
+                        cart_list.append(product_details)
                      return  JsonResponse(cart_list,safe=False)  
              else :
                      return  JsonResponse({"message":"no cookie present"})  
@@ -355,19 +345,20 @@ class ApplyCoupon(View):
         cart=request.COOKIES.get(self.CART_ID)
         if cart:
                cart_obj=Cart.objects.get(pk=cart)
-               product=Product.objects.get(pk=request.POST["product"])
                coupon_code_entered=request.POST["coupon_entered"]
-               if (CouponCode.objects.filter(Code=coupon_code_entered).exists()) and (request.user.Customer.usability) and(not(CustomerCouponUsed.objects.filter(coupon_code=coupon_code_entered,customer_track=request.user.Customer).exists())):
-                    coupon=CouponCode.objects.get(Code=coupon_code_entered)
-                    if not(cart_obj.cartitem_set.filter(Product_In_Cart=product,coupon_code=coupon).exists()):
-                       d_cart_item=cart_obj.cartitem_set.get(Product_In_Cart=product)
-                       d_cart_item.coupon_code=coupon
-                       d_cart_item.save()
+               if (CouponCode.objects.filter(Code=coupon_code_entered).exists()):
+                 coupon=CouponCode.objects.get(Code=coupon_code_entered) 
+                 if (request.user.Customer.usability) and (not(CustomerCouponUsed.objects.filter(coupon_code=coupon,customer_track=request.user.Customer).exists())):
+                    if not(cart_obj.coupon_code):
+                       cart_obj.coupon_code=coupon
+                       cart_obj.save()
                        return JsonResponse({"message":"coupon code applied"})
                     else:
-                       return JsonResponse({"message":"coupon code exist on this product"})          
+                       return JsonResponse({"message":"coupon code exist on this product"})
+                 else:
+                     return JsonResponse({"message":"coupon code not applicable"})              
                else :
-                     return JsonResponse({"message":"coupon code not applicable"})
+                  return JsonResponse({"message":"coupon code not applicable"})
         else:
            return  JsonResponse({"response":"no cookie present"}) 
 
@@ -383,8 +374,7 @@ class CheckoutView(LoginRequiredMixin,View):
                  user=request.user
                  if Cart.objects.filter(pk=cart).exists():
                        cart_obj=Cart.objects.get(pk=cart)
-                       cart_items=cart_obj.cartitem_set.all()
-                       context={"siteuser":user,"cart_items":cart_items}
+                       context={"siteuser":user,"cart_obj":cart_obj}
                        return render(request,"checkout.html",context)
                  else:   
                        messages.error(self.request, 'no cart')
@@ -412,27 +402,27 @@ class PlaceOrder(LoginRequiredMixin,FormView):
         return context 
      def form_valid(self,form):
            """make an  order"""
-           print form.cleaned_data["Delivery_Type"]
-           order=Order.objects.create( 
-                                       Order_In_Name_Of=form.cleaned_data["Order_In_Name_Of"],
-                                       Order_Customer=self.request.user.customer,
-                                       Order_Delivery_Type=Delivery_Type.objects.get(type=form.cleaned_data["Delivery_Type"]),
-                                       Order_Date_Time=timezone.now(),
-                                       Order_Address_Line1=form.cleaned_data["Order_Address_Line1"],
-                                       Order_Address_Line2=form.cleaned_data["Order_Address_Line2"],
-                                       Order_City=form.cleaned_data["Order_Region"],
-                                       Order_State="DELHI",
-                                       Order_ZIP=form.cleaned_data["Order_ZIP"],
-                                       Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
-                                       Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
-                                       Whole_Order_Status=Order_Status_Model.objects.get(status_for_order="PENDING"),
-                                       Transaction_Id="null",
-                                              )
            CART_ID="CART_ID"
            cart=self.request.COOKIES.get(CART_ID)
            if cart:
               if Cart.objects.filter(pk=cart).exists():
                     cart_obj=Cart.objects.get(pk=cart)
+                    order=Order.objects.create( 
+                                                 Order_In_Name_Of=form.cleaned_data["Order_In_Name_Of"],
+                                                 Order_Customer=self.request.user.customer,
+                                                 Order_Delivery_Type=Delivery_Type.objects.get(type=form.cleaned_data["Delivery_Type"]),
+                                                 Order_Date_Time=timezone.now(),
+                                                 Order_Address_Line1=form.cleaned_data["Order_Address_Line1"],
+                                                 Order_Address_Line2=form.cleaned_data["Order_Address_Line2"],
+                                                 Order_City=form.cleaned_data["Order_Region"],
+                                                 Order_State="DELHI",
+                                                 Order_ZIP=form.cleaned_data["Order_ZIP"],
+                                                 Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
+                                                 Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
+                                                 Whole_Order_Status=Order_Status_Model.objects.get(status_for_order="PENDING"),
+                                                 Transaction_Id="null",
+                                                 Order_Reference=cart_obj.OrderReferenceCheck()
+                                                        )
                     cart_items=cart_obj.cartitem_set.all()
                     for cart_item in cart_items:
                          order_item=Order_Product_Specs.objects.create( 
@@ -440,7 +430,6 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                                       Ordered_Product=cart_item.ProductAvailibiltyCheck(),
                                                                       Quantity=cart_item.Product_Quantity,
                                                                       Shipment_Authority=cart_item.Product_In_Cart.Shipment_Authority,
-                                                                      Order_Reference=cart_item.OrderReferenceCheck(),
                                                                       Final_Ordered_Product_price=cart_item.Total_Price(),
                                                                       Order_Status=Order_Status_Model.objects.get(status_for_order="PENDING"),
                                                                         )
@@ -464,20 +453,27 @@ class OrderPayment(LoginRequiredMixin,View):
     else:
       raise Http404           
   def post(self,request,order_id):
+    """usablity cancel"""
     CART_ID="CART_ID"
     if Order.objects.filter(pk=order_id).exists():
        order=Order.objects.get(pk=order_id)
        """just mark cancel here the whole order will be termed as cancel"""
        if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="null") and(order.Order_Customer==request.user.Customer):
             Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))
-            return redirect(reverse("user-orders",kwargs={"order_id":order.pk}))
             cart=request.COOKIES.get(CART_ID)
             if cart:
               cart_obj=Cart.objects.get(pk=cart)
-              for cart_product in cart_obj.cartitem_set.all():
-                if cart_product.coupon_code:
-                  CustomerCouponUsed.objects.create(customer=request.user.Customer,coupon_code=cart_product.coupon_code)
-              Cart.objects.filter(pk=cart).delete() 
+              if cart_obj.coupoun_code:
+                  CustomerCouponUsed.objects.create(customer=request.user.Customer,coupon_code=cart_obj.coupon_code)
+                  if request.user.Customer.usability==True:
+                      request.user.Customer.usability=False
+                  else:
+                      request.user.Customer.usability    
+              Cart.objects.filter(pk=cart).delete()
+              response = redirect(reverse("user-orders",kwargs={"order_id":order.pk}))
+              response.delete_cookie(CART_ID)
+              return response
+
        else:
          raise Http404
     else:
@@ -486,37 +482,28 @@ class OrderPayment(LoginRequiredMixin,View):
       
 
 #callbackview
-class OrderProcessCompleted(View):
-     def invoice_genrator(order_id):
-         pass
-         """
-         pip install fpdf
-         link to this lib :http://pyfpdf.readthedocs.io/en/latest/Tutorial/index.html
-         pdf =FPDF()
-         pdf.add_page()
-         pdf.set_font('Arial', 'B', 16)
-         pdf.cell(40, 10, 'Hola Mundo!')
-         pdf.output('path_to_invoice_folder.pdf', 'F')
-         will continue after stats
-         """
-     def post(self,request):
-       CART_ID="CART_ID"
-       cart=request.COOKIES.get(CART_ID)
-       if cart:
-         cart_obj=Cart.objects.get(pk=cart)
-         for cart_product in cart_obj.cartitem_set.all():
-            if cart_product.coupon_code:
-              CustomerCouponUsedTrack.objects.create(customer=request.user,coupon_code=cart_product.coupon_code)
-         Cart.objects.filter(pk=cart).delete()
-         #order_id=request.POST["order_id_from_paytm"]
-         #invoice_genrator(order_id)
-         messages.success(self.request,'order placed buddy')
-         # paytm crdentials and redirection
-         response = redirect(reverse("user-orders"))
-         response.delete_cookie(CART_ID)
-         return response
-       else:
-         return Http404
+# class OrderProcessCompleted(View):
+#      def invoice_genrator(order_id):
+#          pass
+#          """
+#          pip install fpdf
+#          link to this lib :http://pyfpdf.readthedocs.io/en/latest/Tutorial/index.html
+#          pdf =FPDF()
+#          pdf.add_page()
+#          pdf.set_font('Arial', 'B', 16)
+#          pdf.cell(40, 10, 'Hola Mundo!')
+#          pdf.output('path_to_invoice_folder.pdf', 'F')
+#          will continue after stats
+#          """
+#      def get(self,request):
+            
+#      def post(self,request):
+#          #order_id=request.POST["order_id_from_paytm"]
+#          #invoice_genrator(order_id)
+#          messages.success(self.request,'order placed buddy')
+#          # paytm crdentials and redirection
+#        else:
+#          return Http404
 
 
 
