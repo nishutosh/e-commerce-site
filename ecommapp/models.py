@@ -204,6 +204,7 @@ class Customer(models.Model):
    Customer_Contact_Number=models.IntegerField()
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
+   usability=models.BooleanField(default=True)
    def __str__(self):
      return self.Customer_First_Name
 
@@ -243,8 +244,10 @@ class CouponCode(models.Model):
        return self.Code
 
 
-class CustomerCouponUsedTrack(models.Model):
-    customer=models.ForeignKey(Customer)
+
+
+class CustomerCouponUsed(models.Model):
+    customer_track=models.ForeignKey(Customer)   
     coupon_code=models.ForeignKey(CouponCode)
 
 #cart stuff
@@ -352,7 +355,8 @@ class Order_Product_Specs(models.Model):
   Quantity=models.IntegerField(default=1)
   #Invoice_Id=models.CharField(max_length=100,unique=True)
   #Invoice=models.FileField(upload_to="Invoices/")
-  Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  Shipment_Authority_Details=models.ForeignKey(Shipment_Orgs)
+  Shipment_Id=models.CharField(max_length=100)
   #Esimated_Delivery_Date=models.DateField()
   Order_Status=models.ForeignKey(Order_Status_Model)
   Final_Ordered_Product_price=models.FloatField()

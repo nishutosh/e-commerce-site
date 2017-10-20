@@ -357,7 +357,7 @@ class ApplyCoupon(View):
                cart_obj=Cart.objects.get(pk=cart)
                product=Product.objects.get(pk=request.POST["product"])
                coupon_code_entered=request.POST["coupon_entered"]
-               if CouponCode.objects.filter(Code=coupon_code_entered).exists() and (not CustomerCouponUsedTrack.objects.filter(coupon_code__Code=coupon_code_entered).exists()):
+               if (CouponCode.objects.filter(Code=coupon_code_entered).exists()) and (request.user.Customer.usability) and(not(CustomerCouponUsed.objects.filter(coupon_code=coupon_code_entered,customer_track=request.user.Customer).exists())):
                     coupon=CouponCode.objects.get(Code=coupon_code_entered)
                     if not(cart_obj.cartitem_set.filter(Product_In_Cart=product,coupon_code=coupon).exists()):
                        d_cart_item=cart_obj.cartitem_set.get(Product_In_Cart=product)
@@ -367,7 +367,7 @@ class ApplyCoupon(View):
                     else:
                        return JsonResponse({"message":"coupon code exist on this product"})          
                else :
-                     return JsonResponse({"message":"coupon code expired"})
+                     return JsonResponse({"message":"coupon code not applicable"})
         else:
            return  JsonResponse({"response":"no cookie present"}) 
 
@@ -459,24 +459,25 @@ class OrderPayment(LoginRequiredMixin,View):
   def get(self,request,order_id):
     user_obj=request.user
     order=Order.objects.get(pk=order_id)
-    if order.Whole_Order_Status.status_for_order=="PENDING":
-      if order.Transaction_Id=="null":
+    if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="null") and(order.Order_Customer==request.user.Customer):
         return render(request,"order-payment.html",{"siteuser":user_obj,"order":order})
-      else:
-        raise Http404
     else:
       raise Http404           
   def post(self,request,order_id):
+    CART_ID="CART_ID"
     if Order.objects.filter(pk=order_id).exists():
        order=Order.objects.get(pk=order_id)
        """just mark cancel here the whole order will be termed as cancel"""
-       if order.Whole_Order_Status.status_for_order=="PENDING":
-         print order.Transaction_Id
-         if order.Transaction_Id=="null":
+       if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="null") and(order.Order_Customer==request.user.Customer):
             Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))
-            return redirect(reverse("user-orders")) 
-         else:
-            raise Http404
+            return redirect(reverse("user-orders",kwargs={"order_id":order.pk}))
+            cart=request.COOKIES.get(CART_ID)
+            if cart:
+              cart_obj=Cart.objects.get(pk=cart)
+              for cart_product in cart_obj.cartitem_set.all():
+                if cart_product.coupon_code:
+                  CustomerCouponUsed.objects.create(customer=request.user.Customer,coupon_code=cart_product.coupon_code)
+              Cart.objects.filter(pk=cart).delete() 
        else:
          raise Http404
     else:
@@ -516,6 +517,7 @@ class OrderProcessCompleted(View):
          return response
        else:
          return Http404
+
 
 
 
