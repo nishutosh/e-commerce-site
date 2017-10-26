@@ -107,12 +107,12 @@
         </div>
 
         <div class="main-navbar-more-buttons">
-            <button class="btn btn-default small-button navbar-cart-btn" data-target="#mainNavbar">
-              <a href="{%url "checkout"%}">
-                  <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+          <button class="btn btn-default navbar-cart-btn">
+            <a href="{%url "checkout"%}">
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i> CART
+                <span class="cart-item-number badge">1</span>
               </a>
-
-            </button>
+          </button>
             <div class="dropdown">
               {% if siteuser %}
               <a href="" class="btn btn-default navbar-user-btn dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">

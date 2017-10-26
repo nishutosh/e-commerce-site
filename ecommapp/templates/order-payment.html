@@ -1,0 +1,13 @@
+{% extends "base/base.html" %}
+{% block body_block %}
+    <h2>PAYMENT FOR <br>Order id: {{order.pk}} <br>customerName:{{order.Order_In_Name_Of}}  </h2>
+    <p>blah blah blah</p>
+    <h3>999999999</h3>
+        <form action="" method="post" style="text-align: center;">
+          {%csrf_token%}
+          <input type="text" name="transaction_id" />
+          <input type="submit" value="SUBMIT YOUR TRANSACTION ID" />
+       </form>
+         <button>ELSE ENTER LATER PROCEED</button>
+      <a  href={%url "place-order" %}></a>
+{% endblock %}

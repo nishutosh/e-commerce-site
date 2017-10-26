@@ -66,6 +66,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELD=['']
 
     objects=CustomUserManager()
+    def __str__(self):
+        return self.username
 
 
 
@@ -74,9 +76,11 @@ class BaseCategory(models.Model):
   Base_Category_Pic=models.ImageField(upload_to="BaseCatPic/")
   Base_Slug_Field=models.SlugField(max_length=120,blank=True)
   def save(self, *args, **kwargs):
-        #print ("self.Base_Category")
+        print (self.Base_Category)
         self.Base_Slug_Field=slugify(self.Base_Category)
         super(BaseCategory, self).save()
+  def __str__(self):
+     return self.Base_Category
 
 
 
@@ -88,35 +92,48 @@ class SubCategory(models.Model):
   def save(self, *args, **kwargs):
         self.Sub_Category_Slug_Field=slugify(self.Sub_Category)
         super(SubCategory, self).save()
+  def __str__(self):
+    return self.Sub_Category
 
 class Tax(models.Model):
     Prducts=models.ForeignKey(SubCategory)
     Tax_Percentage=models.FloatField()
+    def __str__(self):
+        return self.Tax_Percentage
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)
-   Filter_Subcategory_Type=models.ForeignKey(SubCategory,default=1)
+   Filter_Subcategory_Type=models.ForeignKey(SubCategory)
+   def __str__(self):
+        return self.Filter_Name
 
 class Filter_Category(models.Model):
    Filter=models.ForeignKey(Filter_Name)
    Filter_Category_Name=models.CharField(max_length=100)
-
+   def __str__(self):
+        return self.Filter_Category_Name
 
 class Availibilty_status(models.Model):
   status=models.CharField(max_length=50,unique=True)
+  def __str__(self):
+        return self.status
 
 class Seller(models.Model):
+  seller_user=models.OneToOneField(CustomUser)
   Seller_Id=models.CharField(max_length=100,unique=True)
   Seller_Name=models.CharField(max_length=100)
   Address=models.TextField(max_length=500)
   Profile=models.TextField(max_length=1000)
   email=models.EmailField()
   Contact_Number=models.IntegerField()
-
+  def __str__(self):
+        return self.Seller_Id
 
 class Shipment_Orgs(models.Model):
   Shipping_Company_Name=models.CharField(max_length=100)
-  Shipping_Company_Id=models.CharField(max_length=100,unique=True)
+  Shipping_Company_URL=models.URLField(max_length=100)
+  def __str__(self):
+        return self.Shipping_Company_Name
   #shipping company details will be added as per requirements
 
 
@@ -133,8 +150,13 @@ class Product(models.Model):
   # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  is_displayed=models.BooleanField(default=True)
   Product_Seller=models.ForeignKey(Seller)
-  TaxOnProduct=models.ForeignKey(Tax,default=1)
+  TaxOnProduct=models.ForeignKey(Tax)
+  def __str__(self):
+     return str(self.pk)+str(self.Product_Name)
+  def get_product_url(self):
+      return "home/"+self.Product_Base_Category.Base_Slug_Field+"/"+self.product_Sub_Category.Sub_Category_Slug_Field+"/"+self.pk
   def price_after_discount(self):
       Actual_Price=((100-self.Discount)/100)* self.Base_Price
       return  Actual_Price
@@ -155,16 +177,18 @@ class Flash_Sale(models.Model):
    Products_In_Sale=models.ManyToManyField(Product)
    active=models.BooleanField(default=False)
    Main_Banner=models.ImageField(upload_to="FlashSaleBanner/")
-   Flash_slug=models.SlugField()
+   Flash_Sale_URL=models.URLField()
+   def __str__(self):
+     return self.Flash_Sale_Name
 
-class Flash_Sale_Banner(models.Model):
-   Flash_Sale_Ancess=models.ForeignKey(Flash_Sale)
-   Banner_Pics=models.ImageField(upload_to="FlashSaleBanner/")
+
 
 
 class Pics(models.Model):
   ProductPics=models.ForeignKey(Product)
   Images=models.ImageField(upload_to="ProductImages/")
+  def __str__(self):
+     return self.Images.name
 
 
 class Customer(models.Model):
@@ -180,13 +204,16 @@ class Customer(models.Model):
    Customer_Contact_Number=models.IntegerField()
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
+   usability=models.BooleanField(default=True)
+   def __str__(self):
+     return self.Customer_First_Name
 
-class Review(models.Model):
-  Reviewer=models.ForeignKey(Customer)
-  Product=models.ForeignKey(Product)
-  Review_Title=models.CharField(max_length=200)
-  Review_Body=models.TextField(max_length=5000)
-  show_review=models.BooleanField(default=True)
+# class Review(models.Model):
+#   Reviewer=models.ForeignKey(Customer)
+#   Product=models.ForeignKey(Product)
+#   Review_Title=models.CharField(max_length=200)
+#   Review_Body=models.TextField(max_length=5000)
+#   show_review=models.BooleanField(default=True)
 
 class Wish_List(models.Model):
    User_Wishlist=models.OneToOneField(CustomUser)
@@ -205,47 +232,49 @@ class Sales_Team(models.Model):
    is_intern=models.BooleanField(default=False)
    Sales_Contact_Number=models.IntegerField()
    Sales_Points=models.IntegerField(default=0)
+   def __str__(self):
+     return self.Sales_First_Name
 
 #coupon stuff
 class CouponCode(models.Model):
-    Code=models.TextField(max_length=100)
+    Code=models.CharField(max_length=100)
     Sales_Member=models.ForeignKey(Sales_Team,null=True)
     Discount=models.FloatField(default=0)
+    def __str__(self):
+       return self.Code
 
 
-class CustomerCouponUsedTrack(models.Model):
-    customer=models.ForeignKey(Customer)
+
+
+class CustomerCouponUsed(models.Model):
+    customer_track=models.ForeignKey(Customer)
     coupon_code=models.ForeignKey(CouponCode)
 
 #cart stuff
 class Cart(models.Model):
    date_of_creation=models.DateField(auto_now_add=True)
    checkout_date=models.DateField(blank=True,null=True)
+   coupon_code=models.ForeignKey(CouponCode,null=True,blank=True)
    def Total_Price(self):
         Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
         return Total
+   def OrderReferenceCheck(self):
+        if self.coupon_code:
+             return self.coupon_code.Sales_Member
+        else:
+             return None
 
 class Cartitem(models.Model):
   Cart_Product_Belongs_To=models.ForeignKey(Cart)
   Product_In_Cart=models.ForeignKey(Product)
   Product_Quantity=models.IntegerField(default=1)
-  coupon_code=models.ForeignKey(CouponCode,null=True,blank=True)
   def Total_Price(self):
-          if self.coupon_code:
-            #write discount function
-             Total=((self.Product_In_Cart.price_after_discount())*(self.Product_Quantity))-self.coupon_code.Discount
-          else:
-             Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
+          Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
           return Total
   def ProductAvailibiltyCheck(self):
          if self.Product_In_Cart.Availiability:
              return self.Product_In_Cart
          else:
-             return None
-  def OrderReferenceCheck(self):
-        if self.coupon_code:
-             return self.coupon_code.Sales_Member
-        else:
              return None
   # def CalculateEstimateDate(self):
   #       return timezone.now()
@@ -255,16 +284,24 @@ class Cartitem(models.Model):
 
 class Delivery_Type(models.Model):
    type=models.CharField(max_length=100,unique=True)
+   def __str__(self):
+       return self.type
    #normal #express
 
 class Payment_Method(models.Model):
   payment_type=models.CharField(max_length=100,unique=True)
+  def __str__(self):
+       return self.payment_type
 
 class Payment_Status(models.Model):
   payment_status=models.CharField(max_length=100,unique=True)
+  def __str__(self):
+       return self.payment_status
 
 class Order_Status_Model(models.Model):
   status_for_order=models.CharField(max_length=100,unique=True)
+  def __str__(self):
+       return self.status_for_order
   #delivered,shipped,outfordelivery,cancelled
 class Order(models.Model):
    Order_In_Name_Of=models.CharField(max_length=100)
@@ -279,9 +316,12 @@ class Order(models.Model):
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
    Transaction_Id=models.CharField(max_length=100)
-   Whole_Order_Status=models.ForeignKey(Order_Status_Model,default=1)
+   Whole_Order_Status=models.ForeignKey(Order_Status_Model)
+   Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
    class Meta:
-       ordering=['pk']
+       ordering=['-Order_Date_Time']
+   def __str__(self):
+       return self.Order_In_Name_Of
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0
@@ -308,9 +348,12 @@ class Order_Product_Specs(models.Model):
   Quantity=models.IntegerField(default=1)
   #Invoice_Id=models.CharField(max_length=100,unique=True)
   #Invoice=models.FileField(upload_to="Invoices/")
-  Shipment_Authority=models.ForeignKey(Shipment_Orgs)
+  Shipment_Authority_Details=models.ForeignKey(Shipment_Orgs)
+  Shipment_Id=models.CharField(max_length=100)
   #Esimated_Delivery_Date=models.DateField()
   Order_Status=models.ForeignKey(Order_Status_Model)
   Final_Ordered_Product_price=models.FloatField()
-  Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
   Order_Volts_Credit_Used=models.IntegerField(default=0)
+
+class OrderReturn(models.Model):
+   Order=models.ForeignKey(Order)

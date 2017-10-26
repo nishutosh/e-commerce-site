@@ -1,0 +1,64 @@
+.image
+{
+  width: 200px;
+}
+
+.canvas-container
+{
+  min-width: 500px;
+  max-width: 1000px;
+}
+.canvas
+{
+  border: 2px solid black;
+  /*height: 400px;
+  width: 300px;*/
+}
+
+
+.phone
+{
+  /*background: transparent;*/
+  padding: 6px;
+  position: relative;
+  border-radius: 20px;
+  min-width: 300px;
+
+}
+
+.new
+{
+  position: absolute;
+  z-index: -1;
+
+
+  border-radius: 20px;
+}
+
+.phone img
+{
+  width: auto;
+  max-width: 400px;
+}
+
+.custom-canvas
+{
+  position: absolute;
+  z-index:-1;
+}
+
+.preview
+{
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position:absolute;
+  z-index:-1;
+  padding:10px;
+  border-radius: 20px;
+}
+
+.preview img
+{
+  border-radius: 15px;
+}

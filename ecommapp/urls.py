@@ -9,7 +9,7 @@ userurls=[
    url(r'security/$',SecurityView.as_view(),name="security"),
    url(r'credits/$',FashVoltsCreditView.as_view(),name="credits"),
    url(r'coupon-applied/$',CoupounAppliedView.as_view(),name="coupons"),
-   url(r'reviews/$',UserReviewList.as_view(),name="user-reviews"),
+ #  url(r'reviews/$',UserReviewList.as_view(),name="user-reviews"),
    url(r'orders/$',UserOrderList.as_view(),name="user-orders")
 ]
 
@@ -36,7 +36,7 @@ commonurls=[
 orderurls=[
 url(r'place-order/$',PlaceOrder.as_view(),name="place-order"),
 url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
-
+url(r'order-payment/(?P<order_id>\d+)/$',OrderPayment.as_view(),name="order-payment"),
 ]
 
 adminurls=[
@@ -69,7 +69,7 @@ adminurls=[
    url(r'marketing/edit-coupon/(?P<pk>[\w-]+)$',AdminCouponUpdateView.as_view(),name="admin-marketing-coupon-edit"),
    url(r'marketing/edit-coupon/delete/$',AdminCouponDeleteView.as_view(),name="admin-marketing-coupon-delete"),
    url(r'admin-order/$',AdminOrderView.as_view(),name="admin-order"),
-   url(r'admin-order/change-product-status$',AdminOrderView.as_view(),name="admin-order-product-status"),
+   url(r'admin-order/change-product-status$',OrderStatusChange.as_view(),name="admin-order-product-status"),
 
 ]
 
@@ -77,6 +77,13 @@ salesurls=[
  url(r'signin/$',SalesSignin.as_view(),name="sales-signin"),
  url(r'^$',SalesPanel.as_view(),name="sales-panel"),
  url(r'signout/$',SalesSignOut.as_view(),name="sales-signout"),
+
+]
+
+customurls=[
+
+ url(r'^$',CustomView.as_view(),name="sales-panel"),
+
 
 ]
 
@@ -89,4 +96,5 @@ urlpatterns = [
     url(r'search/',ElasticSearch,name="search"),
     url(r'admin-panel/',include(adminurls)),
     url(r'sales-panel/',include(salesurls)),
+    url(r'^custom/',include(customurls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

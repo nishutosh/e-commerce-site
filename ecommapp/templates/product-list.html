@@ -5,21 +5,35 @@
   {%csrf_token%}
   <div class="page-content">
     <div class="product-filters">
-      Filters
-      <ul>
+      <button type="button" name="filter-list-toggle" class="btn btn-default filter-toggle-btn">
+          <h4>Filters <i class="fa fa-caret-down"></i></h4>
+      </button>
+
+      <div class="filter-list">
         {% for filter in filters %}
-       <li>{{filter.Filter_Name}}
-         <ul>
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>{{filter.Filter_Name}}</th>
+            </tr>
+          </thead>
+          <tbody>
          {%for filter_sub in filter.filter_category_set.all %}
-         <li>
-         <lable>{{filter_sub.Filter_Category_Name}}</lable>
-              <input value={{filter_sub.Filter_Category_Name}} type="checkbox">
-            </li>
+         <tr>
+           <td><input value={{filter_sub.Filter_Category_Name}} type="checkbox" class="filter-input"></td>
+
+            <td><lable>{{filter_sub.Filter_Category_Name}}</lable></td>
+            </tr>
          {% endfor %}
-       </ul>
-       </li>
+       </tbody>
+        </table>
+
+
      {% endfor %}
-      </ul>
+    <button type="button" name="filter-btn" id="filter-btn" class="btn btn-default alternate-cta-btn">Apply Filters</button>
+   </div>
+
       </div>
 
     <!--filter ends-->

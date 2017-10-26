@@ -1,4 +1,5 @@
 /*product-filters*/
+
 .product-filters
 {
     width: 100%;
@@ -7,44 +8,18 @@
     vertical-align: top;
     padding:0 20px;
 }
-.main-filter-btn
+
+.product-filters #filter-btn
 {
-  padding:0!important;
+  display: block;
+  margin: 20px auto;
 }
-.product-filters h3
+
+.filter-toggle-btn
 {
-  margin:0;
-  padding: 10px;
+  width: 100%;
 }
-.filter-list
-{
-}
-.filter-btn
-{
-    width: 100%;
-    padding: 5px 20px;
-    text-align: left;
-    border:none;
-    font-size: 18px;
-}
-.filter-btn i
-{
-  float:right;
-  margin-right: 20px;
-}
-.filter-type-list
-{
-    padding:20px;
-}
-.filter-type-list li
-{
-  display:list-item;
-  font-size: 16px;
-}
-.filter-type-list li input
-{
-  margin: 5px;
-}
+
 
 /*Product listing*/
 .product-list-container

@@ -165,3 +165,16 @@ body
 {
   border: 1px solid #ccc;
 }
+
+.navbar-cart-btn,.cta-btn
+{
+    background-color:orange;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+}
+.alternate-cta-btn,.alternate-cta-btn:hover
+{
+  background-color: #232F3E;
+  color:white;
+}

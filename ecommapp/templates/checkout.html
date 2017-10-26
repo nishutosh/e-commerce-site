@@ -17,7 +17,7 @@
                             </tr>
                           </thead>
                           <tbody>
-                            {% for items in cart_items%}
+                            {% for items in cart_obj.cartitem_set.all%}
                             <tr>
                                 <td class="item-image"><img src="{{ items.Product_In_Cart.Main_Image.url}}" alt="{{ items.Product_In_Cart.Product_Name}}"></td>
                                 <td class="product-name">

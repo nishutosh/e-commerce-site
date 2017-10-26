@@ -1,0 +1,57 @@
+{% extends "base/custom-base.html" %}
+{% load static %}
+{% block body %}
+
+
+    <div class="container-fluid">
+        <div class="page-content">
+          <h2>Custom Products</h2>
+              <div class="image-container">
+                <div class="image">
+                  <img id="phone-image" src="{%static 'main/images/phone_canvas.png' %}" alt="">
+                </div>
+                <div class="image">
+                  <img id="rear-image" src="{%static 'main/images/kids.jpg' %}" alt="">
+                </div>
+              </div>
+
+            <div class="phone-container col-lg-4">
+              <div class="phone" data-src="{%static 'main/images/new_phone_canvas.png' %}">
+              <canvas id="phone-canvas" class="custom-canvas" width="300" height="300">
+
+                  <img class="phone-canvas" src="{%static 'main/images/new_phone_canvas.png' %}" alt="">
+
+
+              </canvas>
+              <div class="preview" id="preview">
+
+              </div>
+            </div>
+
+            </div>
+
+
+              <div class="canvas-container col-lg-6">
+                        <div class="canvas">
+                            <canvas id="canvas" width="300" height="500">
+
+                            </canvas>
+                        </div>
+                        <div class="crop-button">
+                          <button type="button" class="btn btn-default alternate-cta-btn" id="crop" name="button">CROP</button>
+                          <button type="button" class="btn btn-default alternate-cta-btn" id="get-crop" name="button">getCROPbox</button>
+                          <button type="button" class="btn btn-default alternate-cta-btn" id="reset" name="button">reset</button>
+                          <button type="button" class="btn btn-default alternate-cta-btn" id="clear" name="button">clear</button>
+                          <button type="button" class="btn btn-default alternate-cta-btn" id="done" name="button">done</button>
+                        </div>
+              </div>
+
+              <div class="new-image">
+                  <div id="new-image">
+
+                  </div>
+              </div>
+        </div>
+    </div>
+
+{% endblock %}

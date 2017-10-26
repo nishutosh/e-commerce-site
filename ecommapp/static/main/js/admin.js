@@ -1,4 +1,24 @@
 
+$(document).ready(function(){
+  //prevent_defaults();
+  bootstrapClass();
+});
+
+///////////////////////////
+// stopping form submission
+//////////////////////////
+
+function prevent_defaults(){
+  var form = $("#filter-form").get(0);
+  form.addEventListener("submit",event => {
+        event.preventDefault();
+        submitFilters();
+        console.log("form submission stopped");
+    });
+}
+
+
+
   ///////////////////////////////////////////
   // Change product status through admin for orders
   ///////////////////////////////////////////
@@ -25,3 +45,23 @@
            }
     });
   });
+
+
+  ///////////////////////////////////////
+  // Filter function for orders
+  //////////////////////////////////////
+
+  function submitFilters()
+  {
+
+  }
+
+  ///////////////////////////////////
+  //adding bootstrap class to django forms
+  ////////////////////////////////////
+
+  function bootstrapClass()
+  {
+    $(".provide-bootstrap-class input").addClass("form-control");
+    $(".provide-bootstrap-class select").addClass("form-control");
+  }
