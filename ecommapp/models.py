@@ -316,6 +316,7 @@ class Order(models.Model):
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
    Transaction_Id=models.CharField(max_length=100)
+   Transaction_Id_verified=models.BooleanField(default=False)
    Whole_Order_Status=models.ForeignKey(Order_Status_Model)
    Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
    class Meta:
@@ -357,6 +358,10 @@ class Order_Product_Specs(models.Model):
   
 class OrderReturn(models.Model):
    Order=models.ForeignKey(Order)
+   User_Ordered=models.ForeignKey(Customer)
+   Refunded=models.BooleanField(default=False)
+
+
 
 
 

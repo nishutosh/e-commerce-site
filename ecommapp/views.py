@@ -396,7 +396,6 @@ class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
      #paytm redirect url
-
      def get_success_url(self,**kwargs):
         return reverse_lazy("order-payment",kwargs={"order_id":kwargs["order_id"]})
      def get_context_data(self, **kwargs): 
@@ -483,7 +482,7 @@ class OrderPayment(LoginRequiredMixin,View):
     else:
       raise Http404            
 
-      
+    
 
 #callbackview
 # class OrderProcessCompleted(View):
@@ -526,9 +525,13 @@ class CancelOrder(LoginRequiredMixin,View):
                   if order_product.Order_Status.status_for_order=="DELIVERED":
                      messages.error(self.request, 'order delivered')
                      return redirect(reverse("user-orders"))
-                  else:
-                     order_product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
-                     order_product.save()
+                  elif order_product.Order_Status.status_for_order=="PLACED":
+                    if order_obj.Transaction_Id_verified:
+                       OrderReturn.objects.create(Order=order_obj,
+                                                  User_Ordered=order_obj.Order_Customer.customer,
+                                                  )   
+                    order_product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
+                    order_product.save()
           else:
               messages.error(self.request, 'request timeout')
               return redirect(reverse("user-orders"))
@@ -537,8 +540,9 @@ class CancelOrder(LoginRequiredMixin,View):
         return redirect(reverse("user-orders"))
    
 
+
 class AdminSignin(FormView):
-    """admin login form and validation"""
+    """ admin login form and validation"""
     template_name="admin-login.html"
     form_class=SignInForm
     success_url="adminsite/panel"
@@ -570,12 +574,11 @@ class AdminPanel(LoginRequiredMixin,UserPassesTestMixin,View):
         order_count=Order.objects.all().count()
         customer_count=Customer.objects.all().count()
         recent_order=Order.objects.all()[0:10] 
-        #get request for sales para: "month" "date" "year" 
-        # order_per_month=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__month=request.GET.get("month"))
-        # order_per_year=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__year=request.GET.get("year"))
-        # order_per_day=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__day=request.GET.get("day"))
-        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user} 
-        # "order_per_month":order_per_month,"order_per_year":order_per_year,"order_per_day":order_per_day 
+        """get request for sales para: month date year""" 
+        order_per_month=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__month=request.GET.get("month"))
+        order_per_year=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__year=request.GET.get("year"))
+        order_per_day=Order.objects.filter(Whole_Order_Status__status_for_order="DELIVERED",Order_Date_Time__day=request.GET.get("day"))
+        context={"order_count":order_count,"customer_count":customer_count,"recent_order":recent_order,"siteadmin":request.user,"order_per_month":order_per_month,"order_per_year":order_per_year,"order_per_day":order_per_day }  
         return render(request,"admin-index.html",context)      
 
 
