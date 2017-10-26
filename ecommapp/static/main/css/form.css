@@ -183,3 +183,19 @@ input:-webkit-autofill ~ .control-label
   height:20px;
   float: right;
 }
+
+.paytm-details
+{
+  text-align: center;
+}
+
+.paytm-details h3
+{
+    text-decoration: underline;
+}
+
+.paytm-details span
+{
+  font-size: 25px;
+  font-weight: bold;
+}

@@ -548,8 +548,8 @@ class CancelOrder(LoginRequiredMixin,View):
    def post(self,request):
         order=request.POST.get("order_id")
         order_obj=get_object_or_404(Order,pk=order)
-        if (request.user==order_obj.Order_Customer.customer.User_customer):
-          if ((timezone.now()-timezone.timedelta(days=1))<order.Order_Date_Time):
+        if (request.user==order_obj.Order_Customer.User_customer):
+          if ((timezone.now()-timezone.timedelta(days=1))<order_obj.Order_Date_Time):
              order_items_id=request.POST.getlist("order_product_id")
              for product_id in order_items_id:
                   order_product=get_object_or_404(Order_Product_Specs,pk=product_id)
@@ -557,6 +557,7 @@ class CancelOrder(LoginRequiredMixin,View):
                      messages.error(self.request, 'order delivered')
                      return redirect(reverse("user-orders"))
                   else:
+                     print("I am cancelling") 
                      order_product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
                      order_product.save()
           else:

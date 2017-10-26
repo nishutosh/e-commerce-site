@@ -1,13 +1,37 @@
-{% extends "base/base.html" %}
+{% extends "base/form.html" %}
 {% block body_block %}
-    <h2>PAYMENT FOR <br>Order id: {{order.pk}} <br>customerName:{{order.Order_In_Name_Of}}  </h2>
-    <p>blah blah blah</p>
-    <h3>999999999</h3>
-        <form action="" method="post" style="text-align: center;">
+  <div class="container-fluid">
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Pay via Paytm for Order:</h4>
+              <br>
+            <h4>Order Id: {{order.pk}}</h4>
+            <h4>Customer Name: {{order.Order_In_Name_Of}}</h4>
+            <h4>Total Price : {{order.Order_Total_Price}}</h4>
+            <div class="paytm-details">
+                <h3>Pay on number: </h3>
+                <span>999999999</span>
+            </div>
+        </div>
+        {{ form.non_field_errors }}
+        <form class="form-horizontal" action="" method="post">
           {%csrf_token%}
-          <input type="text" name="transaction_id" />
-          <input type="submit" value="SUBMIT YOUR TRANSACTION ID" />
+          <div class="form-group col-sm-8 ">
+            <input type="text" name="transaction_id" />
+            <label class="control-label" for="transaction_id">Transaction ID of the Paytm Payment:</label>
+            <span class="orange-line"></span>
+          </div>
+          <div class="form-group button col-sm-8">
+            <input type="submit" value="SUBMIT" />
+          </div>
        </form>
-         <button>ELSE ENTER LATER PROCEED</button>
-      <a  href={%url "place-order" %}></a>
+
+       <!-- <div class="signup-container">
+         <h5>Can't Pay now? <br>Provide transaction Id later!</h5>
+         <a href="{%url "place-order"%}" class="btn btn-default">Place Order</a>
+       </div> -->
+    </div>
+
+  </div>
+
 {% endblock %}

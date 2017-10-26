@@ -96,28 +96,4 @@
       {%endfor%}
     </div>
 
-
-
-
-
-    <!-- <ul>
-        {% for order in orders%}
-            <li>
-                   {{ order.Order_In_Name_Of}}
-
-                   {{order.Order_Date_Time}}
-
-                    {{order.Order_ZIP}}
-
-                     {{order.Order_Date_Time}}
-
-                      {%for product in  order.order_product_specs_set.all %}
-                        <p>{{product.Ordered_Product.Product_Name}}</p>
-                      {%endfor%}
-
-                     {{order.Order_Payment_status.payment_status}}
-
-            </li>
-        {% endfor %}
-    </ul> -->
 {% endblock %}
