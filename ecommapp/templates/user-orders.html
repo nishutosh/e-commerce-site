@@ -16,6 +16,7 @@
                     <th>shipped to</th>
                     <th>Order</th>
                     <th>payment status</th>
+                    <th>order status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -25,6 +26,7 @@
                       <td>{{ order.Order_In_Name_Of}}</td>
                       <td>#{{ order.pk}}</td>
                       <td>{{ order.Order_Payment_status.payment_status}}</td>
+                      <td>{{order.Whole_Order_Status.status_for_order}}</td>
                     </tr>
                 </tbody>
               </table>
@@ -42,7 +44,7 @@
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Final Price</th>
-                            <th>Order Status</th>
+                            <!-- <th>Order Status</th> -->
 
                           </tr>
                         </thead>
@@ -52,7 +54,7 @@
                             <td>₹{{product.Ordered_Product.price_after_discount}}</td>
                             <td>{{product.Quantity}}</td>
                             <td>₹{{product.Final_Ordered_Product_price}}</td>
-                            <td>{{product.Order_Status.status_for_order}}</td>
+                            <!-- <td>{{product.Order_Status.status_for_order}}</td> -->
                           </tr>
                         </tbody>
                 </table>
