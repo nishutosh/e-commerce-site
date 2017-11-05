@@ -86,7 +86,7 @@ class BaseCategory(models.Model):
 
 class SubCategory(models.Model):
   Base_category_Key=models.ForeignKey(BaseCategory)
-  Sub_Category=models.CharField(max_length=100,unique=True)
+  Sub_Category=models.CharField(max_length=100)
   Sub_Category_Pic=models.ImageField(upload_to="SubCatPic/")
   Sub_Category_Slug_Field=models.SlugField(max_length=120,blank=True)
   def save(self, *args, **kwargs):
@@ -98,8 +98,7 @@ class SubCategory(models.Model):
 class Tax(models.Model):
     Prducts=models.ForeignKey(SubCategory)
     Tax_Percentage=models.FloatField()
-    def __str__(self):
-        return self.Tax_Percentage
+    
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)

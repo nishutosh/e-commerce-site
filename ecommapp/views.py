@@ -191,7 +191,7 @@ class  EditFormView(LoginRequiredMixin,FormView):
                       "contact_number":user_obj.customer.Customer_Contact_Number,
                       "address_line_1":user_obj.customer.Address_Line1,
                       "address_line_2":user_obj.customer.Address_Line2,
-                      "Region":user_obj.customer.City,
+                      "State":user_obj.customer.City,
                       "ZIP":user_obj.customer.ZIP,
                       }
           return initial
@@ -202,7 +202,7 @@ class  EditFormView(LoginRequiredMixin,FormView):
                                                         Customer_Email=form.cleaned_data["email"],
                                                         Address_Line1=form.cleaned_data["address_line_1"],
                                                         Address_Line2=form.cleaned_data["address_line_2"],
-                                                        City=form.cleaned_data["Region"],
+                                                        City=form.cleaned_data["city"],
                                                         State="DELHI",
                                                         ZIP=form.cleaned_data["ZIP"],
                                                         Customer_Contact_Number=form.cleaned_data["contact_number"] )
