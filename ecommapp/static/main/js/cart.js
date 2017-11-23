@@ -184,6 +184,7 @@ function updateCart(element,id,url)
       console.log("hurray quantity changed");
     }
   });
+   Couponupdate();
   billCalculate();
 }
 
@@ -203,6 +204,7 @@ function removeFromCart(item)
     success: function(){
       console.log("item removed");
       getCartItems();
+      Couponupdate();
       billCalculate();
     }
     });
@@ -215,7 +217,20 @@ function removeFromCart(item)
 /////////Discount application
 ////////////////////////////////////////
 
-
+function Couponupdate()
+{    console.log("coupon update")
+       $.ajax({
+               type: "GET",
+               url: "/cart/apply-coupon/",
+                success: function(result){
+                  $(".discount-value").text(result.value)
+                  $(".discount-note").text(result.message)
+                  console.log(result)
+                  billCalculate();
+                           
+                }
+                });
+}
 $(".discount-form").each(function(){
     $(this).submit(function(evt){
 
@@ -228,16 +243,15 @@ $(".discount-form").each(function(){
         url: discountUrl,
         data:{
              //"quantity":element.value,
-             "product":productId,
              "coupon_entered":discountCode.toString(),
              "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
             
              },
-        success: function(){
-          console.log("discount applied");
-          $.get("/cart/checkout/",function(){
-            console.log(reloaded);
-          })
+        success: function(result){
+            $(".discount-value").text(result.value)
+            $(".discount-note").text(result.message)
+            console.log(result)
+            billCalculate();
         }
         });
     });
@@ -254,7 +268,6 @@ $(".discount-form").each(function(){
     var $deliveryCharges_element = $("#deliveryCharges");
     var $discount_element = $("#totalDiscount");
     var $billAmount_element = $("#totalBill");
-
     var $discount_value = $(".discount-value");
     var $cost_value = $(".product-price");
     var $quantity_value = $(".quantityValue");
@@ -264,29 +277,25 @@ $(".discount-form").each(function(){
     var totalelements = $("#cart-table tbody tr").length;
     $.each($cost_value,function(index,cost_value){
       console.log("stuff1 call");
-          console.log(index);
           let quantity = $quantity_value.get(index).value;
           cost = parseInt($(this).text())*quantity;
-          console.log(cost);
           totalCost+=cost;
+          console.log(totalCost);
     });
 
-    $.each($discount_value,function(index,discount_value){
-      console.log("stuff2 call");
-          let quantity = $quantity_value.get(index).value;
-          discount = parseInt($(this).text())*quantity;
-          console.log(cost);
-          totalDiscount+=discount;
-    });
+          discount = parseInt($discount_value.text());
+          console.log(discount);
+    
 
    
 
-    totalBill = totalCost + deliveryCharges - totalDiscount;
+    totalBill = totalCost + deliveryCharges - discount;
     console.log(totalBill);
 
     $cost_element.text("₹"+totalCost);
+    
     $deliveryCharges_element.text("₹"+deliveryCharges);
-    $discount_element.text("₹"+totalDiscount);
+    $discount_element.text("₹"+discount);
     $billAmount_element.text("₹"+totalBill);
 
   }
