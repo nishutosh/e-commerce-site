@@ -262,18 +262,18 @@ $(".discount-form").each(function(){
     var totalDiscount = 0,totalBill = 0,totalCost = 0,deliveryCharges = 100;
     var totalelements = $("#cart-table tbody tr").length;
     $.each($cost_value,function(index,cost_value){
-          // console.log(index);
-          // let quantity = $quantity_value.get(index).value;
-          // cost = parseInt($(this).text())*quantity;
-          // console.log(cost);
-          totalCost=0;
+          console.log(index);
+          let quantity = $quantity_value.get(index).value;
+          cost = parseInt($(this).text())*quantity;
+          console.log(cost);
+          totalCost+=cost;
     });
 
     $.each($discount_value,function(index,discount_value){
-          // let quantity = $quantity_value.get(index).value;
-          // discount = parseInt($(this).text())*quantity;
-          // console.log(cost);
-          totalDiscount=0;
+          let quantity = $quantity_value.get(index).value;
+          discount = parseInt($(this).text())*quantity;
+          console.log(cost);
+          totalDiscount+=discount;
     });
 
     console.log(totalCost);

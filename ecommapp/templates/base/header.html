@@ -22,7 +22,7 @@
                   <div class="main-navbar-header-items">
                     <!-- Search bar -->
                     <div class="search-form">
-                      <form class="main-navbar-form">
+                      <form class="main-navbar-form" action={%url "search" %} method="get">
                         <div class="input-group">
                           <input type="text" class="form-control" placeholder="Search" name="search_term">
                           <button type="button" name="button" class="btn btn-default search-btn" data-url="{% url "search" %}">
