@@ -976,60 +976,60 @@ class SalesSignOut(LoginRequiredMixin,View):
           return redirect(reverse("sales-signin"))
 
 #seller stuff-------------------------->
-class SellerPanel(LoginRequiredMixin,UserPassesTestMixin,View):
-  """sales panel"""
-  def test_func(self):
-      return Seller.objects.filter(seller_user=self.request.user).exists()
-  def get(self,request):
-      """seller panel landing page"""
-      seller=Seller.objects.get(seller_user=request.user)
-      return render(request,"seller-panel.html",{"seller":seller})
+# class SellerPanel(LoginRequiredMixin,UserPassesTestMixin,View):
+#   """sales panel"""
+#   def test_func(self):
+#       return Seller.objects.filter(seller_user=self.request.user).exists()
+#   def get(self,request):
+#       """seller panel landing page"""
+#       seller=Seller.objects.get(seller_user=request.user)
+#       return render(request,"seller-panel.html",{"seller":seller})
 
-class SellerSignin(FormView):
-    """sales login form and validation"""
-    template_name="seller-login.html"
-    form_class=SignInForm
-    success_url="sellersite/panel"
-    def form_valid(self,form):
-           user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
-           if Seller.objects.filter(seller_user__username=form.cleaned_data["username"]).exists():
-               if user is not None:
-                     if user.is_active:
-                         login(self.request,user)
-                         return super(SellerSignin, self).form_valid(form)
-                     else:
-                           messages.error(self.request, 'Invalid username or password')
-                           return redirect(reverse("seller-signin"))
-               else:
-                   messages.error(self.request, 'Invalid username or password')
-                   return redirect(reverse("seller-signin"))
-           else:
-               messages.error(self.request, 'Invalid username or password')
-               return redirect(reverse("seller-signin"))
+# class SellerSignin(FormView):
+#     """sales login form and validation"""
+#     template_name="seller-login.html"
+#     form_class=SignInForm
+#     success_url="sellersite/panel"
+#     def form_valid(self,form):
+#            user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
+#            if Seller.objects.filter(seller_user__username=form.cleaned_data["username"]).exists():
+#                if user is not None:
+#                      if user.is_active:
+#                          login(self.request,user)
+#                          return super(SellerSignin, self).form_valid(form)
+#                      else:
+#                            messages.error(self.request, 'Invalid username or password')
+#                            return redirect(reverse("seller-signin"))
+#                else:
+#                    messages.error(self.request, 'Invalid username or password')
+#                    return redirect(reverse("seller-signin"))
+#            else:
+#                messages.error(self.request, 'Invalid username or password')
+#                return redirect(reverse("seller-signin"))
 
-class SellerSignOut(LoginRequiredMixin,View):
-    def get(self,request):
-          logout(request)
-          return redirect(reverse("seller-signin"))
+# class SellerSignOut(LoginRequiredMixin,View):
+#     def get(self,request):
+#           logout(request)
+#           return redirect(reverse("seller-signin"))
 
-class SellerProductAdd(LoginRequiredMixin,CreateView,UserPassesTestMixin):
-   model=Product
-   template_name="seller-product-cu.html"
-   fields="__all__"
-   success_url="sellersite/panel"
-   def test_func(self):
-      return Seller.objects.filter(seller_user=self.request.user).exists()
+# class SellerProductAdd(LoginRequiredMixin,CreateView,UserPassesTestMixin):
+#    model=Product
+#    template_name="seller-product-cu.html"
+#    fields="__all__"
+#    success_url="sellersite/panel"
+#    def test_func(self):
+#       return Seller.objects.filter(seller_user=self.request.user).exists()
 
-class SellerProductUpdate(LoginRequiredMixin,UpdateView,UserPassesTestMixin):
-   model=Product
-   fields="__all__"
-   template_name="seller-product-cu.html"
-   success_url="sellersite/panel"
-   def test_func(self):
-      return Seller.objects.filter(seller_user=self.request.user).exists()
+# class SellerProductUpdate(LoginRequiredMixin,UpdateView,UserPassesTestMixin):
+#    model=Product
+#    fields="__all__"
+#    template_name="seller-product-cu.html"
+#    success_url="sellersite/panel"
+#    def test_func(self):
+#       return Seller.objects.filter(seller_user=self.request.user).exists()
 
-class SellerProductDelete(LoginRequiredMixin,DeleteView,UserPassesTestMixin):
-   model=Product
-   success_url="sellersite/panel"
-   def test_func(self):
-      return Seller.objects.filter(seller_user=self.request.user).exists()
+# class SellerProductDelete(LoginRequiredMixin,DeleteView,UserPassesTestMixin):
+#    model=Product
+#    success_url="sellersite/panel"
+#    def test_func(self):
+#       return Seller.objects.filter(seller_user=self.request.user).exists()
