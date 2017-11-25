@@ -61,7 +61,7 @@
               <span class="current-price">₹{{product.price_after_discount}}</span>
 
           </div>
-          <div class="size-list row">
+          <!-- <div class="size-list row">
             <h4>Select Size</h4>
             <div class="col-md-1 col-xs-2 col-xs-offset-1">
                 <div class="size">
@@ -91,7 +91,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
           {%csrf_token%}
           <div class="cart-cta">
             <button class="btn btn-default cart-btn" id="add-to-cart-btn" data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>

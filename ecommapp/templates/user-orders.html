@@ -13,10 +13,10 @@
                   <tr>
                     <th>order placed</th>
                     <th>total</th>
-                    <th>shipped to</th>
+                    <th>will be shipped to</th>
                     <th>Order</th>
-                    <th>payment status</th>
-                    <th>order status</th>
+                    <th>payment status **</th>
+                     <th>transaction Id</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -24,9 +24,22 @@
                       <td>{{order.Order_Date_Time}}</td>
                       <td>{{ order.Order_Total_Price}}</td>
                       <td>{{ order.Order_In_Name_Of}}</td>
-                      <td>#{{ order.pk}}</td>
-                      <td>{{ order.Order_Payment_status.payment_status}}</td>
-                      <td>{{order.Whole_Order_Status.status_for_order}}</td>
+                      <td>{{ order.pk}}</td>
+                      <td>{{ order.Order_Payment_status.payment_status}}</td>                   
+                       <td>{%if order.Transaction_Id %}
+                          {{order.Transaction_Id}}
+                          {%else%}
+                      <form class="form-horizontal" action="/order/order-payment/{{order.pk}}/" method="post">
+                         {%csrf_token%}
+                          <input type="text" placeholder="enter transaction id" name="transaction_id" />
+                           <input type="submit" value="SUBMIT" />
+          </div>
+       </form>
+                          {%endif%}
+                       </td>
+                      
+                      
+                      
                     </tr>
                 </tbody>
               </table>
@@ -44,7 +57,9 @@
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Final Price</th>
-                            <!-- <th>Order Status</th> -->
+                              <th>Order Status</th>
+                             <th> Shipment ID</th>
+                  
 
                           </tr>
                         </thead>
@@ -54,7 +69,12 @@
                             <td>₹{{product.Ordered_Product.price_after_discount}}</td>
                             <td>{{product.Quantity}}</td>
                             <td>₹{{product.Final_Ordered_Product_price}}</td>
-                            <!-- <td>{{product.Order_Status.status_for_order}}</td> -->
+                            <td>{{product.Order_Status.status_for_order}}</td>
+                            <td>{%if product.Shipment_Id%}    
+                            <p> {{product.Shipment_Id}}
+                              {%else%}
+                              PENDING
+                            {%endif%}
                           </tr>
                         </tbody>
                 </table>
@@ -62,9 +82,10 @@
               </div>
 
               <div class="action-btns">
-                    <a href="#" class="btn btn-default alternate-cta-btn">Track Package</a>
+                    <a href={{product.Shipment_Authority_Details.Shipping_Company_URL}} class="btn btn-default alternate-cta-btn">Track Package **</a>
+               
                     <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal{{order.pk}}" data-url="{%url "cancel-order"%}" data-id="">Cancel Package</a>
-
+   <br><b>** order trasaction id will be confimed by the moderators and payment status and shipment id will be updated in 24 hrs.</b>
               </div>
           </div>
           <!--cancel warning Modal -->
@@ -85,7 +106,6 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                   </div>
                 </div>
-
               </div>
             </div>
           {%endfor%}

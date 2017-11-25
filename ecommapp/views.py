@@ -191,7 +191,8 @@ class  EditFormView(LoginRequiredMixin,FormView):
                       "contact_number":user_obj.customer.Customer_Contact_Number,
                       "address_line_1":user_obj.customer.Address_Line1,
                       "address_line_2":user_obj.customer.Address_Line2,
-                      "State":user_obj.customer.City,
+                      "Region":user_obj.customer.City,
+                      "State":user_obj.customer.State,
                       "ZIP":user_obj.customer.ZIP,
                       }
           return initial
@@ -202,8 +203,8 @@ class  EditFormView(LoginRequiredMixin,FormView):
                                                         Customer_Email=form.cleaned_data["email"],
                                                         Address_Line1=form.cleaned_data["address_line_1"],
                                                         Address_Line2=form.cleaned_data["address_line_2"],
-                                                        City=form.cleaned_data["city"],
                                                         State="DELHI",
+                                                        City=form.cleaned_data["Region"],
                                                         ZIP=form.cleaned_data["ZIP"],
                                                         Customer_Contact_Number=form.cleaned_data["contact_number"] )
           messages.success(self.request, 'Details Updated')
@@ -235,8 +236,9 @@ class FashVoltsCreditView(LoginRequiredMixin,View):
 class  CoupounAppliedView(LoginRequiredMixin,View):
     def get(self,request):
          user_obj=request.user
-         context={"siteuser":user_obj,"coupouns":user_obj.customer.customercoupounused_set.all()}
+         context={"siteuser":user_obj,"coupouns":user_obj.customer.customercouponused_set.all()}
          context.update(menu_product_view_context)
+         print context
          return render(request,"coupouns.html",context)
 
 
@@ -489,8 +491,7 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                  Order_ZIP=form.cleaned_data["Order_ZIP"],
                                                  Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
                                                  Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
-                                                 Whole_Order_Status=Order_Status_Model.objects.get(status_for_order="PENDING"),
-                                                 Transaction_Id="null",
+                                                 Transaction_Id="",
                                                  Order_Reference=cart_obj.OrderReferenceCheck()
                                                         )
                     cart_items=cart_obj.cartitem_set.all()
@@ -528,27 +529,29 @@ class OrderPayment(LoginRequiredMixin,View):
     if Order.objects.filter(pk=order_id).exists():
        order=Order.objects.get(pk=order_id)
        """just mark cancel here the whole order will be termed as cancel"""
-       if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="null") and(order.Order_Customer==request.user.customer):
+       if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="") and(order.Order_Customer==request.user.customer):
             Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))
             cart=request.COOKIES.get(CART_ID)
             if cart:
               cart_obj=Cart.objects.get(pk=cart)
               if cart_obj.coupon_code:
-                  CustomerCouponUsed.objects.create(customer=request.user.customer,coupon_code=cart_obj.coupon_code)
+                  CustomerCouponUsed.objects.create(customer_track=request.user.customer,coupon_code=cart_obj.coupon_code)
                   if request.user.customer.usability==True:
                       request.user.customer.usability=False
                   else:
                       request.user.customer.usability
               Cart.objects.filter(pk=cart).delete()
+              print "dsds"
               response = redirect(reverse("user-orders"))
               response.delete_cookie(CART_ID)
               return response
-
+            else:
+              return redirect(reverse("user-orders"))             
        else:
          raise Http404
     else:
       raise Http404
-
+    
 
 
 class OrderProcessCompleted(LoginRequiredMixin,View):

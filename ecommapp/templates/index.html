@@ -11,7 +11,10 @@
           <h3>Get the best deals on clothes, footwear, mobile accessories and many more, that you may not have seen before.</h3>
           <div class="cta">
                 <a name="button" href="#shopping-categories" class="cta-btn btn btn-default">Shop Now</a>
+                {% if siteuser %}
+                {%else%}
                 <a name="button" href="/register/" class="alternate-cta-btn btn btn-default">Sign Up Now</a>
+                {%endif%}
           </div>
 
       </div>

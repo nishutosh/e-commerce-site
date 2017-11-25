@@ -223,6 +223,12 @@ function Couponupdate()
                type: "GET",
                url: "/cart/apply-coupon/",
                 success: function(result){
+                  if(result.message=="coupon code already applied" || result.message=="coupon code applied"){          
+                    $(".cta-btn").attr("disabled","disabled")
+                    $("#discount-input").attr("disabled","disabled")
+
+
+                  }
                   $(".discount-value").text(result.value)
                   $(".discount-note").text(result.message)
                   console.log(result)
@@ -293,7 +299,7 @@ $(".discount-form").each(function(){
     console.log(totalBill);
 
     $cost_element.text("₹"+totalCost);
-    
+
     $deliveryCharges_element.text("₹"+deliveryCharges);
     $discount_element.text("₹"+discount);
     $billAmount_element.text("₹"+totalBill);

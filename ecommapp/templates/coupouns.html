@@ -1,13 +1,25 @@
 {% extends 'base/user-dash.html' %}
 {% load static %}
 {% block body_block %}
-    <h2>COUPOUNS</h2>
-    <ul>
-        {% for coupoun in coupouns%}
-            <li>
-                   {{ coupoun}}
+    <h2>COUPOUNS USED</h2>
+<table class="table ">
+    <thead>
+        <tr>
+            <th>COUPON CODE</th>
+            <th>DISCOUNT OFFERED</th>
+        </tr>
+    </thead>
+    <tbody>
+       {% for coupoun in coupouns%}
+        <tr>
+            <td>{{coupoun.coupon_code.Code}}</td>
+            <td>₹ {{coupoun.coupon_code.Discount}}</td>
+        </tr>
+         {% endfor %}
+    </tbody>
+</table>
 
-            </li>
-        {% endfor %}
-    </ul>
+  
+
+     
 {% endblock %}

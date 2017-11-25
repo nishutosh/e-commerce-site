@@ -314,8 +314,7 @@ class Order(models.Model):
    Order_ZIP=models.IntegerField()
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
-   Transaction_Id=models.CharField(max_length=100)
-   Whole_Order_Status=models.ForeignKey(Order_Status_Model)
+   Transaction_Id=models.CharField(max_length=100,blank=True)
    Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
    class Meta:
        ordering=['-Order_Date_Time']
@@ -324,11 +323,6 @@ class Order(models.Model):
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0
-       for order_item in order_list:
-           total=total+order_item.Final_Ordered_Product_price
-       return total
-   def  Order_Status_sync(self):
-       order_list=self.order_product_specs_set.all()
        for order_item in order_list:
            total=total+order_item.Final_Ordered_Product_price
        return total
