@@ -1,6 +1,7 @@
 window.onload = function () {
     var graph_data;
     var url = $(".data").attr("data-api-url");
+    
     console.log("the api url is : "+url);
     $.ajax({
         type: "GET",
@@ -29,6 +30,7 @@ window.onload = function () {
 
 function plotGraph(graph_data)
 {
+    var data_title = $(".data").attr("data-title");
     var requiredGraph = new CanvasJS.Chart('graph-container',{
         animationEnabled: true,
         backgroundColor: "transparent",
@@ -48,10 +50,10 @@ function plotGraph(graph_data)
         data: [{
             type: "line",
             showInLegend: true,
-            name: "Total Orders",
+            name: data_title,
             markerType: "square",
             xValueFormatString: "DD MMM, YYYY",
-            color: "#F08080",
+            color: "orange",
             dataPoints: graph_data
                 
             

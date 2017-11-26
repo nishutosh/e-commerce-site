@@ -1014,6 +1014,18 @@ class AdminReportsOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
          
          return render(request,"admin-reports-orders.html",{"contacts":order_list,"status":status}) 
 
+class AdminReportsUserView(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         #filter = OrderFilter(request.GET, queryset=Order.objects.all())
+         #status=Order_Status_Model.objects.all()
+         customer_list=Customer.objects.all()
+
+         
+         return render(request,"admin-reports-users.html",{"contacts":customer_list}) 
+      
+
 #api for object returns for different reports
  
 class OrderReportApi(LoginRequiredMixin,UserPassesTestMixin,View):
@@ -1042,6 +1054,39 @@ class OrderReportApi(LoginRequiredMixin,UserPassesTestMixin,View):
             if not response_data:
                   current_entry = {
                               "x": order.Order_Date_Time.date(),
+                              "y": count
+                        }
+                  response_data[index]=current_entry
+
+            return JsonResponse(response_data)                  
+
+#user report api
+class UserReportApi(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+        return self.request.user.is_superuser
+      def get(self,request):
+            users = Customer.objects.all()
+            response_data = {}
+            prev_date = users[0].Join_Date_Time.date()
+            count = 0
+            index = 0
+            for order in users:
+                  if(order.Join_Date_Time.date() == prev_date):
+                        count = count+1
+                  else:
+                        current_entry = {
+                              "x": order.Join_Date_Time.date(),
+                              "y": count
+                        }
+                        response_data[index]=current_entry
+                        index=index+1
+                        count = 0
+                        prev_date = order.Join_Date_Time
+           
+            # if the response is empty because every order is on same date and it never goes in else of for loop
+            if not response_data:
+                  current_entry = {
+                              "x": order.Join_Date_Time.date(),
                               "y": count
                         }
                   response_data[index]=current_entry

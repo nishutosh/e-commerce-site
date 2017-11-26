@@ -75,6 +75,8 @@ adminurls=[
 
    url(r'admin-reports/total-order$',AdminReportsOrderView.as_view(),name="admin-reports-orders"),
    url(r'admin-reports/get-order-stats$',OrderReportApi.as_view(),name="admin-reports-orders-stats"),
+   url(r'admin-reports/total-users$',AdminReportsUserView.as_view(),name="admin-reports-users"),
+   url(r'admin-reports/get-user-stats$',UserReportApi.as_view(),name="admin-reports-users-stats")
 
 ]
 

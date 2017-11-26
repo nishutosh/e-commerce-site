@@ -204,6 +204,7 @@ class Customer(models.Model):
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
    usability=models.BooleanField(default=True)
+   Join_Date_Time = models.DateTimeField(auto_now_add=True)
    def __str__(self):
      return self.Customer_First_Name
 
