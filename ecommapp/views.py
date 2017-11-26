@@ -29,7 +29,7 @@ menu_product_view_context={
 def ElasticSearch(request):
   if request.method=="GET":
     results=search(search_term=request.GET["search_term"])
-    print results
+    print (results)
     return render(request,"product-list.html",{"product_list":results})
 
 class CustomView(ListView):
