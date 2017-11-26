@@ -73,6 +73,9 @@ adminurls=[
    url(r'admin-order/order-list-by-category/(?P<subfield>[\w-]+)$',AdminOrderViewByGivenCategory.as_view(),name="admin-order-by-given-category"),
    url(r'admin-order/change-product-status$',OrderStatusChange.as_view(),name="admin-order-product-status"),
 
+   url(r'admin-reports/total-order$',AdminReportsOrderView.as_view(),name="admin-reports-orders"),
+   url(r'admin-reports/get-order-stats$',OrderReportApi.as_view(),name="admin-reports-orders-stats"),
+
 ]
 
 salesurls=[

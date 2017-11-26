@@ -1000,6 +1000,55 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
        else:
           return JsonResponse({"message":"order does not exist"})
 
+
+#admin reports stuff ------------------------------------------->
+
+class AdminReportsOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         #filter = OrderFilter(request.GET, queryset=Order.objects.all())
+         status=Order_Status_Model.objects.all()
+         order_list=Order.objects.all()
+
+         
+         return render(request,"admin-reports-orders.html",{"contacts":order_list,"status":status}) 
+
+#api for object returns for different reports
+ 
+class OrderReportApi(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+        return self.request.user.is_superuser
+      def get(self,request):
+            orders = Order.objects.all()
+            response_data = {}
+            prev_date = orders[0].Order_Date_Time.date()
+            count = 0
+            index = 0
+            for order in orders:
+                  if(order.Order_Date_Time.date() == prev_date):
+                        count = count+1
+                  else:
+                        current_entry = {
+                              "x": order.Order_Date_Time.date(),
+                              "y": count
+                        }
+                        response_data[index]=current_entry
+                        index=index+1
+                        count = 0
+                        prev_date = order.Order_Date_Time
+           
+            # if the response is empty because every order is on same date and it never goes in else of for loop
+            if not response_data:
+                  current_entry = {
+                              "x": order.Order_Date_Time.date(),
+                              "y": count
+                        }
+                  response_data[index]=current_entry
+
+            return JsonResponse(response_data)                  
+
+
 #sales panel stuff----------------------------------------------->
 class SalesSignin(FormView):
     """sales login form and validation"""
