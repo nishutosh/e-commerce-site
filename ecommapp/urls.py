@@ -69,6 +69,8 @@ adminurls=[
    url(r'marketing/edit-coupon/(?P<pk>[\w-]+)$',AdminCouponUpdateView.as_view(),name="admin-marketing-coupon-edit"),
    url(r'marketing/edit-coupon/delete/$',AdminCouponDeleteView.as_view(),name="admin-marketing-coupon-delete"),
    url(r'admin-order/$',AdminOrderView.as_view(),name="admin-order"),
+   url(r'admin-order/order-list-by-category$',AdminOrderViewByCategory.as_view(),name="admin-order-by-category"),
+   url(r'admin-order/order-list-by-category/(?P<subfield>[\w-]+)$',AdminOrderViewByGivenCategory.as_view(),name="admin-order-by-given-category"),
    url(r'admin-order/change-product-status$',OrderStatusChange.as_view(),name="admin-order-product-status"),
 
 ]

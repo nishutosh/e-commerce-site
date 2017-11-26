@@ -924,6 +924,63 @@ class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(paginator.num_pages)
          return render(request,"admin-order-list.html",{"contacts":contacts,"status":status,'filter': filter})
 
+# admin order view to show all the categories
+class AdminOrderViewByCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         sub_category=SubCategory.objects.all()
+         paginator = Paginator(sub_category, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-order-categories.html', {'contacts':contacts})
+
+#admin order list for selected category
+class AdminOrderViewByGivenCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request,**kwargs):
+         
+         status=Order_Status_Model.objects.all()
+         
+         order_list=Order.objects.all()
+         required_orders = order_list
+         to_be_deleted = []
+         for order in order_list:
+               found = False
+               products = order.order_product_specs_set.all()
+               for product in products:
+                     current_sub_category = product.Ordered_Product.product_Sub_Category
+                     if(current_sub_category.Sub_Category == self.kwargs["subfield"]):
+                           found = True
+                           break
+               print(found)
+               if not found:
+                  # required_orders=required_orders.filter(pk = order.pk).delete()
+                  to_be_deleted.append(order.pk)
+
+         print(to_be_deleted)         
+         required_orders = Order.objects.exclude(pk__in = to_be_deleted)   
+         filter = OrderFilter(request.GET, queryset=required_orders)
+         print(required_orders)
+         paginator = Paginator(required_orders, 25)
+         
+         page = request.GET.get('page')
+
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request,"admin-order-list.html",{"contacts":contacts,"status":status,'filter': filter})
+
+
 class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
   """ use  order_product_id and order_id """
   def test_func(self):
