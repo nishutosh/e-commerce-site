@@ -339,26 +339,41 @@ class DeleteCartView(View):
 #yet to be tested
 class ApplyCoupon(View):
   CART_ID="CART_ID"
+  def get(self,request):
+        cart=request.COOKIES.get(self.CART_ID)
+        if cart:
+          cart_obj=Cart.objects.get(pk=cart)
+          if cart_obj.coupon_code:
+             return JsonResponse({"message":"coupon code already applied","value":cart_obj.coupon_code.Discount})
+          else:
+             return JsonResponse({"message":"coupon code not applied","value":0})
+        else:
+          return  JsonResponse({"alert":"something is wrong"})
   def post(self,request):
         cart=request.COOKIES.get(self.CART_ID)
         if cart:
-               cart_obj=Cart.objects.get(pk=cart)
+          cart_obj=Cart.objects.get(pk=cart)
+          if not(cart_obj.coupon_code):
                coupon_code_entered=request.POST["coupon_entered"]
                if (CouponCode.objects.filter(Code=coupon_code_entered).exists()):
+                 coupon_code_entered=request.POST["coupon_entered"]
                  coupon=CouponCode.objects.get(Code=coupon_code_entered)
                  if (request.user.customer.usability) and (not(CustomerCouponUsed.objects.filter(coupon_code=coupon,customer_track=request.user.customer).exists())):
                     if not(cart_obj.coupon_code):
                        cart_obj.coupon_code=coupon
                        cart_obj.save()
-                       return JsonResponse({"message":"coupon code applied"})
+                       return JsonResponse({"message":"coupon code applied","value":coupon.Discount})
                     else:
-                       return JsonResponse({"message":"coupon code exist on this product"})
+                       return JsonResponse({"message":"coupon code exist on this cart","value":coupon.Discount})
                  else:
-                     return JsonResponse({"message":"coupon code not applicable"})
+                     return JsonResponse({"message":"coupon code not applicable","value":0})
                else :
-                  return JsonResponse({"message":"coupon code not applicable"})
+                  return JsonResponse({"message":"coupon code not applicable","value":0})
+          else:
+            return JsonResponse({"message":"coupon code already applied","value":cart_obj.coupon_code.Discount})
+                  
         else:
-           return  JsonResponse({"response":"no cookie present"})
+           return  JsonResponse({"alert":"something is wrong"})
 
 
 class RemoveCoupoun(LoginRequiredMixin,View):
