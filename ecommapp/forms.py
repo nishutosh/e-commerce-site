@@ -140,4 +140,4 @@ class SubCategoryForm(ModelForm):
 class ProductForm(ModelForm):
       class Meta:
            model=Product
-           fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority"]
+           fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority","TaxOnProduct"]

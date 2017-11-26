@@ -150,7 +150,7 @@ class Product(models.Model):
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   is_displayed=models.BooleanField(default=True)
-  Product_Seller=models.ForeignKey(Seller)
+ # Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
   def __str__(self):
      return str(self.pk)+str(self.Product_Name)

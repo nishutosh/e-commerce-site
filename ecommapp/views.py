@@ -731,7 +731,7 @@ class AdminProductCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
    model=Product
    template_name="admin-product-edit.html"
    success_url="/admin-panel/catalog/products/"
-   fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority"]
+   fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority","TaxOnProduct"]
    def test_func(self):
            return self.request.user.is_superuser
 
