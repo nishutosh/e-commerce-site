@@ -1223,10 +1223,26 @@ class CustomeModuleMain(LoginRequiredMixin,View):
   def get(self,request,pk):
      phone_obj=Phones.objects.get(pk=pk)
      return render(request,"custom-main.html",{"phone":phone_obj})    
-  def post(self,request,pk):
-    
+class PostCustomModule(View):
+   def post(self,request):
+      """first call this then this would return product id and make an add to cart post call using its result"""
+      if request.user.customer.can_create_custom:
+        base_price=200
+        product=Product.objects.create(
+                        Product_Base_Category=BaseCategory.objects.get( Base_Category="CUSTOM"),
+                        product_Sub_Category=SubCategory.objects.get(Sub_Category="PHONE COVERS"),
+                        Product_Name=request.POST["name"]+str(pk),
+                        Base_Price=base_price,
+                        Main_Image=request.FILE["custom_image"],
+                        is_displayed=request.POST["choice"],
+                        Product_Seller=Seller.objects.get(Seller_Name="FashVolts"),
+                        TaxOnProduct=Tax.objects.get(Tax_Percentage=17),
+                        Shipment_Authority=Shipment_Orgs.objects.get(Shipping_Company_Name="Fashvolts")
+                         )
+        return JsonResponse({"product":product.pk,"quantity":1})
+      else:
+         raise Http404   
 
-
-  Main_Image=models.ImageField(upload_to="ProductImages/")
+                      
  
 

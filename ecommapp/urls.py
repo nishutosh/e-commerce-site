@@ -97,6 +97,7 @@ custommoduleurls=[
  url(r'home$',CustomModule.as_view(),name="custom-home"),
  url(r'edit/(?P<pk>[\w]+)$',CustomeModuleMain.as_view(),name="edit-pic"),
  url(r'(?P<brand_slug>[\w-]+)$',getphones,name="get-phones"),
+ url(r'submit$',PostCustomModule.as_view(),name="submit-custom-image"),
 
 
 ]

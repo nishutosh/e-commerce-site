@@ -96,7 +96,7 @@ class SubCategory(models.Model):
     return self.Sub_Category
 
 class Tax(models.Model):
-    Prducts=models.ForeignKey(SubCategory)
+    Products=models.ForeignKey(SubCategory)
     Tax_Percentage=models.FloatField()
     
 
@@ -153,10 +153,9 @@ class Product(models.Model):
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   is_displayed=models.BooleanField(default=True)
- # Product_Seller=models.ForeignKey(Seller)
+  Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
   Sizes=models.ManyToManyField(Size,null=True)
-  is_custom=models.BooleanField(default=False)
   def __str__(self):
      return str(self.pk)+str(self.Product_Name)
   def get_product_url(self):
@@ -209,7 +208,7 @@ class Customer(models.Model):
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
    usability=models.BooleanField(default=True)
-   Join_Date_Time = models.DateTimeField(auto_now_add=True)
+   can_create_custom=models.BooleanField(default=True)
    def __str__(self):
      return self.Customer_First_Name
 
@@ -374,5 +373,4 @@ class Phones(models.Model):
   pic=models.ImageField(upload_to="CustomImages/")
   def __str__(self):
       return self.brand.brand_name+self.name
-  
-    
+   
