@@ -29,7 +29,7 @@ menu_product_view_context={
 def ElasticSearch(request):
   if request.method=="GET":
     results=search(search_term=request.GET["search_term"])
-    print results
+    print (results)
     return render(request,"product-list.html",{"product_list":results})
 
 class CustomView(ListView):
@@ -734,7 +734,7 @@ class AdminProductCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
    model=Product
    template_name="admin-product-edit.html"
    success_url="/admin-panel/catalog/products/"
-   fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority"]
+   fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority","TaxOnProduct"]
    def test_func(self):
            return self.request.user.is_superuser
 
@@ -927,6 +927,63 @@ class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(paginator.num_pages)
          return render(request,"admin-order-list.html",{"contacts":contacts,"status":status,'filter': filter})
 
+# admin order view to show all the categories
+class AdminOrderViewByCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         sub_category=SubCategory.objects.all()
+         paginator = Paginator(sub_category, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-order-categories.html', {'contacts':contacts})
+
+#admin order list for selected category
+class AdminOrderViewByGivenCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request,**kwargs):
+         
+         status=Order_Status_Model.objects.all()
+         
+         order_list=Order.objects.all()
+         required_orders = order_list
+         to_be_deleted = []
+         for order in order_list:
+               found = False
+               products = order.order_product_specs_set.all()
+               for product in products:
+                     current_sub_category = product.Ordered_Product.product_Sub_Category
+                     if(current_sub_category.Sub_Category == self.kwargs["subfield"]):
+                           found = True
+                           break
+               print(found)
+               if not found:
+                  # required_orders=required_orders.filter(pk = order.pk).delete()
+                  to_be_deleted.append(order.pk)
+
+         print(to_be_deleted)         
+         required_orders = Order.objects.exclude(pk__in = to_be_deleted)   
+         filter = OrderFilter(request.GET, queryset=required_orders)
+         print(required_orders)
+         paginator = Paginator(required_orders, 25)
+         
+         page = request.GET.get('page')
+
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request,"admin-order-list.html",{"contacts":contacts,"status":status,'filter': filter})
+
+
 class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
   """ use  order_product_id and order_id """
   def test_func(self):
@@ -945,6 +1002,100 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
           return JsonResponse({"message":"status changed"})
        else:
           return JsonResponse({"message":"order does not exist"})
+
+
+#admin reports stuff ------------------------------------------->
+
+class AdminReportsOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         #filter = OrderFilter(request.GET, queryset=Order.objects.all())
+         status=Order_Status_Model.objects.all()
+         order_list=Order.objects.all()
+
+         
+         return render(request,"admin-reports-orders.html",{"contacts":order_list,"status":status}) 
+
+class AdminReportsUserView(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         #filter = OrderFilter(request.GET, queryset=Order.objects.all())
+         #status=Order_Status_Model.objects.all()
+         customer_list=Customer.objects.all()
+
+         
+         return render(request,"admin-reports-users.html",{"contacts":customer_list}) 
+      
+
+#api for object returns for different reports
+ 
+class OrderReportApi(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+        return self.request.user.is_superuser
+      def get(self,request):
+            orders = Order.objects.all()
+            response_data = {}
+            prev_date = orders[0].Order_Date_Time.date()
+            count = 0
+            index = 0
+            for order in orders:
+                  if(order.Order_Date_Time.date() == prev_date):
+                        count = count+1
+                  else:
+                        current_entry = {
+                              "x": order.Order_Date_Time.date(),
+                              "y": count
+                        }
+                        response_data[index]=current_entry
+                        index=index+1
+                        count = 0
+                        prev_date = order.Order_Date_Time
+           
+            # if the response is empty because every order is on same date and it never goes in else of for loop
+            if not response_data:
+                  current_entry = {
+                              "x": order.Order_Date_Time.date(),
+                              "y": count
+                        }
+                  response_data[index]=current_entry
+
+            return JsonResponse(response_data)                  
+
+#user report api
+class UserReportApi(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+        return self.request.user.is_superuser
+      def get(self,request):
+            users = Customer.objects.all()
+            response_data = {}
+            prev_date = users[0].Join_Date_Time.date()
+            count = 0
+            index = 0
+            for order in users:
+                  if(order.Join_Date_Time.date() == prev_date):
+                        count = count+1
+                  else:
+                        current_entry = {
+                              "x": order.Join_Date_Time.date(),
+                              "y": count
+                        }
+                        response_data[index]=current_entry
+                        index=index+1
+                        count = 0
+                        prev_date = order.Join_Date_Time
+           
+            # if the response is empty because every order is on same date and it never goes in else of for loop
+            if not response_data:
+                  current_entry = {
+                              "x": order.Join_Date_Time.date(),
+                              "y": count
+                        }
+                  response_data[index]=current_entry
+
+            return JsonResponse(response_data)                  
+
 
 #sales panel stuff----------------------------------------------->
 class SalesSignin(FormView):

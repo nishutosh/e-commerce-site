@@ -15,6 +15,7 @@
      <script src="{% static 'main/js/jquery-3.2.1.js' %}"></script>
      <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
      <script src="{% static 'main/js/bootstrap-dropdownhover.min.js' %}"></script>
+
   </head>
   <body>
       <header>
@@ -27,7 +28,7 @@
           <div class="icon-tray">
                 <div class="admin-user">
                 <a href="#" class="btn btn-default">
-                    <i class="fa fa-user" aria-hidden="true"></i> Nishutosh
+                    <i class="fa fa-user" aria-hidden="true"></i> {{siteadmin.username}}
                 </a>
                 </div>
                 <div class="logout">
@@ -87,18 +88,9 @@
                               All Orders
                             </a>
                           </li>
+                         
                           <li>
-                            <a href="#">
-                              Pending Orders
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              Confirmed Orders
-                            </a>
-                          </li>
-                          <li>
-                            <a href="/admin-dashboard/order-list-by-category">
+                            <a href="{%url "admin-order-by-category"%}">
                               Orders by Category
                             </a>
                           </li>
@@ -144,22 +136,13 @@
                 <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
                 <ul class="side-nav-sub-list">
                           <li>
-                            <a href="#">
-                              Total Sales
+                            <a href="{%url "admin-reports-orders"%}">
+                              Total Orders
                             </a>
                           </li>
+                          
                           <li>
-                            <a href="#">
-                              Intern Sales
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
-                              Team Sales
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#">
+                            <a href="{%url "admin-reports-users"%}">
                               Total End Users
                             </a>
                           </li>
@@ -174,5 +157,6 @@
 
       <script type="text/javascript" src="{% static 'main/js/list.js' %}"></script>
       <script type="text/javascript" src="{% static 'main/js/admin.js' %}"></script>
+      <script type="text/javascript" src="{% static 'main/js/graph.js' %}"></script>
   </body>
 </html>

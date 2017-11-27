@@ -153,7 +153,7 @@ class Product(models.Model):
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   is_displayed=models.BooleanField(default=True)
-  Product_Seller=models.ForeignKey(Seller)
+ # Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
   Sizes=models.ManyToManyField(Size,null=True)
   is_custom=models.BooleanField(default=False)
@@ -209,6 +209,7 @@ class Customer(models.Model):
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
    usability=models.BooleanField(default=True)
+   Join_Date_Time = models.DateTimeField(auto_now_add=True)
    def __str__(self):
      return self.Customer_First_Name
 
