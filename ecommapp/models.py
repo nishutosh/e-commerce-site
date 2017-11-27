@@ -134,6 +134,9 @@ class Shipment_Orgs(models.Model):
   def __str__(self):
         return self.Shipping_Company_Name
   #shipping company details will be added as per requirements
+class Size(models.Model):
+  size_sf=models.CharField(max_length=20)
+
 
 
 class Product(models.Model):
@@ -143,15 +146,17 @@ class Product(models.Model):
   Discount=models.FloatField(default=0)
   Base_Price=models.FloatField()
   Availiability=models.BooleanField(default=True)
-  Description=models.TextField(max_length=10000)
-  Features=models.TextField(max_length=10000)
-  TechnicalSpecs=models.CharField(max_length=10000)
+  Description=models.TextField(max_length=10000,blank=True)
+  Features=models.TextField(max_length=10000,blank=True)
+  TechnicalSpecs=models.CharField(max_length=10000,blank=True)
   # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   is_displayed=models.BooleanField(default=True)
   Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
+  Sizes=models.ManyToManyField(Size,null=True)
+  is_custom=models.BooleanField(default=False)
   def __str__(self):
      return str(self.pk)+str(self.Product_Name)
   def get_product_url(self):
@@ -350,3 +355,23 @@ class Order_Product_Specs(models.Model):
 
 class OrderReturn(models.Model):
    Order=models.ForeignKey(Order)
+
+
+class Brand(models.Model):
+  brand_name=models.CharField(max_length=100,unique=True)
+  brand_pic=models.ImageField(upload_to="BrandPic/")
+  slug=models.CharField(max_length=100,blank=True)
+  def save(self, *args, **kwargs):
+        self.slug=slugify(self.brand_name)
+        super(Brand, self).save()
+  def __str__(self):
+    return self.brand_name      
+
+class Phones(models.Model):
+  brand=models.ForeignKey(Brand)
+  name=models.CharField(max_length=100)
+  pic=models.ImageField(upload_to="CustomImages/")
+  def __str__(self):
+      return self.brand.brand_name+self.name
+  
+    

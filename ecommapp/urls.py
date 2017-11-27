@@ -86,15 +86,23 @@ customurls=[
 
 
 ]
+custommoduleurls=[
+ url(r'home$',CustomModule.as_view(),name="custom-home"),
+ url(r'edit/(?P<pk>[\w]+)$',CustomeModuleMain.as_view(),name="edit-pic"),
+ url(r'(?P<brand_slug>[\w-]+)$',getphones,name="get-phones"),
+
+
+]
 
 urlpatterns = [
-    url(r'^',include(commonurls)),
-    url(r'^',include(authurls)),
     url(r'cart/',include(carturls)),
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
     url(r'search/',ElasticSearch,name="search"),
     url(r'admin-panel/',include(adminurls)),
     url(r'sales-panel/',include(salesurls)),
-    url(r'^custom/',include(customurls)),
+    url(r'custom/',include(customurls)),
+    url(r'custom-module/',include(custommoduleurls)),
+    url(r'^',include(commonurls)),
+    url(r'^',include(authurls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

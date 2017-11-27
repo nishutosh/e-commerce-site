@@ -1,0 +1,13 @@
+{%extends 'base/custom-base.html'%}
+{% load static %}
+{%block body%}
+ {%for brand in brands%}
+ <div class="col-md-2">
+   <img src={{brand.brand_pic.url}} class="img-responsive">
+   <h4>{{brand.brand_name}}</h4>
+
+ </div>
+
+ {%endfor%}
+
+{%endblock%}

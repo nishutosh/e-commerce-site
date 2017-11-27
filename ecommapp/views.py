@@ -519,7 +519,7 @@ class OrderPayment(LoginRequiredMixin,View):
   def get(self,request,order_id):
     user_obj=request.user
     order=Order.objects.get(pk=order_id)
-    if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="null") and(order.Order_Customer==request.user.customer):
+    if (order.Order_Payment_status.payment_status=="PENDING") and (order.Transaction_Id=="") and(order.Order_Customer==request.user.customer):
         return render(request,"order-payment.html",{"siteuser":user_obj,"order":order})
     else:
       raise Http404
@@ -529,7 +529,7 @@ class OrderPayment(LoginRequiredMixin,View):
     if Order.objects.filter(pk=order_id).exists():
        order=Order.objects.get(pk=order_id)
        """just mark cancel here the whole order will be termed as cancel"""
-       if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="") and(order.Order_Customer==request.user.customer):
+       if (order.Order_Payment_status.payment_status=="PENDING") and (order.Transaction_Id=="") and(order.Order_Customer==request.user.customer):
             Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))
             cart=request.COOKIES.get(CART_ID)
             if cart:
@@ -589,7 +589,7 @@ class AdminSignin(FormView):
     """admin login form and validation"""
     template_name="admin-login.html"
     form_class=SignInForm
-    success_url="admin-panel/panel"
+    success_url="/admin-panel/"
     def form_valid(self,form):
            user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
            if user is not None:
@@ -1051,3 +1051,31 @@ class SalesSignOut(LoginRequiredMixin,View):
 #    success_url="sellersite/panel"
 #    def test_func(self):
 #       return Seller.objects.filter(seller_user=self.request.user).exists()
+
+
+class CustomModule(ListView):
+  context_object_name="brands"
+  model=Brand
+  template_name="custom-module-index.html"
+
+@login_required
+def getphones(request,brand_slug):
+  """js ajax call display all phone 
+     names of that brand"""
+  phones=Phones.objects.filter(brand__slug=brand_slug)
+  phone_list=[]
+  for phone in phones:
+    phone_list.append({phone.pk:phone.name})
+  return JsonResponse(phone_list,safe=False)
+
+class CustomeModuleMain(LoginRequiredMixin,View):
+  def get(self,request,pk):
+     phone_obj=Phones.objects.get(pk=pk)
+     return render(request,"custom-main.html",{"phone":phone_obj})    
+  def post(self,request,pk):
+    
+
+
+  Main_Image=models.ImageField(upload_to="ProductImages/")
+ 
+
