@@ -238,7 +238,7 @@ class  CoupounAppliedView(LoginRequiredMixin,View):
          user_obj=request.user
          context={"siteuser":user_obj,"coupouns":user_obj.customer.customercouponused_set.all()}
          context.update(menu_product_view_context)
-         print context
+         print (context)
          return render(request,"coupouns.html",context)
 
 
@@ -541,7 +541,7 @@ class OrderPayment(LoginRequiredMixin,View):
                   else:
                       request.user.customer.usability
               Cart.objects.filter(pk=cart).delete()
-              print "dsds"
+              print ("dsds")
               response = redirect(reverse("user-orders"))
               response.delete_cookie(CART_ID)
               return response

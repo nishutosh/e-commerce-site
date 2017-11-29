@@ -101,11 +101,16 @@
           </div>
           <div class="product-content">
             <h4>Description</h4>
-           {{product.Description}}
+            <p>{{product.Description}}</p>
+           
           </div>
-          <div class="product-content">
-            <h4>Technical Specs</h4>
-           {{product.TechnicalSpecs}}
+          <div class="product-content specifications">
+            <!-- <h4>Product Features</h4>
+            <ul>
+              <li>{{product.TechnicalSpecs}}</li>
+            </ul> -->
+            {{product.Features}}
+           
           </div>
           
           <!--Product attributes end-->
@@ -115,13 +120,13 @@
     </div>
     <!--Product display ends-->
     <!--Questions-->
-    <div class="col-md-offset-1 col-md-10 question-list">
+    <!-- <div class="col-md-offset-1 col-md-10 question-list">
         <h2>Features</h2>
             <div class="answer">
-               {{product.Features}}
+               {{product.Features}} 
             </div>
           
-    </div>
+    </div> -->
     <!-- Questions end -->
     <!-- <div class="review-list col-md-offset-1 col-md-10">
           <h2>Reviews</h2>
