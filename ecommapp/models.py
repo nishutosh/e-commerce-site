@@ -317,6 +317,7 @@ class Order(models.Model):
    Order_City=models.CharField(max_length=200)
    Order_State=models.CharField(max_length=200)
    Order_ZIP=models.IntegerField()
+   Invoice=models.FileField(upload_to="Invoices/",null=True)
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
    Transaction_Id=models.CharField(max_length=100,blank=True)

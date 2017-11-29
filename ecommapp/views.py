@@ -20,6 +20,10 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .search import search
 from .orderfilters import OrderFilter
 from fpdf import FPDF
+import os
+from InvoiceGenerator.api import Invoice, Item, Client, Provider, Creator
+from InvoiceGenerator.pdf import SimpleInvoice
+os.environ["INVOICE_LANG"] = "en"
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all()
@@ -983,8 +987,45 @@ class AdminOrderViewByGivenCategory(LoginRequiredMixin,UserPassesTestMixin,View)
             contacts = paginator.page(paginator.num_pages)
          return render(request,"admin-order-list.html",{"contacts":contacts,"status":status,'filter': filter})
 
+class WholeOrderPaymentConfirm(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def post(self,request):
+       order_id=request.POST.get("order_id")
+       if Order.objects.filter(pk=order_id).exists():
+        order=Order.objects.get(pk=order_id)
+        if request.POST.get("payment_status")=="COMPLETED":
+          if order.Order_Payment_status.payment_status=="PENDING":
+            order.Order_Payment_status=Payment_Status.objects.get(payment_status="COMPLETED")
+            order.Transaction_Id=request.POST.get("transactionID")
+            #order reference
+            client = Client(request.user.customer.Customer_First_Name)
+            provider = Provider('Fashvolts')
+            creator = Creator('Vaibhav')
+            invoice = Invoice(client, provider, creator)
+            invoice.currency=u'Rs.'
 
-class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
+            for product in order.order_product_specs_set.all():
+              product.Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED")
+              #shipment id enter
+              invoice.add_item(Item(product.Quantity, product.Final_Ordered_Product_price, description=product.Ordered_Product.Product_Name))
+            pdf = SimpleInvoice(invoice)
+            name="invoice"+str(order.pk)
+            order.Invoice=pdf.gen(name, generate_qr_code=False)
+            order.save()
+            return JsonResponse({"status":"order made"})
+
+        else:
+          if order.Order_Payment_status.payment_status=="CANCELLED":
+            order.Order_Payment_status=Payment_Status.objects.get(payment_status="CANCELLED")
+            for product in order.order_product_specs_set.all():
+              product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
+            return JsonResponse({"status":"order cancelled"})  
+
+
+                
+        
+class OrderProductStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
   """ use  order_product_id and order_id """
   def test_func(self):
         return self.request.user.is_superuser
@@ -995,8 +1036,6 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
           order=Order.objects.get(pk=order_id)
           product_id=request.POST.get("order_product_id")
           ordered_product=Order_Product_Specs.objects.get(pk=product_id)
-          print (isinstance(ordered_product.Order_Status,Order_Status_Model))
-          print (isinstance(Order_Status_Model.objects.get(status_for_order=request.POST.get("status")),Order_Status_Model))
           ordered_product.Order_Status=Order_Status_Model.objects.get(status_for_order=request.POST.get("status"))
           ordered_product.save()
           return JsonResponse({"message":"status changed"})
