@@ -87,6 +87,7 @@ class BaseCategory(models.Model):
 class SubCategory(models.Model):
   Base_category_Key=models.ForeignKey(BaseCategory)
   Sub_Category=models.CharField(max_length=100)
+  Sub_Category_alias = models.CharField(max_length = 20, default = "sub")
   Sub_Category_Pic=models.ImageField(upload_to="SubCatPic/")
   Sub_Category_Slug_Field=models.SlugField(max_length=120,blank=True)
   def save(self, *args, **kwargs):
@@ -356,10 +357,18 @@ class Order_Product_Specs(models.Model):
 
 class OrderReturn(models.Model):
    Order=models.ForeignKey(Order)
+   
+class TypeOfCustomProduct(models.Model):
+    product_type = models.CharField(max_length = 20,unique=True)
+    image = models.ImageField(upload_to = "CustomTypes/")
+    sub_category = models.ForeignKey(SubCategory)
+    def __str__(self):
+        return self.product_type   
 
 
 class Brand(models.Model):
   brand_name=models.CharField(max_length=100,unique=True)
+  brand_type = models.ForeignKey(TypeOfCustomProduct,default = 1) 
   brand_pic=models.ImageField(upload_to="BrandPic/")
   slug=models.CharField(max_length=100,blank=True)
   def save(self, *args, **kwargs):
@@ -383,3 +392,4 @@ class CustomModulePics(models.Model):
     def __str__(self):
         return self.product.Product_Name
    
+ 

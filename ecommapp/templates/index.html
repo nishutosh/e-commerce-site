@@ -8,7 +8,7 @@
 
       <div class="bannerText">
           <h1>Want to spice up your style?</h1>
-          <a href={% url "custom-home" %}>helo</a>
+         
           <h3>Get the best deals on clothes, footwear, mobile accessories and many more, that you may not have seen before.</h3>
           <div class="cta">
                 <a name="button" href="#shopping-categories" class="cta-btn btn btn-default">Shop Now</a>
@@ -46,6 +46,35 @@
                 </li>
             {% endfor %}
       </ul>
+      <div class="custom-category">
+          <div class="header">
+              <h3>Create your own product!!!!</h3>
+          </div>
+          <div class="custom-container">
+              <div class="custom-image">
+             
+                  <img src="{%static "main/images/custom.jpg"%}" alt="">
+                
+              </div>
+              <div class="custom-categories">
+                <ul>
+                  {% for type in type_of_custom %}
+                  <li>
+                    <a href="{%url "custom-home" type.product_type %}">
+                      {{type.sub_category.Sub_Category_alias}}
+                    </a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <div class="custom-image">
+                  
+                       <img src="{%static "main/images/laptop-skins.png"%}" alt="">
+                     
+                   </div>
+          </div>
+          
+      </div>
       </div>
     </div>
 

@@ -56,6 +56,8 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         flash_sale=Flash_Sale.objects.filter(active=True)
+        type_of_custom = TypeOfCustomProduct.objects.all()
+        context["type_of_custom"] = type_of_custom
         context["flash_sale"]=flash_sale
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user
@@ -1248,8 +1250,22 @@ class SalesSignOut(LoginRequiredMixin,View):
 
 class CustomModule(ListView):
   context_object_name="brands"
-  model=Brand
   template_name="custom-module-index.html"
+  def get_queryset(self):
+        try:
+              type_pk = TypeOfCustomProduct.objects.filter(product_type = self.kwargs["type"])
+              return  Brand.objects.filter(brand_type=type_pk)
+        except:
+              raise Http404
+  def get_context_data(self, **kwargs):
+        context = super(CustomModule, self).get_context_data(**kwargs)
+        context.update(menu_product_view_context)
+        if self.request.user.is_authenticated:
+             context["siteuser"]=self.request.user
+        print(context)     
+        return context          
+              
+
 
 @login_required
 def getphones(request,brand_slug):
@@ -1276,7 +1292,7 @@ class PostCustomModule(View):
         custom_image = ContentFile(image_data, name+'.png')
         product=Product.objects.create(
                         Product_Base_Category=BaseCategory.objects.get( Base_Category="CUSTOM"),
-                        product_Sub_Category=SubCategory.objects.get(Sub_Category="PHONE COVERS"),
+                        product_Sub_Category=SubCategory.objects.get(Sub_Category="PHONE-COVERS"),
                         Product_Name=name,
                         Base_Price=base_price,
                         Main_Image=custom_image,

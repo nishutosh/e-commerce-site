@@ -94,7 +94,7 @@ customurls=[
 
 ]
 custommoduleurls=[
- url(r'brand/$',CustomModule.as_view(),name="custom-home"),
+ url(r'brand/(?P<type>[\w-]+)$',CustomModule.as_view(),name="custom-home"),
  url(r'edit/(?P<pk>[\w]+)$',CustomeModuleMain.as_view(),name="edit-pic"),
  url(r'phone/(?P<brand_slug>[\w-]+)$',getphones,name="get-phones"),
  url(r'submit$',PostCustomModule.as_view(),name="submit-custom-image"),

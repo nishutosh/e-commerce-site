@@ -1,5 +1,6 @@
 $(document).ready(function(){
   getCartItems();
+  successModal();
 });
 
 
@@ -117,8 +118,8 @@ function addtocart(){
                
                      },
               success: function(){
-                                        
-                                         getCartItems()
+                                        callSuccessModal();                       
+                                         getCartItems();
 
                                         }
               });
@@ -328,3 +329,33 @@ $(".discount-form").each(function(){
            }
     });
   });
+
+
+  function successModal(){
+    var element = '<div id="successModal" class="modal fade" role="dialog">'+
+    '<div class="modal-dialog">'+
+    '<div class="modal-content">'+
+      '<div class="modal-header">'+
+        '<button type="button" class="close" data-dismiss="modal">&times;</button>'+
+        '<h4 class="modal-title">Product added to Cart</h4>'+
+      '</div>'+
+      '<div class="modal-body">'+
+        '<h3>SUCCESS</h3>'+
+        '<div>'+
+          '<div class="successIcon"><i class="fa fa-check"></i></div>'+
+        '</div>'+
+        '<div><h5>The product successfully added to cart</h5></div>'
+      '</div>'+
+      '<div class="modal-footer">'+
+        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+'</div>';
+    $('body').append(element);
+  }
+
+  function callSuccessModal()
+  {
+    $('#successModal').modal('show');
+  }
