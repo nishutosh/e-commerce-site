@@ -71,8 +71,8 @@ adminurls=[
    url(r'admin-order/$',AdminOrderView.as_view(),name="admin-order"),
    url(r'admin-order/order-list-by-category$',AdminOrderViewByCategory.as_view(),name="admin-order-by-category"),
    url(r'admin-order/order-list-by-category/(?P<subfield>[\w-]+)$',AdminOrderViewByGivenCategory.as_view(),name="admin-order-by-given-category"),
-   url(r'admin-order/change-product-status$',OrderStatusChange.as_view(),name="admin-order-product-status"),
-
+   url(r'admin-order/change-product-status$',OrderProductStatusChange.as_view(),name="admin-order-product-status"),
+   url(r'admin-order/change-order-status$',WholeOrderPaymentConfirm.as_view(),name="admin-order-status"),
    url(r'admin-reports/total-order$',AdminReportsOrderView.as_view(),name="admin-reports-orders"),
    url(r'admin-reports/get-order-stats$',OrderReportApi.as_view(),name="admin-reports-orders-stats"),
    url(r'admin-reports/total-users$',AdminReportsUserView.as_view(),name="admin-reports-users"),
