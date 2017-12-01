@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django.contrib import admin
 
 
-from ecommapp.models import BaseCategory,SubCategory,Availibilty_status,Seller,Product,Pics,Customer,Cart,Cartitem,Delivery_Type,Order,Order_Status_Model,Payment_Method,Shipment_Orgs,Order_Product_Specs,Filter_Name,Filter_Category,Payment_Status,Flash_Sale,CustomerCouponUsed,CouponCode,Sales_Team,Tax,Brand,Phones,Size
+from ecommapp.models import BaseCategory,SubCategory,Availibilty_status,Seller,Product,Pics,Customer,Cart,Cartitem,Delivery_Type,Order,Order_Status_Model,Payment_Method,Shipment_Orgs,Order_Product_Specs,Filter_Name,Filter_Category,Payment_Status,Flash_Sale,CustomerCouponUsed,CouponCode,Sales_Team,Tax,Brand,Phones,Size,CustomModulePics
 from .models import CustomUser
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
@@ -37,3 +37,4 @@ admin.site.register(Tax)
 admin.site.register(Phones)
 admin.site.register(Brand)
 admin.site.register(Size)
+admin.site.register(CustomModulePics)

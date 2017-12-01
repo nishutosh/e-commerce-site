@@ -20,6 +20,9 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .search import search
 from .orderfilters import OrderFilter
 from fpdf import FPDF
+from django.core.files.base import ContentFile
+import base64
+import re
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all()
@@ -1228,20 +1231,46 @@ class PostCustomModule(View):
       """first call this then this would return product id and make an add to cart post call using its result"""
       if request.user.customer.can_create_custom:
         base_price=200
+        name = request.POST.get("product_name")
+        image_parameter = request.POST['custom_image']
+        image_data = base64.b64decode(re.search(r'base64,(.*)', request.POST['custom_image']).group(1))
+        custom_image = ContentFile(image_data, name+'.png')
         product=Product.objects.create(
                         Product_Base_Category=BaseCategory.objects.get( Base_Category="CUSTOM"),
                         product_Sub_Category=SubCategory.objects.get(Sub_Category="PHONE COVERS"),
-                        Product_Name=request.POST["name"]+str(pk),
+                        Product_Name=name,
                         Base_Price=base_price,
-                        Main_Image=request.FILE["custom_image"],
-                        is_displayed=request.POST["choice"],
+                        Main_Image=custom_image,
+                        is_displayed=True,
                         Product_Seller=Seller.objects.get(Seller_Name="FashVolts"),
                         TaxOnProduct=Tax.objects.get(Tax_Percentage=17),
-                        Shipment_Authority=Shipment_Orgs.objects.get(Shipping_Company_Name="Fashvolts")
+                        Shipment_Authority=Shipment_Orgs.objects.get(Shipping_Company_Name="FashVolts")
                          )
         return JsonResponse({"product":product.pk,"quantity":1})
       else:
          raise Http404   
+
+class PostCustomModulePics(View):
+   def post(self,request):
+      """first call PostCustomModule then this would insert required images in the table"""
+      if request.user.customer.can_create_custom:
+        name = request.POST.get("product_name")
+        image_parameter = request.POST.get('preview')
+        image_data = base64.b64decode(re.search(r'base64,(.*)', request.POST.get('preview')).group(1))
+        custom_image = ContentFile(image_data, name+'.png')
+        main_image_data = base64.b64decode(re.search(r'base64,(.*)', request.POST.get('main_image')).group(1))
+        main_image = ContentFile(main_image_data, name+'_main.png')    
+        productPics=CustomModulePics.objects.create(
+                        
+                        product=Product.objects.get(pk = request.POST.get("product_pk")),                       
+                        main_image=main_image,
+                        text_to_be_inserted = request.POST.get("text_to_be_inserted"),
+                        preview=custom_image,
+                        
+                         )
+        return JsonResponse({"message":"custom product registered"})
+      else:
+         raise Http404           
 
                       
  

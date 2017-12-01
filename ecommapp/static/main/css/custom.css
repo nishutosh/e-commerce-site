@@ -26,6 +26,11 @@
 
 }
 
+.phone-container
+{
+  z-index: 2;
+}
+
 .new
 {
   position: absolute;
@@ -54,11 +59,144 @@
   overflow: hidden;
   position:absolute;
   z-index:-1;
-  padding:10px;
+  padding:3px;
   border-radius: 20px;
+  margin-left:-6px;
 }
 
 .preview img
 {
   border-radius: 15px;
+  max-width: 100%!important;
+
+}
+
+
+.brand.box
+{
+  /* height: 300px;
+  width:300px; */
+  display:inline-block;
+  margin:10px;
+  padding:5px;
+}
+
+.brand img
+{
+  width:200px;
+  height: 200px!important;
+}
+
+.caption
+{
+  text-align:center;
+}
+
+.phone-list tr{
+ 
+  width:100%;
+  margin:10px 5px;
+ 
+  padding: 10px;
+  font-size: 18px;
+  box-shadow: 0 0 1px #777;
+  
+}
+
+.phone-list tr a
+{
+  color: #333;
+  text-decoration: none;
+  width:100%;
+}
+
+.step
+{
+  display:block;
+}
+.number
+{
+  border-radius:50%;
+  display: inline-block;
+  height: 40px;
+  width:40px;
+  text-align:center;
+  padding: 7px 5px;
+  background-color: #232F3E;
+  font-weight: bold;
+  color: white;
+  font-size: 20px;
+}
+.heading
+{
+  display: inline-block;
+  margin-left: 10px;
+}
+
+.content
+{
+  display: none;
+}
+
+.content.active
+{
+  display:block;
+}
+
+input[type=file]
+{
+  opacity:0;
+}
+
+.image-upload-btn,input[type=file],input[type=button]
+{
+  padding: 10px;
+  text-align:center!important;
+  cursor: pointer!important;
+}
+.image-upload-btn:hover,input[type=file]:hover
+{
+  background-color:#232F3E;
+  color:white;
+}
+
+.image-upload-btn i
+{
+  margin-right: 5px;
+  color: #232F3E;
+  font-size: 20px;
+  vertical-align: middle;
+}
+
+.image-container
+{
+  display: inline-block;
+}
+
+.button-set
+{
+  display:inline-block;
+}
+
+.required-images
+{
+  margin: 10px auto;
+  text-align: center;
+}
+
+.required-images .image
+{
+  display: inline-block;
+  margin: 20px;
+}
+
+.customization-section
+{
+  /* min-height: 800px; */
+}
+
+.final-submit-div
+{
+  text-align: center;
+  margin-top: 20px;
 }

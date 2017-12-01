@@ -373,4 +373,12 @@ class Phones(models.Model):
   pic=models.ImageField(upload_to="CustomImages/")
   def __str__(self):
       return self.brand.brand_name+self.name
+
+class CustomModulePics(models.Model):
+    main_image = models.ImageField(upload_to="CustomWorkImages/")
+    preview = models.ImageField(upload_to="CustomWorkImages/")
+    text_to_be_inserted = models.CharField(max_length=20,blank=True,null=True)
+    product = models.ForeignKey(Product)    
+    def __str__(self):
+        return self.product.Product_Name
    

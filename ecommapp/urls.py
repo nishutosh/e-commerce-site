@@ -94,10 +94,11 @@ customurls=[
 
 ]
 custommoduleurls=[
- url(r'home$',CustomModule.as_view(),name="custom-home"),
+ url(r'brand/$',CustomModule.as_view(),name="custom-home"),
  url(r'edit/(?P<pk>[\w]+)$',CustomeModuleMain.as_view(),name="edit-pic"),
- url(r'(?P<brand_slug>[\w-]+)$',getphones,name="get-phones"),
+ url(r'phone/(?P<brand_slug>[\w-]+)$',getphones,name="get-phones"),
  url(r'submit$',PostCustomModule.as_view(),name="submit-custom-image"),
+ url(r'submit-images$',PostCustomModulePics.as_view(),name="submit-custom-working-images"),
 
 
 ]
@@ -110,7 +111,7 @@ urlpatterns = [
     url(r'admin-panel/',include(adminurls)),
     url(r'sales-panel/',include(salesurls)),
     url(r'custom/',include(customurls)),
-    url(r'custom-module/',include(custommoduleurls)),
+    url(r'custom-products/',include(custommoduleurls)),
     url(r'^',include(commonurls)),
     url(r'^',include(authurls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
