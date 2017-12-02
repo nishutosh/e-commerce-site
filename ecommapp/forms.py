@@ -37,14 +37,7 @@ class SignInForm(forms.Form):
     password=forms.CharField(widget=forms.PasswordInput)
 
 
-class AccountEditForm(forms.Form):
-    email=forms.EmailField()
-    contact_number=forms.IntegerField()
-    address_line_1=forms.CharField(max_length=400)
-    address_line_2=forms.CharField(max_length=400)
-    city=forms.CharField(max_length=200)
-    state=forms.CharField(max_length=200)
-    ZIP=forms.IntegerField()
+
 
 class PasswordChange(forms.Form):
     old_password=forms.CharField(widget=forms.PasswordInput)
@@ -140,4 +133,15 @@ class SubCategoryForm(ModelForm):
 class ProductForm(ModelForm):
       class Meta:
            model=Product
-           fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority"]
+           fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority","TaxOnProduct"]
+
+class AccountEditForm(forms.Form):
+    email=forms.EmailField()
+    contact_number=forms.IntegerField()
+    address_line_1=forms.CharField(max_length=400)
+    address_line_2=forms.CharField(max_length=400)
+    # city=forms.CharField(max_length=200)
+    # state=forms.CharField(max_length=200)
+    Region=forms.ChoiceField(widget=forms.Select,choices=Delivery_City)
+    ZIP=forms.IntegerField()
+

@@ -7,19 +7,25 @@
     <title>Fashvolts</title>
     {% load static %}
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.min.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/font-awesome.min.css' %}" />
       <link href="{% static 'main/css/animate.min.css' %}" rel="stylesheet">
       <link href="{% static 'main/css/bootstrap-dropdownhover.min.css' %}" rel="stylesheet">
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/test-style.css' %}" />
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/desktop.css' %}" />
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/tablet.css' %}" />
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/white-theme.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/form.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/form-colors.css' %}" />
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/cropper.css' %}" />
+      
       <link rel="stylesheet" type="text/css" href="{% static 'main/css/custom.css' %}" />
+      
       <script src="{% static 'main/js/jquery-3.2.1.js' %}"></script>
       <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
       <script src="{% static 'main/js/bootstrap-dropdownhover.min.js' %}"></script>
       <script src="{% static 'main/js/cropper.js' %}"></script>
-      <script src="https://use.fontawesome.com/a8a9a7df82.js"></script>
+      <script src="{% static 'main/js/html2canvas.js' %}"></script>
+      
 
       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenLite.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/utils/Draggable.min.js"></script>
@@ -39,6 +45,7 @@
 
   {% include 'base/footer.html' %}
   <script src="{% static 'main/js/custom.js' %}"></script>
+  <script src="{% static 'main/js/phone-list.js' %}"></script>
 
 
   </body>

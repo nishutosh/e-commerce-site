@@ -38,23 +38,7 @@
                                   <div class="quantity-icon increase-quantity">
                                       +
                                   </div>
-                                </td>
-                                <td>
-                                  <div class="discount">
-
-                                    <form class="discount-form" action="{%url "apply-coupon"%}" method="post" onsubmit="" data-id="{{items.Product_In_Cart.id}}">
-                                      <input type="text" name="discount" value="" placeholder="Discount Code">
-
-                                      <button type="submit" name="button" class="btn btn-default cta-btn">Apply</button>
-                                    </form>
-                                    <p class="discount-status">
-                                      Discount Value = <span class="discount-value">0</span>
-                                      <br>
-                                      <span class="discount-note">No Discount Applied!</span>
-                                    </p>
-
-
-                                  </div>
+                               
                                 </td>
                                 <td>
                                   <button type="button" name="button" class="btn btn-default alternate-cta-btn remove-btn" id="remove-from-cart-btn" onclick="removeFromCart(this)" data-id="{{items.Product_In_Cart.id}}" data-url="/cart/delete/">Remove</button>
@@ -64,7 +48,21 @@
                           </tbody>
 
                       </table>
+                        <div class="discount">
 
+                                    <form class="discount-form" action="/cart/apply-coupon/" method="post">
+                                      <input id="discount-input" type="text" name="discount" value="" placeholder="Discount Code">
+
+                                      <button type="submit" name="button" class="btn btn-default cta-btn">Apply coupon</button>
+                                    </form>
+                                    <p class="discount-status">
+                                      Discount ₹  <span class="discount-value"></span>
+                                      <br>
+                                      <span class="discount-note"></span>
+                                    </p>
+
+
+                                  </div>
                       <div class="continue-shopping-cta">
                         <a href="/" class="btn btn-default alternate-cta-btn"><i class="fa fa-chevron-left"></i>Continue Shopping</a>
                       </div>
@@ -102,3 +100,8 @@
           </div>
     </div>
 {% endblock %}
+{% block script %}
+<script>
+   Couponupdate();  
+</script>
+{%endblock%}

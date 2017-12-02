@@ -1,0 +1,30 @@
+{%extends 'base/admin-dash.html'%}
+{% load static %}
+{%block body%}
+
+<div class="container-fluid">
+  <div class="messages">
+      {%if messages%}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {%endif%}
+  </div>
+  <div class="data-container detail-box">
+      <div class="header">
+        <i class="fa fa-list" aria-hidden="true"></i>
+        Order Stats
+
+          
+      </div>
+      <div class="data" data-api-url="{%url "admin-reports-orders-stats"%}" data-title="Total Orders"></div>
+      <div id="graph-container" class="graph-container">
+
+      </div>
+      
+  </div>
+
+</div>
+{%endblock%}

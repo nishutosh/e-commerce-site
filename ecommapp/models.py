@@ -86,7 +86,8 @@ class BaseCategory(models.Model):
 
 class SubCategory(models.Model):
   Base_category_Key=models.ForeignKey(BaseCategory)
-  Sub_Category=models.CharField(max_length=100,unique=True)
+  Sub_Category=models.CharField(max_length=100)
+  Sub_Category_alias = models.CharField(max_length = 20, default = "sub")
   Sub_Category_Pic=models.ImageField(upload_to="SubCatPic/")
   Sub_Category_Slug_Field=models.SlugField(max_length=120,blank=True)
   def save(self, *args, **kwargs):
@@ -96,10 +97,9 @@ class SubCategory(models.Model):
     return self.Sub_Category
 
 class Tax(models.Model):
-    Prducts=models.ForeignKey(SubCategory)
+    Products=models.ForeignKey(SubCategory)
     Tax_Percentage=models.FloatField()
-    def __str__(self):
-        return self.Tax_Percentage
+    
 
 class Filter_Name(models.Model):
    Filter_Name=models.CharField(max_length=100)
@@ -135,6 +135,9 @@ class Shipment_Orgs(models.Model):
   def __str__(self):
         return self.Shipping_Company_Name
   #shipping company details will be added as per requirements
+class Size(models.Model):
+  size_sf=models.CharField(max_length=20)
+
 
 
 class Product(models.Model):
@@ -144,22 +147,32 @@ class Product(models.Model):
   Discount=models.FloatField(default=0)
   Base_Price=models.FloatField()
   Availiability=models.BooleanField(default=True)
-  Description=models.TextField(max_length=10000)
-  Features=models.TextField(max_length=10000)
-  TechnicalSpecs=models.CharField(max_length=10000)
+  Description=models.TextField(max_length=10000,blank=True)
+  Features=models.TextField(max_length=10000,blank=True)
+  TechnicalSpecs=models.CharField(max_length=10000,blank=True)
   # Product_Filter=models.ManyToManyField(Filter_Category)
   Main_Image=models.ImageField(upload_to="ProductImages/")
   Shipment_Authority=models.ForeignKey(Shipment_Orgs)
   is_displayed=models.BooleanField(default=True)
   Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
+  Sizes=models.ManyToManyField(Size,null=True)
   def __str__(self):
-     return str(self.pk)+str(self.Product_Name)
+     return str(self.Product_Name)
+  
   def get_product_url(self):
       return "home/"+self.Product_Base_Category.Base_Slug_Field+"/"+self.product_Sub_Category.Sub_Category_Slug_Field+"/"+self.pk
+  
   def price_after_discount(self):
-      Actual_Price=((100-self.Discount)/100)* self.Base_Price
+      price_with_tax = self.price_with_tax()
+      Actual_Price=((100-self.Discount)/100)* price_with_tax
       return  Actual_Price
+
+  def price_with_tax(self):
+      tax = Tax.objects.get(Products = self.product_Sub_Category).Tax_Percentage
+      actual_price = self.Base_Price + ((tax*self.Base_Price)/100)
+      return actual_price
+
   def indexing(self):
      from .search import ProductIndex
      obj = ProductIndex(
@@ -205,6 +218,7 @@ class Customer(models.Model):
    Volts_Credit=models.IntegerField(default=0)
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
    usability=models.BooleanField(default=True)
+   can_create_custom=models.BooleanField(default=True)
    def __str__(self):
      return self.Customer_First_Name
 
@@ -238,7 +252,7 @@ class Sales_Team(models.Model):
 #coupon stuff
 class CouponCode(models.Model):
     Code=models.CharField(max_length=100)
-    Sales_Member=models.ForeignKey(Sales_Team,null=True)
+    Sales_Member=models.ForeignKey(Sales_Team,null=True,blank=True)
     Discount=models.FloatField(default=0)
     def __str__(self):
        return self.Code
@@ -313,10 +327,10 @@ class Order(models.Model):
    Order_City=models.CharField(max_length=200)
    Order_State=models.CharField(max_length=200)
    Order_ZIP=models.IntegerField()
+   Invoice=models.FileField(upload_to="Invoices/",null=True)
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
-   Transaction_Id=models.CharField(max_length=100)
-   Whole_Order_Status=models.ForeignKey(Order_Status_Model)
+   Transaction_Id=models.CharField(max_length=100,blank=True)
    Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
    class Meta:
        ordering=['-Order_Date_Time']
@@ -325,11 +339,6 @@ class Order(models.Model):
    def Order_Total_Price(self):
        order_list=self.order_product_specs_set.all()
        total=0
-       for order_item in order_list:
-           total=total+order_item.Final_Ordered_Product_price
-       return total
-   def  Order_Status_sync(self):
-       order_list=self.order_product_specs_set.all()
        for order_item in order_list:
            total=total+order_item.Final_Ordered_Product_price
        return total
@@ -357,3 +366,39 @@ class Order_Product_Specs(models.Model):
 
 class OrderReturn(models.Model):
    Order=models.ForeignKey(Order)
+   
+class TypeOfCustomProduct(models.Model):
+    product_type = models.CharField(max_length = 20,unique=True)
+    image = models.ImageField(upload_to = "CustomTypes/")
+    sub_category = models.ForeignKey(SubCategory)
+    def __str__(self):
+        return self.product_type   
+
+
+class Brand(models.Model):
+  brand_name=models.CharField(max_length=100,unique=True)
+  brand_type = models.ForeignKey(TypeOfCustomProduct,default = 1) 
+  brand_pic=models.ImageField(upload_to="BrandPic/")
+  slug=models.CharField(max_length=100,blank=True)
+  def save(self, *args, **kwargs):
+        self.slug=slugify(self.brand_name)
+        super(Brand, self).save()
+  def __str__(self):
+    return self.brand_name      
+
+class Phones(models.Model):
+  brand=models.ForeignKey(Brand)
+  name=models.CharField(max_length=100)
+  pic=models.ImageField(upload_to="CustomImages/")
+  def __str__(self):
+      return self.brand.brand_name+self.name
+
+class CustomModulePics(models.Model):
+    main_image = models.ImageField(upload_to="CustomWorkImages/")
+    preview = models.ImageField(upload_to="CustomWorkImages/")
+    text_to_be_inserted = models.CharField(max_length=20,blank=True,null=True)
+    product = models.ForeignKey(Product)    
+    def __str__(self):
+        return self.product.Product_Name
+   
+ 

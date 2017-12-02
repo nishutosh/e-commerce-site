@@ -96,7 +96,7 @@ h1,h2,h3,h4,h5,h6
 
 .main-navbar-menu-list li a
 {
-  color:white;
+  color:white!important;
 
 }
 
@@ -211,6 +211,23 @@ footer a
       background-color: #f6f6f6;
 }
 
+.header-cart-btn,.header-cart-btn:hover
+{
+  background-color: orange;
+  display: inline-block;
+  color: #000;
+  padding: 8px;
+  border-radius: 5px;
+  /* margin-top: 5px; */
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.header-cart-btn .badge 
+{
+  background-color: black;
+}
 
 @media(max-width:768px)
 {
@@ -223,4 +240,82 @@ footer a
   {
     color:black;
   }
+}
+
+#successModal
+{
+  text-align:center;
+}
+
+.successIcon
+{
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  background-color: limegreen;
+  color: white;
+  border-radius: 50%;
+  font-weight: bolder;
+  font-size: 40px;
+  margin: 40px auto;
+}
+
+.custom-category
+{
+  background: white;
+  box-shadow: 1px 1px 2px #f6f6f6;
+  
+}
+
+.custom-container
+{
+  padding: 20px;
+}
+.custom-image
+{
+  width: 100%;
+  height:auto;
+  display:inline-block;
+ 
+}
+
+.custom-category .header
+{
+  text-align: center;
+  box-shadow: 0 2px 2px #999;
+  padding: 20px;
+}
+
+.custom-categories
+{
+  display:inline-block;
+  width: 200px;
+  height: 100%;
+  padding: 0;
+  margin:0 40px;
+}
+
+.custom-categories ul
+{
+  width: 100%;
+  padding: 0px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.custom-categories ul li
+{
+  display: list-item;
+  width: 100%;
+  /* padding: 10px 20px; */
+}
+.custom-categories ul li a
+{
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  color: #232f3e;
+  text-decoration: none;
+  display: inline-block;
+  width: 100%;
+  padding: 10px 20px;
 }

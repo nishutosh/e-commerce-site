@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'ecommapp',
     'rest_framework',
     'django_filters',
+    'storages',
 ]
 
 MIDDLEWARE = [

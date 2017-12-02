@@ -25,8 +25,4 @@ $('.toggle-button').click(function(){
   $('.side-main-list').slideToggle();
 });
 
-$(".navbar-cart-btn").click(function(){
-  $.get("/cart/checkout/",function(data){
-    console.log("akhand chutiyapa")
-  })
-})
+

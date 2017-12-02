@@ -20,6 +20,13 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .search import search
 from .orderfilters import OrderFilter
 from fpdf import FPDF
+from django.core.files.base import ContentFile
+import base64
+import re
+import os
+from InvoiceGenerator.api import Invoice, Item, Client, Provider, Creator
+from InvoiceGenerator.pdf import SimpleInvoice
+os.environ["INVOICE_LANG"] = "en"
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all()
@@ -29,8 +36,8 @@ menu_product_view_context={
 def ElasticSearch(request):
   if request.method=="GET":
     results=search(search_term=request.GET["search_term"])
-    #print results
-    return render(request,"product_list.html",{"product_list":results})
+    print (results)
+    return render(request,"product-list.html",{"product_list":results})
 
 class CustomView(ListView):
     model=BaseCategory
@@ -49,6 +56,8 @@ class HomeView(ListView):
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         flash_sale=Flash_Sale.objects.filter(active=True)
+        type_of_custom = TypeOfCustomProduct.objects.all()
+        context["type_of_custom"] = type_of_custom
         context["flash_sale"]=flash_sale
         if self.request.user.is_authenticated:
              context["siteuser"]=self.request.user
@@ -192,6 +201,7 @@ class  EditFormView(LoginRequiredMixin,FormView):
                       "address_line_1":user_obj.customer.Address_Line1,
                       "address_line_2":user_obj.customer.Address_Line2,
                       "Region":user_obj.customer.City,
+                      "State":user_obj.customer.State,
                       "ZIP":user_obj.customer.ZIP,
                       }
           return initial
@@ -202,8 +212,8 @@ class  EditFormView(LoginRequiredMixin,FormView):
                                                         Customer_Email=form.cleaned_data["email"],
                                                         Address_Line1=form.cleaned_data["address_line_1"],
                                                         Address_Line2=form.cleaned_data["address_line_2"],
-                                                        City=form.cleaned_data["Region"],
                                                         State="DELHI",
+                                                        City=form.cleaned_data["Region"],
                                                         ZIP=form.cleaned_data["ZIP"],
                                                         Customer_Contact_Number=form.cleaned_data["contact_number"] )
           messages.success(self.request, 'Details Updated')
@@ -235,8 +245,9 @@ class FashVoltsCreditView(LoginRequiredMixin,View):
 class  CoupounAppliedView(LoginRequiredMixin,View):
     def get(self,request):
          user_obj=request.user
-         context={"siteuser":user_obj,"coupouns":user_obj.customer.customercoupounused_set.all()}
+         context={"siteuser":user_obj,"coupouns":user_obj.customer.customercouponused_set.all()}
          context.update(menu_product_view_context)
+         print (context)
          return render(request,"coupouns.html",context)
 
 
@@ -339,26 +350,41 @@ class DeleteCartView(View):
 #yet to be tested
 class ApplyCoupon(View):
   CART_ID="CART_ID"
+  def get(self,request):
+        cart=request.COOKIES.get(self.CART_ID)
+        if cart:
+          cart_obj=Cart.objects.get(pk=cart)
+          if cart_obj.coupon_code:
+             return JsonResponse({"message":"coupon code already applied","value":cart_obj.coupon_code.Discount})
+          else:
+             return JsonResponse({"message":"coupon code not applied","value":0})
+        else:
+          return  JsonResponse({"alert":"something is wrong"})
   def post(self,request):
         cart=request.COOKIES.get(self.CART_ID)
         if cart:
-               cart_obj=Cart.objects.get(pk=cart)
+          cart_obj=Cart.objects.get(pk=cart)
+          if not(cart_obj.coupon_code):
                coupon_code_entered=request.POST["coupon_entered"]
                if (CouponCode.objects.filter(Code=coupon_code_entered).exists()):
+                 coupon_code_entered=request.POST["coupon_entered"]
                  coupon=CouponCode.objects.get(Code=coupon_code_entered)
                  if (request.user.customer.usability) and (not(CustomerCouponUsed.objects.filter(coupon_code=coupon,customer_track=request.user.customer).exists())):
                     if not(cart_obj.coupon_code):
                        cart_obj.coupon_code=coupon
                        cart_obj.save()
-                       return JsonResponse({"message":"coupon code applied"})
+                       return JsonResponse({"message":"coupon code applied","value":coupon.Discount})
                     else:
-                       return JsonResponse({"message":"coupon code exist on this product"})
+                       return JsonResponse({"message":"coupon code exist on this cart","value":coupon.Discount})
                  else:
-                     return JsonResponse({"message":"coupon code not applicable"})
+                     return JsonResponse({"message":"coupon code not applicable","value":0})
                else :
-                  return JsonResponse({"message":"coupon code not applicable"})
+                  return JsonResponse({"message":"coupon code not applicable","value":0})
+          else:
+            return JsonResponse({"message":"coupon code already applied","value":cart_obj.coupon_code.Discount})
+                  
         else:
-           return  JsonResponse({"response":"no cookie present"})
+           return  JsonResponse({"alert":"something is wrong"})
 
 
 class RemoveCoupoun(LoginRequiredMixin,View):
@@ -474,8 +500,7 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                  Order_ZIP=form.cleaned_data["Order_ZIP"],
                                                  Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
                                                  Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
-                                                 Whole_Order_Status=Order_Status_Model.objects.get(status_for_order="PENDING"),
-                                                 Transaction_Id="null",
+                                                 Transaction_Id="",
                                                  Order_Reference=cart_obj.OrderReferenceCheck()
                                                         )
                     cart_items=cart_obj.cartitem_set.all()
@@ -503,7 +528,7 @@ class OrderPayment(LoginRequiredMixin,View):
   def get(self,request,order_id):
     user_obj=request.user
     order=Order.objects.get(pk=order_id)
-    if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="null") and(order.Order_Customer==request.user.customer):
+    if (order.Order_Payment_status.payment_status=="PENDING") and (order.Transaction_Id=="") and(order.Order_Customer==request.user.customer):
         return render(request,"order-payment.html",{"siteuser":user_obj,"order":order})
     else:
       raise Http404
@@ -513,27 +538,29 @@ class OrderPayment(LoginRequiredMixin,View):
     if Order.objects.filter(pk=order_id).exists():
        order=Order.objects.get(pk=order_id)
        """just mark cancel here the whole order will be termed as cancel"""
-       if (order.Whole_Order_Status.status_for_order=="PENDING") and (order.Transaction_Id=="null") and(order.Order_Customer==request.user.customer):
+       if (order.Order_Payment_status.payment_status=="PENDING") and (order.Transaction_Id=="") and(order.Order_Customer==request.user.customer):
             Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))
             cart=request.COOKIES.get(CART_ID)
             if cart:
               cart_obj=Cart.objects.get(pk=cart)
               if cart_obj.coupon_code:
-                  CustomerCouponUsed.objects.create(customer=request.user.customer,coupon_code=cart_obj.coupon_code)
+                  CustomerCouponUsed.objects.create(customer_track=request.user.customer,coupon_code=cart_obj.coupon_code)
                   if request.user.customer.usability==True:
                       request.user.customer.usability=False
                   else:
                       request.user.customer.usability
               Cart.objects.filter(pk=cart).delete()
+              print ("dsds")
               response = redirect(reverse("user-orders"))
               response.delete_cookie(CART_ID)
               return response
-
+            else:
+              return redirect(reverse("user-orders"))             
        else:
          raise Http404
     else:
       raise Http404
-
+    
 
 
 class OrderProcessCompleted(LoginRequiredMixin,View):
@@ -571,7 +598,7 @@ class AdminSignin(FormView):
     """admin login form and validation"""
     template_name="admin-login.html"
     form_class=SignInForm
-    success_url="admin-panel/panel"
+    success_url="/admin-panel/"
     def form_valid(self,form):
            user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
            if user is not None:
@@ -716,7 +743,7 @@ class AdminProductCreateView(LoginRequiredMixin,UserPassesTestMixin,CreateView):
    model=Product
    template_name="admin-product-edit.html"
    success_url="/admin-panel/catalog/products/"
-   fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority"]
+   fields=["Product_Base_Category","product_Sub_Category","Product_Name","Discount","Base_Price","Availiability","Description","Features","TechnicalSpecs","Main_Image","Shipment_Authority","TaxOnProduct"]
    def test_func(self):
            return self.request.user.is_superuser
 
@@ -909,7 +936,101 @@ class AdminOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
             contacts = paginator.page(paginator.num_pages)
          return render(request,"admin-order-list.html",{"contacts":contacts,"status":status,'filter': filter})
 
-class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
+# admin order view to show all the categories
+class AdminOrderViewByCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         sub_category=SubCategory.objects.all()
+         paginator = Paginator(sub_category, 25)
+         page = request.GET.get('page')
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request, 'admin-order-categories.html', {'contacts':contacts})
+
+#admin order list for selected category
+class AdminOrderViewByGivenCategory(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request,**kwargs):
+         
+         status=Order_Status_Model.objects.all()
+         
+         order_list=Order.objects.all()
+         required_orders = order_list
+         to_be_deleted = []
+         for order in order_list:
+               found = False
+               products = order.order_product_specs_set.all()
+               for product in products:
+                     current_sub_category = product.Ordered_Product.product_Sub_Category
+                     if(current_sub_category.Sub_Category == self.kwargs["subfield"]):
+                           found = True
+                           break
+               print(found)
+               if not found:
+                  # required_orders=required_orders.filter(pk = order.pk).delete()
+                  to_be_deleted.append(order.pk)
+
+         print(to_be_deleted)         
+         required_orders = Order.objects.exclude(pk__in = to_be_deleted)   
+         filter = OrderFilter(request.GET, queryset=required_orders)
+         print(required_orders)
+         paginator = Paginator(required_orders, 25)
+         
+         page = request.GET.get('page')
+
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request,"admin-order-list.html",{"contacts":contacts,"status":status,'filter': filter})
+
+class WholeOrderPaymentConfirm(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def post(self,request):
+       order_id=request.POST.get("order_id")
+       if Order.objects.filter(pk=order_id).exists():
+        order=Order.objects.get(pk=order_id)
+        if request.POST.get("payment_status")=="COMPLETED":
+          if order.Order_Payment_status.payment_status=="PENDING":
+            order.Order_Payment_status=Payment_Status.objects.get(payment_status="COMPLETED")
+            order.Transaction_Id=request.POST.get("transactionID")
+            #order reference
+            client = Client(request.user.customer.Customer_First_Name)
+            provider = Provider('Fashvolts')
+            creator = Creator('Vaibhav')
+            invoice = Invoice(client, provider, creator)
+            invoice.currency=u'Rs.'
+
+            for product in order.order_product_specs_set.all():
+              product.Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED")
+              #shipment id enter
+              invoice.add_item(Item(product.Quantity, product.Final_Ordered_Product_price, description=product.Ordered_Product.Product_Name))
+            pdf = SimpleInvoice(invoice)
+            name="invoice"+str(order.pk)
+            order.Invoice=pdf.gen(name, generate_qr_code=False)
+            order.save()
+            return JsonResponse({"status":"order made"})
+
+        else:
+          if order.Order_Payment_status.payment_status=="CANCELLED":
+            order.Order_Payment_status=Payment_Status.objects.get(payment_status="CANCELLED")
+            for product in order.order_product_specs_set.all():
+              product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
+            return JsonResponse({"status":"order cancelled"})  
+
+
+                
+        
+class OrderProductStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
   """ use  order_product_id and order_id """
   def test_func(self):
         return self.request.user.is_superuser
@@ -920,13 +1041,105 @@ class OrderStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
           order=Order.objects.get(pk=order_id)
           product_id=request.POST.get("order_product_id")
           ordered_product=Order_Product_Specs.objects.get(pk=product_id)
-          print (isinstance(ordered_product.Order_Status,Order_Status_Model))
-          print (isinstance(Order_Status_Model.objects.get(status_for_order=request.POST.get("status")),Order_Status_Model))
           ordered_product.Order_Status=Order_Status_Model.objects.get(status_for_order=request.POST.get("status"))
           ordered_product.save()
           return JsonResponse({"message":"status changed"})
        else:
           return JsonResponse({"message":"order does not exist"})
+
+
+#admin reports stuff ------------------------------------------->
+
+class AdminReportsOrderView(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         #filter = OrderFilter(request.GET, queryset=Order.objects.all())
+         status=Order_Status_Model.objects.all()
+         order_list=Order.objects.all()
+
+         
+         return render(request,"admin-reports-orders.html",{"contacts":order_list,"status":status}) 
+
+class AdminReportsUserView(LoginRequiredMixin,UserPassesTestMixin,View):
+    def test_func(self):
+        return self.request.user.is_superuser
+    def get(self,request):
+         #filter = OrderFilter(request.GET, queryset=Order.objects.all())
+         #status=Order_Status_Model.objects.all()
+         customer_list=Customer.objects.all()
+
+         
+         return render(request,"admin-reports-users.html",{"contacts":customer_list}) 
+      
+
+#api for object returns for different reports
+ 
+class OrderReportApi(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+        return self.request.user.is_superuser
+      def get(self,request):
+            orders = Order.objects.all()
+            response_data = {}
+            prev_date = orders[0].Order_Date_Time.date()
+            count = 0
+            index = 0
+            for order in orders:
+                  if(order.Order_Date_Time.date() == prev_date):
+                        count = count+1
+                  else:
+                        current_entry = {
+                              "x": order.Order_Date_Time.date(),
+                              "y": count
+                        }
+                        response_data[index]=current_entry
+                        index=index+1
+                        count = 0
+                        prev_date = order.Order_Date_Time
+           
+            # if the response is empty because every order is on same date and it never goes in else of for loop
+            if not response_data:
+                  current_entry = {
+                              "x": order.Order_Date_Time.date(),
+                              "y": count
+                        }
+                  response_data[index]=current_entry
+
+            return JsonResponse(response_data)                  
+
+#user report api
+class UserReportApi(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+        return self.request.user.is_superuser
+      def get(self,request):
+            users = Customer.objects.all()
+            response_data = {}
+            prev_date = users[0].Join_Date_Time.date()
+            count = 0
+            index = 0
+            for order in users:
+                  if(order.Join_Date_Time.date() == prev_date):
+                        count = count+1
+                  else:
+                        current_entry = {
+                              "x": order.Join_Date_Time.date(),
+                              "y": count
+                        }
+                        response_data[index]=current_entry
+                        index=index+1
+                        count = 0
+                        prev_date = order.Join_Date_Time
+           
+            # if the response is empty because every order is on same date and it never goes in else of for loop
+            if not response_data:
+                  current_entry = {
+                              "x": order.Join_Date_Time.date(),
+                              "y": count
+                        }
+                  response_data[index]=current_entry
+
+            return JsonResponse(response_data)                  
+
 
 #sales panel stuff----------------------------------------------->
 class SalesSignin(FormView):
@@ -976,60 +1189,144 @@ class SalesSignOut(LoginRequiredMixin,View):
           return redirect(reverse("sales-signin"))
 
 #seller stuff-------------------------->
-class SellerPanel(LoginRequiredMixin,UserPassesTestMixin,View):
-  """sales panel"""
-  def test_func(self):
-      return Seller.objects.filter(seller_user=self.request.user).exists()
-  def get(self,request):
-      """seller panel landing page"""
-      seller=Seller.objects.get(seller_user=request.user)
-      return render(request,"seller-panel.html",{"seller":seller})
+# class SellerPanel(LoginRequiredMixin,UserPassesTestMixin,View):
+#   """sales panel"""
+#   def test_func(self):
+#       return Seller.objects.filter(seller_user=self.request.user).exists()
+#   def get(self,request):
+#       """seller panel landing page"""
+#       seller=Seller.objects.get(seller_user=request.user)
+#       return render(request,"seller-panel.html",{"seller":seller})
 
-class SellerSignin(FormView):
-    """sales login form and validation"""
-    template_name="seller-login.html"
-    form_class=SignInForm
-    success_url="sellersite/panel"
-    def form_valid(self,form):
-           user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
-           if Seller.objects.filter(seller_user__username=form.cleaned_data["username"]).exists():
-               if user is not None:
-                     if user.is_active:
-                         login(self.request,user)
-                         return super(SellerSignin, self).form_valid(form)
-                     else:
-                           messages.error(self.request, 'Invalid username or password')
-                           return redirect(reverse("seller-signin"))
-               else:
-                   messages.error(self.request, 'Invalid username or password')
-                   return redirect(reverse("seller-signin"))
-           else:
-               messages.error(self.request, 'Invalid username or password')
-               return redirect(reverse("seller-signin"))
+# class SellerSignin(FormView):
+#     """sales login form and validation"""
+#     template_name="seller-login.html"
+#     form_class=SignInForm
+#     success_url="sellersite/panel"
+#     def form_valid(self,form):
+#            user=authenticate(self.request,username=form.cleaned_data["username"],password=form.cleaned_data["password"])
+#            if Seller.objects.filter(seller_user__username=form.cleaned_data["username"]).exists():
+#                if user is not None:
+#                      if user.is_active:
+#                          login(self.request,user)
+#                          return super(SellerSignin, self).form_valid(form)
+#                      else:
+#                            messages.error(self.request, 'Invalid username or password')
+#                            return redirect(reverse("seller-signin"))
+#                else:
+#                    messages.error(self.request, 'Invalid username or password')
+#                    return redirect(reverse("seller-signin"))
+#            else:
+#                messages.error(self.request, 'Invalid username or password')
+#                return redirect(reverse("seller-signin"))
 
-class SellerSignOut(LoginRequiredMixin,View):
-    def get(self,request):
-          logout(request)
-          return redirect(reverse("seller-signin"))
+# class SellerSignOut(LoginRequiredMixin,View):
+#     def get(self,request):
+#           logout(request)
+#           return redirect(reverse("seller-signin"))
 
-class SellerProductAdd(LoginRequiredMixin,CreateView,UserPassesTestMixin):
-   model=Product
-   template_name="seller-product-cu.html"
-   fields="__all__"
-   success_url="sellersite/panel"
-   def test_func(self):
-      return Seller.objects.filter(seller_user=self.request.user).exists()
+# class SellerProductAdd(LoginRequiredMixin,CreateView,UserPassesTestMixin):
+#    model=Product
+#    template_name="seller-product-cu.html"
+#    fields="__all__"
+#    success_url="sellersite/panel"
+#    def test_func(self):
+#       return Seller.objects.filter(seller_user=self.request.user).exists()
 
-class SellerProductUpdate(LoginRequiredMixin,UpdateView,UserPassesTestMixin):
-   model=Product
-   fields="__all__"
-   template_name="seller-product-cu.html"
-   success_url="sellersite/panel"
-   def test_func(self):
-      return Seller.objects.filter(seller_user=self.request.user).exists()
+# class SellerProductUpdate(LoginRequiredMixin,UpdateView,UserPassesTestMixin):
+#    model=Product
+#    fields="__all__"
+#    template_name="seller-product-cu.html"
+#    success_url="sellersite/panel"
+#    def test_func(self):
+#       return Seller.objects.filter(seller_user=self.request.user).exists()
 
-class SellerProductDelete(LoginRequiredMixin,DeleteView,UserPassesTestMixin):
-   model=Product
-   success_url="sellersite/panel"
-   def test_func(self):
-      return Seller.objects.filter(seller_user=self.request.user).exists()
+# class SellerProductDelete(LoginRequiredMixin,DeleteView,UserPassesTestMixin):
+#    model=Product
+#    success_url="sellersite/panel"
+#    def test_func(self):
+#       return Seller.objects.filter(seller_user=self.request.user).exists()
+
+
+class CustomModule(ListView):
+  context_object_name="brands"
+  template_name="custom-module-index.html"
+  def get_queryset(self):
+        try:
+              type_pk = TypeOfCustomProduct.objects.filter(product_type = self.kwargs["type"])
+              return  Brand.objects.filter(brand_type=type_pk)
+        except:
+              raise Http404
+  def get_context_data(self, **kwargs):
+        context = super(CustomModule, self).get_context_data(**kwargs)
+        context.update(menu_product_view_context)
+        if self.request.user.is_authenticated:
+             context["siteuser"]=self.request.user
+        print(context)     
+        return context          
+              
+
+
+@login_required
+def getphones(request,brand_slug):
+  """js ajax call display all phone 
+     names of that brand"""
+  phones=Phones.objects.filter(brand__slug=brand_slug)
+  phone_list=[]
+  for phone in phones:
+    phone_list.append({phone.pk:phone.name})
+  return JsonResponse(phone_list,safe=False)
+
+class CustomeModuleMain(LoginRequiredMixin,View):
+  def get(self,request,pk):
+     phone_obj=Phones.objects.get(pk=pk)
+     return render(request,"custom-main.html",{"phone":phone_obj})    
+class PostCustomModule(View):
+   def post(self,request):
+      """first call this then this would return product id and make an add to cart post call using its result"""
+      if request.user.customer.can_create_custom:
+        base_price=200
+        name = request.POST.get("product_name")
+        image_parameter = request.POST['custom_image']
+        image_data = base64.b64decode(re.search(r'base64,(.*)', request.POST['custom_image']).group(1))
+        custom_image = ContentFile(image_data, name+'.png')
+        product=Product.objects.create(
+                        Product_Base_Category=BaseCategory.objects.get( Base_Category="CUSTOM"),
+                        product_Sub_Category=SubCategory.objects.get(Sub_Category="PHONE-COVERS"),
+                        Product_Name=name,
+                        Base_Price=base_price,
+                        Main_Image=custom_image,
+                        is_displayed=True,
+                        Product_Seller=Seller.objects.get(Seller_Name="FashVolts"),
+                        TaxOnProduct=Tax.objects.get(Tax_Percentage=17),
+                        Shipment_Authority=Shipment_Orgs.objects.get(Shipping_Company_Name="FashVolts")
+                         )
+        return JsonResponse({"product":product.pk,"quantity":1})
+      else:
+         raise Http404   
+
+class PostCustomModulePics(View):
+   def post(self,request):
+      """first call PostCustomModule then this would insert required images in the table"""
+      if request.user.customer.can_create_custom:
+        name = request.POST.get("product_name")
+        image_parameter = request.POST.get('preview')
+        image_data = base64.b64decode(re.search(r'base64,(.*)', request.POST.get('preview')).group(1))
+        custom_image = ContentFile(image_data, name+'.png')
+        main_image_data = base64.b64decode(re.search(r'base64,(.*)', request.POST.get('main_image')).group(1))
+        main_image = ContentFile(main_image_data, name+'_main.png')    
+        productPics=CustomModulePics.objects.create(
+                        
+                        product=Product.objects.get(pk = request.POST.get("product_pk")),                       
+                        main_image=main_image,
+                        text_to_be_inserted = request.POST.get("text_to_be_inserted"),
+                        preview=custom_image,
+                        
+                         )
+        return JsonResponse({"message":"custom product registered"})
+      else:
+         raise Http404           
+
+                      
+ 
+

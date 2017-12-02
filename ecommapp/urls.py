@@ -69,7 +69,14 @@ adminurls=[
    url(r'marketing/edit-coupon/(?P<pk>[\w-]+)$',AdminCouponUpdateView.as_view(),name="admin-marketing-coupon-edit"),
    url(r'marketing/edit-coupon/delete/$',AdminCouponDeleteView.as_view(),name="admin-marketing-coupon-delete"),
    url(r'admin-order/$',AdminOrderView.as_view(),name="admin-order"),
-   url(r'admin-order/change-product-status$',OrderStatusChange.as_view(),name="admin-order-product-status"),
+   url(r'admin-order/order-list-by-category$',AdminOrderViewByCategory.as_view(),name="admin-order-by-category"),
+   url(r'admin-order/order-list-by-category/(?P<subfield>[\w-]+)$',AdminOrderViewByGivenCategory.as_view(),name="admin-order-by-given-category"),
+   url(r'admin-order/change-product-status$',OrderProductStatusChange.as_view(),name="admin-order-product-status"),
+   url(r'admin-order/change-order-status$',WholeOrderPaymentConfirm.as_view(),name="admin-order-status"),
+   url(r'admin-reports/total-order$',AdminReportsOrderView.as_view(),name="admin-reports-orders"),
+   url(r'admin-reports/get-order-stats$',OrderReportApi.as_view(),name="admin-reports-orders-stats"),
+   url(r'admin-reports/total-users$',AdminReportsUserView.as_view(),name="admin-reports-users"),
+   url(r'admin-reports/get-user-stats$',UserReportApi.as_view(),name="admin-reports-users-stats")
 
 ]
 
@@ -86,15 +93,25 @@ customurls=[
 
 
 ]
+custommoduleurls=[
+ url(r'brand/(?P<type>[\w-]+)$',CustomModule.as_view(),name="custom-home"),
+ url(r'edit/(?P<pk>[\w]+)$',CustomeModuleMain.as_view(),name="edit-pic"),
+ url(r'phone/(?P<brand_slug>[\w-]+)$',getphones,name="get-phones"),
+ url(r'submit$',PostCustomModule.as_view(),name="submit-custom-image"),
+ url(r'submit-images$',PostCustomModulePics.as_view(),name="submit-custom-working-images"),
+
+
+]
 
 urlpatterns = [
-    url(r'^',include(commonurls)),
-    url(r'^',include(authurls)),
     url(r'cart/',include(carturls)),
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),
     url(r'search/',ElasticSearch,name="search"),
     url(r'admin-panel/',include(adminurls)),
     url(r'sales-panel/',include(salesurls)),
-    url(r'^custom/',include(customurls)),
+    url(r'custom/',include(customurls)),
+    url(r'custom-products/',include(custommoduleurls)),
+    url(r'^',include(commonurls)),
+    url(r'^',include(authurls)),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

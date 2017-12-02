@@ -1,9 +1,23 @@
 $(document).ready(function(){
-  billCalculate();
   getCartItems();
+  successModal();
 });
 
+function Bill(price,delivery,discount)
+{
+    this.price = price;
+    this.delivery = delivery;
+    this.discount = discount;
+    this.total = 0;
+}
 
+Bill.prototype = {
+  calculate: function()
+  {
+    this.total = this.price+this.delivery-this.discount;
+  }
+}
+var currentBill = new Bill(0,0,0);
 
 // #disable checkout button when cart is empty
 // getting cookies
@@ -62,12 +76,12 @@ $.ajaxSetup({
 
 
 function getCartItems()
-{
+{    console.log("get cart item called")
   $.ajax({
                type: "GET",
                url: "/cart/",
                 success: function(result){
-                          console.log(result);
+                          console.log("get cart item sucess call"+result);
                           if(result.length == 0)
                           {
                             var element = '<h3>Oops! Your cart is empty... </h3>';
@@ -76,16 +90,28 @@ function getCartItems()
                             $("#order-btn").parents(".order-cta").css({
                               "cursor": "not-allowed"
                             });
+                            var cartItems = 0;
+                            $(".cart-item-number").text(cartItems);
+                            console.log("result-len0")
                           }
                           else if(result.message == "no cookie present")
                               {
+                                  console.log("no cokkie")
                                 var cartItems = 0;
                                 $(".cart-item-number").text(cartItems);
                               }
                               
                           else{
+                             console.log("cart has some items")
                             var cartItems = result.length;
                             $(".cart-item-number").text(cartItems);
+                            var price = 0;
+                            for(const prop in result)
+                            {
+                              price += result[prop].Price;
+                            }
+                            currentBill.price = price;
+                            currentBillCalculate();
                           }
 
 
@@ -100,8 +126,8 @@ function getCartItems()
 /////////////////////////////////////
 // for adding to cart on list page
 //////////////////////////////////////
-
-$(".cart-btn").click(function(){
+function addtocart(){
+   console.log("cart-button click")
     $.ajax({
             type: "POST",
             url: $(this).attr("data-ajax-url"),
@@ -109,24 +135,17 @@ $(".cart-btn").click(function(){
                  "quantity":"1",
                  "product":$(this).attr("data-product-id"),
                  "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
-                "s":console.log($("input[name='csrfmiddlewaretoken']").val())
+               
                      },
-              success: function(result){
-                           $.ajax({
-                                         type: "GET",
-                                         url: $(this).attr("data-ajax-url"),
-                                          success: function(result){
-                                         console.log(result);
-                                         if(result.length == 0)
-                                         {
-                                           console.log("cart is empty");
-                                         }
+              success: function(){
+                                         callSuccessModal();                       
+                                         getCartItems();
 
-                                          }
-                                          });
                                         }
               });
-});
+}
+$(".cart-btn").click(addtocart);
+$(".list-cta-btn").click(addtocart);
 
 /////////////////////////////////
 // functionality for decreasing quantity via minus button
@@ -135,6 +154,7 @@ $(".reduce-quantity").click(function(){
   var id = $(this).siblings(".quantity-input").attr("data-id");
   var url = $(this).siblings(".quantity-input").attr("data-url");
   var inputElement = $(this).siblings(".quantity-input").children("input").get(0);
+  console.log("reduce quantity")
   if(val>1)
   {
     val--;
@@ -149,6 +169,7 @@ $(".increase-quantity").click(function(){
   var id = $(this).siblings(".quantity-input").attr("data-id");
   var url = $(this).siblings(".quantity-input").attr("data-url");
   var inputElement = $(this).siblings(".quantity-input").children("input").get(0);
+    console.log("increase quantity")
   if(val<5)
   {
     val++;
@@ -161,7 +182,7 @@ $(".increase-quantity").click(function(){
 // updating and saving cart
 ///////////////////////////////
 function updateCart(element,id,url)
-{
+{ console.log("update cart called");
   console.log("element = " + element);
   console.log("id = " + id);
   if(element.value>5)
@@ -178,19 +199,20 @@ function updateCart(element,id,url)
     data:{
          "quantity":element.value,
          "product":id,
+         "discount":currentBill.discount,
          "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
-        "s":console.log($("input[name='csrfmiddlewaretoken']").val())
          },
     success: function(){
       console.log("hurray quantity changed");
+      Couponupdate();
+      getCartItems();
     }
   });
-
-  billCalculate();
+   
 }
 
 function removeFromCart(item)
-{
+{ console.log("remove from cart called");
   var id = $(item).attr("data-id");
   var url  = $(item).attr("data-url");
 
@@ -201,13 +223,12 @@ function removeFromCart(item)
          //"quantity":element.value,
          "product":id,
          "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
-        "s":console.log($("input[name='csrfmiddlewaretoken']").val())
          },
     success: function(){
       console.log("item removed");
-      $.get("/cart/checkout/",function(){
-        console.log(reloaded);
-      })
+      getCartItems();
+      Couponupdate();
+       //currentBillCalculate();
     }
     });
 
@@ -219,7 +240,27 @@ function removeFromCart(item)
 /////////Discount application
 ////////////////////////////////////////
 
+function Couponupdate()
+{    console.log("coupon update")
+       $.ajax({
+               type: "GET",
+               url: "/cart/apply-coupon/",
+                success: function(result){
+                  if(result.message=="coupon code already applied" || result.message=="coupon code applied"){          
+                    $(".cta-btn").attr("disabled","disabled")
+                    $("#discount-input").attr("disabled","disabled")
 
+
+                  }
+                  $(".discount-value").text(result.value)
+                  $(".discount-note").text(result.message)
+                  console.log(result)
+                  currentBill.discount = result.value;
+                  currentBillCalculate();
+                           
+                }
+                });
+}
 $(".discount-form").each(function(){
     $(this).submit(function(evt){
 
@@ -232,16 +273,16 @@ $(".discount-form").each(function(){
         url: discountUrl,
         data:{
              //"quantity":element.value,
-             "product":productId,
              "coupon_entered":discountCode.toString(),
              "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
-            "s":console.log($("input[name='csrfmiddlewaretoken']").val())
+            
              },
-        success: function(){
-          console.log("item removed");
-          $.get("/cart/checkout/",function(){
-            console.log(reloaded);
-          })
+        success: function(result){
+            $(".discount-value").text(result.value)
+            $(".discount-note").text(result.message)
+            console.log(result)
+            currentBill.discount = result.value;
+            currentBillCalculate();
         }
         });
     });
@@ -249,46 +290,45 @@ $(".discount-form").each(function(){
 
 
   //////////////////////////////
-  // Bill Estimation
+  // currentBill Estimation
   /////////////////////////////
 
-  function billCalculate()
+  function currentBillCalculate()
   {
     var $cost_element = $("#totalCost");
     var $deliveryCharges_element = $("#deliveryCharges");
     var $discount_element = $("#totalDiscount");
-    var $billAmount_element = $("#totalBill");
-
+    var $currentBillAmount_element = $("#totalBill");
     var $discount_value = $(".discount-value");
     var $cost_value = $(".product-price");
     var $quantity_value = $(".quantityValue");
 
-    var totalDiscount = 0,totalBill = 0,totalCost = 0,deliveryCharges = 100;
+    console.log("bil caculate called");
+    var totalDiscount = 0,totalcurrentBill = 0,totalCost = 0,deliveryCharges = 100;
     var totalelements = $("#cart-table tbody tr").length;
-    $.each($cost_value,function(index,cost_value){
-          let quantity = $quantity_value.get(index).value;
-          cost = parseInt($(this).text())*quantity;
-          console.log(cost);
-          totalCost+= cost;
-    });
+    // $.each($cost_value,function(index,cost_value){
+    //   console.log("stuff1 call");
+    //       let quantity = $quantity_value.get(index).value;
+    //       cost = parseInt($(this).text())*quantity;
+    //       totalCost+=cost;
+    //       console.log(totalCost);
+    // });
 
-    $.each($discount_value,function(index,discount_value){
-          let quantity = $quantity_value.get(index).value;
-          discount = parseInt($(this).text())*quantity;
-          console.log(cost);
-          totalDiscount+= discount;
-    });
+    //       discount = parseInt($discount_value.text());
+    //       console.log(discount);
+    console.log("current bill in bill function is:");
+    console.log(currentBill);
+    currentBill.delivery = 100;
+   // currentBill.update();
+    console.log("currentBill is"+currentBill);
+    
+    console.log(totalcurrentBill);
+    currentBill.calculate();
+    $cost_element.text("₹"+currentBill.price);
 
-    console.log(totalCost);
-    console.log(totalDiscount);
-
-    totalBill = totalCost + deliveryCharges - totalDiscount;
-    console.log(totalBill);
-
-    $cost_element.text("₹"+totalCost);
-    $deliveryCharges_element.text("₹"+deliveryCharges);
-    $discount_element.text("₹"+totalDiscount);
-    $billAmount_element.text("₹"+totalBill);
+    $deliveryCharges_element.text("₹"+currentBill.delivery);
+    $discount_element.text("₹"+currentBill.discount);
+    $currentBillAmount_element.text("₹"+currentBill.total);
 
   }
 
@@ -314,3 +354,33 @@ $(".discount-form").each(function(){
            }
     });
   });
+
+
+  function successModal(){
+    var element = '<div id="successModal" class="modal fade" role="dialog">'+
+    '<div class="modal-dialog">'+
+    '<div class="modal-content">'+
+      '<div class="modal-header">'+
+        '<button type="button" class="close" data-dismiss="modal">&times;</button>'+
+        '<h4 class="modal-title">Product added to Cart</h4>'+
+      '</div>'+
+      '<div class="modal-body">'+
+        '<h3>SUCCESS</h3>'+
+        '<div>'+
+          '<div class="successIcon"><i class="fa fa-check"></i></div>'+
+        '</div>'+
+        '<div><h5>The product successfully added to cart</h5></div>'
+      '</div>'+
+      '<div class="modal-footer">'+
+        '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>'+
+'</div>';
+    $('body').append(element);
+  }
+
+  function callSuccessModal()
+  {
+    $('#successModal').modal('show');
+  }

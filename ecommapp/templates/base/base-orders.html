@@ -19,7 +19,6 @@
       <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
       <script src="{% static 'main/js/bootstrap-dropdownhover.min.js' %}"></script>
 
-      <script src="https://use.fontawesome.com/a8a9a7df82.js"></script>
   </head>
   <body>
     <header>
@@ -31,12 +30,11 @@
         {% block body_block %}{%endblock%}
     </div>
 
-<footer>
   {% include 'base/footer.html' %}
-</footer>
-<script src="{% static 'main/js/nav.js' %}"></script>
-<script type="text/javascript" src="{% static 'main/js/cart.js' %}">
 
-</script>
+{% block script%}
+{%endblock%}
+
+
   </body>
 </html>

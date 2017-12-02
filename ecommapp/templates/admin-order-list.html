@@ -13,6 +13,7 @@
       {%endif%}
   </div>
   <div class="data-container detail-box">
+       {%csrf_token%}
       <div class="header">
         <i class="fa fa-list" aria-hidden="true"></i>
         Order List
@@ -69,8 +70,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
+           
                                     {%for product in  contact.order_product_specs_set.all %}
+                                 
                                         <tr>
                                           <td><img src="{{product.Ordered_Product.Main_Image.url}}" alt=""></td>
                                           <td>{{product.Ordered_Product.Product_Name}}</td>
@@ -79,6 +81,7 @@
                                           <td>₹{{product.Final_Ordered_Product_price}}</td>
                                           <td>{{product.Order_Status.status_for_order}}</td>
                                           <td>
+                                          
                                             <select id="status-list-{{contact.pk}}-{{product.pk}}" class="status-list" name="">
                                                   {%for status in status%}
                                                     <option value="{{status.status_for_order}}">{{status.status_for_order}}</option>
@@ -87,8 +90,10 @@
                                           </td>
                                           <td>
                                             <button type="button" name="button" class="status-change-btn btn btn-primary" data-order-id="{{contact.pk}}" data-product-id="{{product.pk}}" data-url="{%url "admin-order-product-status"%}">Change</button>
+                          
                                           </td>
                                         </tr>
+                                 
                                     {%endfor%}
                                 </tbody>
                               </table>
