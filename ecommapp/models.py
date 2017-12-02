@@ -158,12 +158,21 @@ class Product(models.Model):
   TaxOnProduct=models.ForeignKey(Tax)
   Sizes=models.ManyToManyField(Size,null=True)
   def __str__(self):
-     return str(self.pk)+str(self.Product_Name)
+     return str(self.Product_Name)
+  
   def get_product_url(self):
       return "home/"+self.Product_Base_Category.Base_Slug_Field+"/"+self.product_Sub_Category.Sub_Category_Slug_Field+"/"+self.pk
+  
   def price_after_discount(self):
-      Actual_Price=((100-self.Discount)/100)* self.Base_Price
+      price_with_tax = self.price_with_tax()
+      Actual_Price=((100-self.Discount)/100)* price_with_tax
       return  Actual_Price
+
+  def price_with_tax(self):
+      tax = Tax.objects.get(Products = self.product_Sub_Category).Tax_Percentage
+      actual_price = self.Base_Price + ((tax*self.Base_Price)/100)
+      return actual_price
+
   def indexing(self):
      from .search import ProductIndex
      obj = ProductIndex(
@@ -243,7 +252,7 @@ class Sales_Team(models.Model):
 #coupon stuff
 class CouponCode(models.Model):
     Code=models.CharField(max_length=100)
-    Sales_Member=models.ForeignKey(Sales_Team,null=True)
+    Sales_Member=models.ForeignKey(Sales_Team,null=True,blank=True)
     Discount=models.FloatField(default=0)
     def __str__(self):
        return self.Code

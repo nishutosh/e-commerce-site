@@ -3,7 +3,21 @@ $(document).ready(function(){
   successModal();
 });
 
+function Bill(price,delivery,discount)
+{
+    this.price = price;
+    this.delivery = delivery;
+    this.discount = discount;
+    this.total = 0;
+}
 
+Bill.prototype = {
+  calculate: function()
+  {
+    this.total = this.price+this.delivery-this.discount;
+  }
+}
+var currentBill = new Bill(0,0,0);
 
 // #disable checkout button when cart is empty
 // getting cookies
@@ -91,7 +105,13 @@ function getCartItems()
                              console.log("cart has some items")
                             var cartItems = result.length;
                             $(".cart-item-number").text(cartItems);
-                            
+                            var price = 0;
+                            for(const prop in result)
+                            {
+                              price += result[prop].Price;
+                            }
+                            currentBill.price = price;
+                            currentBillCalculate();
                           }
 
 
@@ -118,7 +138,7 @@ function addtocart(){
                
                      },
               success: function(){
-                                        callSuccessModal();                       
+                                         callSuccessModal();                       
                                          getCartItems();
 
                                         }
@@ -186,7 +206,7 @@ function updateCart(element,id,url)
     }
   });
    Couponupdate();
-  billCalculate();
+   getCartItems();
 }
 
 function removeFromCart(item)
@@ -206,7 +226,7 @@ function removeFromCart(item)
       console.log("item removed");
       getCartItems();
       Couponupdate();
-      billCalculate();
+       //currentBillCalculate();
     }
     });
 
@@ -233,7 +253,8 @@ function Couponupdate()
                   $(".discount-value").text(result.value)
                   $(".discount-note").text(result.message)
                   console.log(result)
-                  billCalculate();
+
+                  currentBillCalculate();
                            
                 }
                 });
@@ -258,7 +279,8 @@ $(".discount-form").each(function(){
             $(".discount-value").text(result.value)
             $(".discount-note").text(result.message)
             console.log(result)
-            billCalculate();
+            currentBill.discount = result.value;
+            currentBillCalculate();
         }
         });
     });
@@ -266,44 +288,45 @@ $(".discount-form").each(function(){
 
 
   //////////////////////////////
-  // Bill Estimation
+  // currentBill Estimation
   /////////////////////////////
 
-  function billCalculate()
+  function currentBillCalculate()
   {
     var $cost_element = $("#totalCost");
     var $deliveryCharges_element = $("#deliveryCharges");
     var $discount_element = $("#totalDiscount");
-    var $billAmount_element = $("#totalBill");
+    var $currentBillAmount_element = $("#totalBill");
     var $discount_value = $(".discount-value");
     var $cost_value = $(".product-price");
     var $quantity_value = $(".quantityValue");
 
     console.log("bil caculate called");
-    var totalDiscount = 0,totalBill = 0,totalCost = 0,deliveryCharges = 100;
+    var totalDiscount = 0,totalcurrentBill = 0,totalCost = 0,deliveryCharges = 100;
     var totalelements = $("#cart-table tbody tr").length;
-    $.each($cost_value,function(index,cost_value){
-      console.log("stuff1 call");
-          let quantity = $quantity_value.get(index).value;
-          cost = parseInt($(this).text())*quantity;
-          totalCost+=cost;
-          console.log(totalCost);
-    });
+    // $.each($cost_value,function(index,cost_value){
+    //   console.log("stuff1 call");
+    //       let quantity = $quantity_value.get(index).value;
+    //       cost = parseInt($(this).text())*quantity;
+    //       totalCost+=cost;
+    //       console.log(totalCost);
+    // });
 
-          discount = parseInt($discount_value.text());
-          console.log(discount);
+    //       discount = parseInt($discount_value.text());
+    //       console.log(discount);
+    console.log("current bill in bill function is:");
+    console.log(currentBill);
+    currentBill.delivery = 100;
+   // currentBill.update();
+    console.log("currentBill is"+currentBill);
     
+    console.log(totalcurrentBill);
+    currentBill.calculate();
+    $cost_element.text("₹"+currentBill.price);
 
-   
-
-    totalBill = totalCost + deliveryCharges - discount;
-    console.log(totalBill);
-
-    $cost_element.text("₹"+totalCost);
-
-    $deliveryCharges_element.text("₹"+deliveryCharges);
-    $discount_element.text("₹"+discount);
-    $billAmount_element.text("₹"+totalBill);
+    $deliveryCharges_element.text("₹"+currentBill.delivery);
+    $discount_element.text("₹"+currentBill.discount);
+    $currentBillAmount_element.text("₹"+currentBill.total);
 
   }
 
