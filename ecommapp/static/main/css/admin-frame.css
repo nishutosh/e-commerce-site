@@ -1,0 +1,253 @@
+html,body
+{
+  width:100%;
+  height:100%;
+
+}
+img{
+  width: 100%;
+}
+header{
+  display: block;
+}
+ul
+{
+  list-style-type: none;
+  padding: 0;
+}
+li
+{
+
+}
+a:hover
+{
+  text-decoration: none;
+}
+.admin-header
+{
+    padding:0 20px;
+}
+.logo
+{
+
+    width: 200px;
+    display:inline-block;
+}
+.icon-tray
+{
+    float: right;
+    display: inline-block;
+    margin-top: 20px;
+    margin-right: 20px;
+    font-size: 16px;
+}
+.icon-tray div
+{
+  display: inline-block;
+  margin: 0 10px;
+}
+.icon-tray a
+{
+  padding: 10px 20px;
+}
+.icon-tray i
+{
+  font-size: 20px;
+  margin-top: -5px;
+  vertical-align: middle;
+}
+.side-navigation-bar
+{
+    width: 200px;
+    display: inline-block;
+    vertical-align: top;
+    min-height: 100%;
+}
+.side-nav-header
+{
+  padding: 10px 20px;
+}
+.side-nav-header i
+{
+  font-size: 16px;
+  margin-right: 10px;
+}
+.side-navigation-bar ul li
+{
+
+  font-size: 13px;
+  padding: 10px 20px;
+}
+.side-navigation-bar ul li i
+{
+  font-size: 18px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.side-navigation-bar .side-nav-sub-list
+{
+  display:none;
+}
+.side-navigation-bar .side-nav-sub-list li
+{
+  border: none;
+  padding: 10px 0;
+}
+.side-navigation-bar .side-nav-sub-list li a:before
+{
+  content: "\f101";
+font-size: 13px;
+font-family: FontAwesome;
+margin-left: 10px;
+margin-right: 10px;
+transition: margin ease 0.5s;
+}
+.side-navigation-bar .side-nav-sub-list li:hover a:before
+{
+  margin-right: 15px;
+}
+.admin-main-screen
+{
+  width: calc(100% - 300px);
+  margin-left:50px;
+  display: inline-block;
+  padding: 20px 50px;
+}
+
+.stats-container
+{
+
+}
+.box
+{
+  width: 300px;
+  display: inline-block;
+  margin: 10px 20px;
+  border-radius: 4px;
+  cursor:pointer;
+}
+.box .header
+{
+  padding:10px 20px;
+}
+
+.info
+{
+  padding:10px 20px;
+}
+.link
+{
+  padding:10px 20px;
+}
+
+.info div
+{
+  display: inline-block;
+  font-size: 50px;
+}
+
+.stat
+{
+    float: right;
+}
+.analysis
+{
+  width: 100%;
+  padding: 10px 50px;
+}
+.analysis-box
+{
+  cursor:pointer;
+  width: 40%;
+  display: inline-block;
+  margin: 20px 20px;
+}
+
+.header
+{
+    padding: 20px;
+    font-size: 18px;
+}
+.bar-graph
+{
+
+}
+
+.table-responsive
+{
+
+}
+
+.table
+{
+
+}
+
+.detail-box
+{
+  display: inline-block;
+  width: 30%;
+  margin: 10px;
+  vertical-align: top;
+}
+.detail-box .header
+{
+  padding: 10px 20px;
+}
+.detail-box ul li
+{
+  padding:10px;
+}
+
+.detail-box ul li a
+{
+  width:40px;
+  height:40px;
+  padding-top:10px;
+  text-align:center;
+  margin-right: 10px;
+}
+
+.detail-box .detail-list.right-icon li
+{
+    padding: 20px 10px;
+}
+
+.detail-box .detail-list.right-icon li a
+{
+  border-radius:100%;
+  margin-top:-10px;
+}
+
+.data-container
+{
+  width:100%;
+}
+
+.table-container
+{
+  padding: 10px;
+}
+
+td .btn
+{
+  right: 100px;
+}
+.detail-box ul.status-list li
+{
+    padding: 10px 20px;
+}
+.detail-box ul.status-list li a
+{
+  padding:0;
+  width:100%;
+  height:auto;
+  text-align:left;
+}
+
+.graph-container
+{
+  width:100%;
+  height: 400px;
+}

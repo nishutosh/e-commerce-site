@@ -1,0 +1,71 @@
+{% extends 'base/user-dash.html' %}
+{% load static %}
+
+{% block body_block %}
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+    <div class="account-details">
+      <div class="user-icon">
+          <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+      </div>
+      <div class="details">
+          <h3><strong>{{siteuser.customer.Customer_First_Name}} {{siteuser.customer.Customer_Last_Name}}</strong></h3>
+          <h5>{{siteuser.customer.Customer_Email}}</h5>
+          <h5>{{siteuser.customer.Customer_Contact_Number}}</h5>
+      </div>
+    </div>
+    <div class="features">
+      <div class="box">
+        <a href="{%url "user-orders" %}">
+          <div class="icon">
+            <i class="fa fa-gift" aria-hidden="true"></i>
+          </div>
+          <h3>ORDERS</h3>
+        </a>
+
+      </div>
+
+      <div class="box">
+        <a href="{%url "coupons" %}">
+          <div class="icon">
+            <i class="fa fa-ticket" aria-hidden="true"></i>
+          </div>
+          <h3>COUPONS</h3>
+        </a>
+      </div>
+
+      <div class="box">
+        <a href="{%url "credits" %}">
+          <div class="icon">
+            <i class="fa fa-flash" aria-hidden="true"></i>
+          </div>
+          <h3>FASH CREDITS</h3>
+        </a>
+      </div>
+
+      
+
+      <div class="box">
+        <a href="#">
+          <div class="icon">
+            <i class="fa fa-repeat" aria-hidden="true"></i>
+          </div>
+          <h3>RETURN</h3>
+        </a>
+      </div>
+
+      <div class="box">
+        <a href="{%url "security" %}">
+          <div class="icon">
+            <i class="fa fa-lock" aria-hidden="true"></i>
+          </div>
+          <h3>SECURITY</h3>
+        </a>
+      </div>
+    </div>
+{%endblock%}

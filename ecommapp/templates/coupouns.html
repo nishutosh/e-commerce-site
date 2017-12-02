@@ -1,0 +1,30 @@
+{% extends 'base/user-dash.html' %}
+{% load static %}
+{% block body_block %}
+    <h2>COUPOUNS USED</h2>
+    {%if coupons%}
+<table class="table ">
+    <thead>
+        <tr>
+            <th>COUPON CODE</th>
+            <th>DISCOUNT OFFERED</th>
+        </tr>
+    </thead>
+    <tbody>
+   
+       {% for coupon in coupons%}
+        <tr>
+            <td>{{coupon.coupon_code.Code}}</td>
+            <td>₹ {{coupon.coupon_code.Discount}}</td>
+        </tr>
+         {% endfor %}
+    </tbody>
+</table>
+ {%else%}
+ <h4>Sorry you havnt applied any coupon yet</h4>
+ {%endif%}
+
+  
+
+     
+{% endblock %}

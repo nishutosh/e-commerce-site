@@ -1,0 +1,48 @@
+{% extends "base/admin-dash.html" %}
+{% block body %}
+<div class="catalog-form-container">
+  <div class="header">
+    <h2>Product Details</h2>
+  </div>
+      {{ form.non_field_errors }}
+  <div class="form-container">
+    <form class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <table class="table table-striped">
+        <tbody>
+          {% for field in form %}
+          <tr>
+            {{ field.errors }}
+            <th><label class="control-label" for="{{ field.id_for_label }}">{{ field.label }}:</label></th>
+            <td>{{ field }}</td>
+          </tr>
+          {%endfor%}
+        </tbody>
+      </table>
+
+          <input type="submit" class="btn btn-primary submit-btn" value="SUBMIT" />
+
+
+    </form>
+
+  </div>
+
+  <div>
+    <h5>Note:</h5>
+    <p>Use this format for features section:</p>
+    <p>
+      ** Heading 1 <br>
+        * Point 1 <br>
+        * Point 2 <br>
+        <br>
+      ** Heading 2 <br>
+        * Point 1 <br>
+        * Point 2 <br>
+        * Point 3 <br>
+        * Point 4   <br>
+    </p>
+  </div>
+
+</div>
+
+{% endblock %}

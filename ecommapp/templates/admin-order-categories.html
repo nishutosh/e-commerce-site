@@ -1,0 +1,69 @@
+{% extends "base/admin-dash.html" %}
+{% block body %}
+<div class="container-fluid">
+  <div class="main-screen-header">
+      <h2>Category list</h2>
+  </div>
+  <div class="messages">
+      {%if messages%}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {%endif%}
+  </div>
+  <div class="main-container">
+    <!-- <div class="form-options">
+      <a href="{% url "admin-catalog-sub-new"  %}" class="btn btn-success">ADD</a>
+
+      <a href="{% url "admin-catalog-sub"  %}" class="btn btn-warning">REBUILD</a>
+    </div> -->
+    <div class="form-container">
+      <div class="form-header">
+        <h3>Choose a category</h3>
+      </div>
+          
+          
+          <ul class="category-list">
+              
+                  
+              
+                  {% for contact in contacts %}
+                
+                  <li>
+                      <a href="{%url "admin-order-by-given-category"  contact.Sub_Category  %}">{{ contact.Sub_Category }}</a>
+                      
+                    </li>
+                
+                
+                {%endfor%}
+
+              
+            </ul>
+          
+
+          
+          <div class="pagination">
+              <span class="step-links">
+                  {% if contacts.has_previous %}
+                      <a href="?page={{ contacts.previous_page_number }}">previous</a>
+                  {% endif %}
+
+                  <span class="current">
+                      Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
+                  </span>
+
+                  {% if contacts.has_next %}
+                      <a href="?page={{ contacts.next_page_number }}">next</a>
+                  {% endif %}
+              </span>
+          </div>
+
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

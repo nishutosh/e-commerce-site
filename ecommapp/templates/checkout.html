@@ -1,0 +1,107 @@
+{% extends "base/base-orders.html" %}
+{% block body_block %}
+{%csrf_token%}
+    <div class="container-fluid">
+          <div class="row">
+              <div class="col-lg-9">
+                  <h2>Your cart items:</h2>
+                  <div class="cart-container">
+                      <table class="table table-hover" id="cart-table">
+                          <thead>
+                            <tr>
+                              <th>Image</th>
+                              <th>Name</th>
+                              <th>Price</th>
+                              <th>Quantity</th>
+                              <th>Discount</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for items in cart_obj.cartitem_set.all%}
+                            <tr>
+                                <td class="item-image"><img src="{{ items.Product_In_Cart.Main_Image.url}}" alt="{{ items.Product_In_Cart.Product_Name}}"></td>
+                                <td class="product-name">
+                                    {{ items.Product_In_Cart.Product_Name}}
+                                    <div class="description">
+                                      {{ items.Product_In_Cart.Description}}
+                                    </div>
+                                </td>
+                                <td class="product-price">{{ items.Product_In_Cart.price_after_discount}}</td>
+                                <td>
+                                  <div class="quantity-icon reduce-quantity">
+                                      -
+                                  </div>
+
+                                  <div class="quantity-input" data-id="{{items.Product_In_Cart.id}}" data-url="{%url "cart" %}">
+                                    <input class="quantityValue" type="number" name="quantity" value="{{ items.Product_Quantity}}" min="1" max='5' onchange="updateCart(this,{{items.Product_In_Cart.id}},{%url "cart" %})" />
+                                  </div>
+                                  <div class="quantity-icon increase-quantity">
+                                      +
+                                  </div>
+                               
+                                </td>
+                                <td>
+                                  <button type="button" name="button" class="btn btn-default alternate-cta-btn remove-btn" id="remove-from-cart-btn" onclick="removeFromCart(this)" data-id="{{items.Product_In_Cart.id}}" data-url="/cart/delete/">Remove</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+
+                      </table>
+                        <div class="discount">
+
+                                    <form class="discount-form" action="/cart/apply-coupon/" method="post">
+                                      <input id="discount-input" type="text" name="discount" value="" placeholder="Discount Code">
+
+                                      <button type="submit" name="button" class="btn btn-default cta-btn">Apply coupon</button>
+                                    </form>
+                                    <p class="discount-status">
+                                      Discount ₹  <span class="discount-value"></span>
+                                      <br>
+                                      <span class="discount-note"></span>
+                                    </p>
+
+
+                                  </div>
+                      <div class="continue-shopping-cta">
+                        <a href="/" class="btn btn-default alternate-cta-btn"><i class="fa fa-chevron-left"></i>Continue Shopping</a>
+                      </div>
+                  </div>
+              </div>
+              <div class="col-lg-3">
+                      <div class="bill-details">
+                          <h3>Bill Details</h3>
+                          <table class="table table-responsive">
+                            <tbody class="bill-list">
+                              <tr>
+                                <td>Price</td>
+                                <td><span id="totalCost" class="bill-span"></span></td>
+                              </tr>
+                              <tr>
+                                <td>Delivery Charges</td>
+                                <td><span id="deliveryCharges" class="bill-span"></span></td>
+                              </tr>
+                              <tr>
+                                <td>Coupon Discount</td>
+                                <td><span id="totalDiscount" class="bill-span"></span></td>
+                              </tr>
+                              <tr>
+                                  <td>Bill Total</td>
+                                  <td><span id="totalBill" class="bill-span"></span></td>
+                              </tr>
+                            </tbody>
+                          </table>
+
+                      </div>
+                      <div class="order-cta">
+                        <a id="order-btn" href="{%url "place-order"%}" name="button" class="btn btn-default cart-btn">Place Order</a>
+                      </div>
+              </div>
+          </div>
+    </div>
+{% endblock %}
+{% block script %}
+<script>
+   Couponupdate();  
+</script>
+{%endblock%}

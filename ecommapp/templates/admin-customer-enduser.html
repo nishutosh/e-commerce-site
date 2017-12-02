@@ -1,0 +1,107 @@
+{% extends "base/admin-dash.html" %}
+{% block body %}
+<div class="container-fluid">
+  <div class="main-screen-header">
+      <h2>Product Panel</h2>
+  </div>
+  <div class="messages">
+      {%if messages%}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {%endif%}
+  </div>
+  <div class="main-container">
+    <!-- <div class="form-options">
+      <a href="{% url "admin-catalog-product-new"  %}" class="btn btn-success">ADD</a>
+
+      <a href="{% url "admin-catalog-product"  %}" class="btn btn-warning">RELOAD</a>
+    </div> -->
+    <div class="form-container">
+      <div class="form-header">
+        <h3>Current users</h3>
+      </div>
+          <!-- {{ form.non_field_errors }}
+          <form action={% url "admin-catalog-product-delete"  %} method="post" class="form-horizontal">
+          {%csrf_token %} -->
+          <table class="table table-responsive">
+              <thead>
+                  <tr>
+                      <th>Id</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Contact Number</th>
+                      <th>Address</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for contact in contacts %}
+                <tr>
+                  <td>{{contact.id}}</td>
+                  <td>{{ contact.Customer_First_Name }} {{contact.Customer_Last_Name}}</td>
+                  <td>{{contact.Customer_Email}}</td>
+                  <td>{{contact.Customer_Contact_Number}}</td>
+                  <td>{{contact.Address_Line1}}<br>{{contact.Address_Line2}}</td>
+                </tr>
+                {%endfor%}
+
+              </tbody>
+          </table>
+          <!-- {% for contact in contacts %}
+
+              <input type="checkbox" value={{contact.pk}} name="selected">{{ contact.Base_Category }}  <a href={%url "admin-catalog-base-edit"  contact.id  %}>edit</a><br />
+
+          {% endfor %} -->
+          <!-- <button type="button" name="button" class="btn btn-danger" data-toggle="modal" data-target="#warningModal">Delete</button> -->
+
+          <!-- Warning Modal -->
+                      <!-- <div id="warningModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+
+
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h4 class="modal-title">Warning</h4>
+                            </div>
+                            <div class="modal-body">
+                              <p>Once deleted these products will not exist!!!!!</p>
+                              <p>Are You sure you want to delete the selected products?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <input type="submit" value="DELETE" class="btn btn-danger">
+                              <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+
+          </form> -->
+
+          <div class="pagination">
+              <span class="step-links">
+                  {% if contacts.has_previous %}
+                      <a href="?page={{ contacts.previous_page_number }}">previous</a>
+                  {% endif %}
+
+                  <span class="current">
+                      Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
+                  </span>
+
+                  {% if contacts.has_next %}
+                      <a href="?page={{ contacts.next_page_number }}">next</a>
+                  {% endif %}
+              </span>
+          </div>
+
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

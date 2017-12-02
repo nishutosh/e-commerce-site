@@ -1,0 +1,93 @@
+{% extends 'base/list.html' %}
+{% load static %}
+
+{% block body_block %}
+  {%csrf_token%}
+  <div class="page-content">
+    <div class="product-filters">
+      <button type="button" name="filter-list-toggle" class="btn btn-default filter-toggle-btn">
+          <h4>Filters <i class="fa fa-caret-down"></i></h4>
+      </button>
+
+      <div class="filter-list">
+        {% for filter in filters %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>{{filter.Filter_Name}}</th>
+            </tr>
+          </thead>
+          <tbody>
+         {%for filter_sub in filter.filter_category_set.all %}
+         <tr>
+           <td><input value={{filter_sub.Filter_Category_Name}} type="checkbox" class="filter-input"></td>
+
+            <td><lable>{{filter_sub.Filter_Category_Name}}</lable></td>
+            </tr>
+         {% endfor %}
+       </tbody>
+        </table>
+
+
+     {% endfor %}
+    <button type="button" name="filter-btn" id="filter-btn" class="btn btn-default alternate-cta-btn">Apply Filters</button>
+   </div>
+
+      </div>
+
+    <!--filter ends-->
+    <div class="product-list-container container-fluid">
+      <ul class="product-list">
+        {% for product in product_list %}
+          <li>
+              <div class="product-container">
+                <div class="image-container list">
+                  <a href="{{product.pk}}">
+                          <img src="{{product.Main_Image.url}}"/>
+                  </a>
+                </div>
+                <div class="product-attributes-container">
+                      <div class="product-rating list-cta-btn">
+                            4.5/5
+                      </div>
+                      <div class="product-attributes">
+                          <div class="product-name">
+                            <a href="{{product.product_id}}">{{product.Product_Name}}</a>
+                          </div>
+                          <div class="product-price">
+                            <span class="current-price">₹{{product.price_after_discount}}</span>
+                            <br>
+                            <span class="original-price"><strike>₹{{product.Base_Price}}</strike></span>
+                            <span class="discount">{{product.Discount| floatformat}}% off</span>
+                          </div>
+                          <div class="product-ctas">
+                            <div class="product-add-to-cart">
+                                <button title="Add to cart" data-toggle="modal" class="btn btn-default list-cta-btn"  data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>Add to Cart</button>
+                            </div>
+                           
+                            <div class="sizes dropdown">
+                              <button class="btn btn-default dropdown-toggle list-cta-btn" type="button" data-toggle="dropdown" data-hover="dropdown">
+                                    Sizes
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li class="size-type">s</li>
+                                <li class="size-type">m</li>
+                                <li class="size-type">l</li>
+                              </ul>
+
+                            </div>
+                          </div>
+                      </div>
+                </div>
+
+              </div>
+
+          </li>
+
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+{%endblock%}

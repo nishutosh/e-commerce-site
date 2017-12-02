@@ -1,0 +1,99 @@
+@media(max-width:450px) {
+  .side-navigation-bar
+  {
+
+    width: 100%;
+    position:absolute;
+  }
+  .side-main-list
+  {
+    display: none;
+  }
+  .toggle-button
+  {
+    display: inline-block;
+  }
+  .user-main-screen
+  {
+    width: 100%;
+    margin:0;
+    display:block;
+    text-align:center;
+    padding-bottom: 20px;
+    transition: 0.3s;
+  }
+  .account-details
+  {
+
+  }
+  .user-icon
+  {
+      font-size: 100px;
+      width:100px;
+      display:inline-block;
+      vertical-align: middle;
+  }
+  .details
+  {
+
+    display:inline-block;
+    margin: 0px 60px;
+    vertical-align: middle;
+  }
+  .features
+  {
+
+  }
+  .box
+  {
+    width: 250px;
+    margin: 10px 5px;
+    display:inline-block;
+    cursor: pointer;
+    text-align: center;
+  }
+  .icon
+  {
+
+    font-size: 80px;
+    display:inline-block;
+    vertical-align: middle;
+
+    margin: 0 10px;
+  }
+
+  .box h3
+  {
+
+  }
+
+  .user-main-screen
+  {
+    padding-top: 80px;
+    min-height:calc(100% - 200px);
+  }
+
+  .orders-container .table thead, .orders-container .table tbody
+  {
+    display:inline-block;
+  }
+
+  .orders-container .table th, .orders-container .table td
+  {
+    display: block;
+    border-bottom: 1px solid #ccc;
+    border-top:none;
+  }
+  .product-details
+  {
+    width:90%;
+    margin: 10px auto;
+  }
+  .main-content div
+  {
+    text-align:center;
+    display:block;
+    margin: 5px auto;
+  }
+
+}

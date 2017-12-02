@@ -1,0 +1,265 @@
+@media (min-width:768px) {
+
+  /*Header*/
+  header
+  {
+    display:block;
+  }
+
+  nav
+  {
+    width:100%;
+  }
+
+  .main-navbar
+  {
+      width: 100%;
+      margin: 0 auto;
+      padding:5px 20px;
+      text-align: center;
+
+  }
+  .main-navbar .container-fluid, .main-navbar-header
+  {
+    width: 100%;
+    text-align:center;
+  }
+  .main-navbar div
+  {
+    vertical-align:top;
+    display:inline-block;
+  }
+  .logo
+  {
+    margin-top: 2px;
+      width: 200px;
+      margin-right: -10px;
+  }
+  .navbar-header-items
+  {
+    width: calc(100% - 300px);
+    margin:0;
+  }
+  .other-navbar-header-items
+  {
+    margin-top: 15px;
+    width:100%;
+  }
+      .other-navbar-header-items ul
+      {
+        margin-bottom:0px;
+      }
+      .other-navbar-header-items ul li a
+      {
+          padding:0 10px;
+          color: black;
+      }
+
+  .main-navbar-header-items
+  {
+    margin-top:5px;
+    width: calc(100%);
+  }
+  .main-navbar-more-buttons
+  {
+      margin-left: 20px;
+  }
+  .navbar-cart-btn
+  {
+      width: 160px;
+  }
+  .navbar-cart-btn i
+  {
+    margin-right: 10px;
+    font-size: 16px;
+  }
+  .navbar-user-btn
+  {
+    margin: 0 10px;
+  }
+  .search-form
+  {
+      width:calc(100% - 400px);
+      position:relative;
+      top:auto;
+      left:auto;
+      right: auto;
+  }
+  .main-navbar-form
+  {
+    width:100%;
+  }
+  .input-group
+  {
+    position: relative;
+    width: 100%;
+  }
+  .input-group input
+  {
+    width: 100%;
+  }
+  .search-btn
+  {
+      position: absolute;
+      top:0;
+      right:0;
+      z-index:10;
+  }
+  .main-navbar-menu-list
+  {
+    display:block!important;
+    width: 80%;
+    margin: 10px auto;
+
+      margin-bottom: -2px;
+      visibility:visible;
+  }
+  .main-navbar-menu-list li
+  {
+      float:none;
+      margin:0 10px;
+  }
+  .main-navbar-menu-list li a
+  {
+    color: black;
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+  .dropdown-menu
+  {
+      margin-top: 6px;
+
+  }
+  .user-action-list
+  {
+    margin:0;
+    min-width: 148px;
+    left:10px!important;
+    right: 50px!important;
+    padding:0
+  }
+  .user-action-list li
+  {
+
+    display:block;
+
+
+    text-align: center;
+  }
+  .user-action-list li a
+  {
+    margin:0;
+    padding: 10px 0;
+
+  }
+  /*Header ends*/
+/********************************************/
+
+  /* Banner Content  */
+  .bannerText
+  {
+    display:block;
+    top: 200px;
+    width: 800px;
+    left:auto;
+    right:100px;
+    text-align: left;
+  }
+  .bannerText h1
+  {
+    font-size: 80px;
+  }
+
+  .bannerText h3
+  {
+    font-size: 30px;
+  }
+
+  /*.bannerText .cta
+  {
+    text-align:center;
+  }*/
+
+  .bannerText .btn
+  {
+    width: 200px;
+    font-size: 20px;
+    margin: 30px 20px;
+  }
+  .page-content
+  {
+    margin-top:20px;
+    padding: 50px;
+  }
+
+  .category
+  {
+    text-transform: uppercase;
+    font-size: 0;
+    font-weight: bold;
+    margin: 20px;
+  }
+  .category img
+  {
+    width: 200px;
+    height: 300px;
+  }
+  .category div
+  {
+    display:inline-block;
+    vertical-align:top;
+  }
+  .category .sub-category-container
+  {
+    width:200px;
+    height:100%;
+    padding: 0;
+  }
+  .category .sub-category-container .header
+  {
+    width:100%;
+    font-size: 22px;
+    padding: 20px;
+  }
+  .category .sub-category-container .header span
+  {
+    font-size: 14px;
+    font-weight: normal;
+    display:block;
+    margin-top:-4px;
+  }
+  .category .sub-category-container ul,.category .sub-category-container ul li
+  {
+    width:100%;
+    padding:0px;
+    font-size: 14px;
+    font-weight:bold;
+  }
+  .category .sub-category-container ul li a
+  {
+    display:inline-block;
+    width:100%;
+    padding: 10px 20px;
+  }
+
+  .custom-image
+  {
+    width: 500px;
+    height:auto;
+    display:inline-block;
+   
+  }
+
+}
+
+/***************************************************************/
+
+@media(max-width: 1200px) and (min-width: 900px)
+{
+  .navbar-header
+  {
+    width:100%;
+    padding: 10px 100px;
+    text-align:center;
+  }
+}

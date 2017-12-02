@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fashvolts</title>
+    {% load static %}
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.min.css' %}" />
+      <link href="{% static 'main/css/animate.min.css' %}" rel="stylesheet">
+      <link href="{% static 'main/css/bootstrap-dropdownhover.min.css' %}" rel="stylesheet">
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/font-awesome.min.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/test-style.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/white-theme.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/desktop.css' %}" />
+      <link rel="stylesheet" type="text/css" href="{% static 'main/css/tablet.css' %}" />
+      
+      <script src="{% static 'main/js/jquery-3.2.1.js' %}"></script>
+      <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
+      <script src="{% static 'main/js/bootstrap-dropdownhover.min.js' %}"></script>
+  </head>
+  <body>
+    <header>
+
+      {% include 'base/header.html' %}
+    </header>
+
+
+
+{% block body_block %}{%endblock%}
+
+  {% include 'base/footer.html' %}
+
+
+  </body>
+</html>

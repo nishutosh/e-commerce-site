@@ -1,0 +1,43 @@
+.main-container
+{
+  margin: 10px 20px;
+}
+
+.form-options
+{
+
+}
+
+.form-options .btn
+{
+  margin:0 20px;
+}
+
+.catalog-form-container
+{
+
+}
+
+.catalog-form-container .header
+{
+
+}
+
+.catalog-form-container .form-container
+{
+  width: 80%;
+  margin: 10px auto;
+}
+
+.submit-btn
+{
+  display: block;
+  margin:20px auto;
+  width: 200px;
+  font-size: 18px;
+}
+
+td img
+{
+  width: 100px;
+}

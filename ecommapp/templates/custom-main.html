@@ -1,0 +1,238 @@
+{%extends 'base/custom-base.html'%}
+{% load static %}
+{%block body%}
+<div class="container-fluid">
+    <div class="page-content">
+      <h2>Custom Products</h2>
+
+
+      <div class="stepper-container">
+        <!-- Step 1 -->
+        <div id="step-1" class="step panel">
+          <div class="panel-heading">
+              <div class="number">
+                  1
+              </div>
+              <div class="heading">
+                  <h4>Choose an image:</h4>
+              </div>
+          </div>
+          <div class="panel-body">
+              <div class="content active">
+                  <div class="form-container">
+                      <div id="file-preview" class="image-container" style="display:none">    
+                          <div class="image">
+                            <img class="file-image" src="" alt="">
+                          </div>
+                        </div>
+                      <form id="imageUploadForm" class="form-horizontal" action="">
+                          <div class="form-group col-sm-10 ">
+                              
+                              <button for="main_image" class="control-label btn btn-default cta-btn image-upload-btn">
+                                  <i class="fa fa-file-image-o" aria-hidden="true"></i>
+                                Choose an image(must be High Resolution):
+                              </button>
+                              <input type="file" name="main_image" id="main-image" accept="image/*">
+                          </div>
+                        <button type="submit" class="btn btn-default alternate-cta-btn">Submit</button>
+                      </form>
+                    </div>
+              </div>
+          </div>
+          
+          
+        </div>
+
+        <!-- Step 2 -->
+
+        <div id="step-2" class="step panel">
+          <div class="panel-heading">
+              <div class="number">
+                  2
+                </div>
+                <div class="heading">
+                  <h4>image Preview</h4>
+                </div>
+          </div>
+          <div class="panel-body">
+              <div class="content">
+                  <div class="image-container">    
+                      <div class="image">
+                        <img class="rear-image" src="" alt="">
+                      </div>
+                    </div>
+                  <div class="button-set">
+                      <button class="alternate-cta-btn btn btn-default" id="back">Back</button>
+                      <button class="cta-btn btn btn-default" id="confirm">Confirm</button>
+                  </div> 
+              </div>
+          </div>
+          
+        </div>
+
+
+
+        <!-- Step 3 -->
+
+        <div id="step-3" class="step panel">
+          <div class="panel-heading">
+              <div class="number">
+                  3
+                </div>
+                <div class="heading">
+                  <h4>Customize</h4>
+                </div>
+          </div>
+          <div class="panel-body">
+              <div class="content">
+                <div class = "required-images">
+                    <div class="image thumbnail">
+                        <img id="phone-image" src="{{phone.pic.url}}" alt="">
+                        <div class="caption">
+                          <h4>Phone Rear</h4>
+                        </div>
+                    </div>
+                    <div class="image thumbnail">
+                        <img id="rear-image" class="rear-image" src="" alt="">
+                        <div class="caption">
+                          <h4>Rear Cover Image</h4>
+                        </div>
+                    </div>
+    
+                </div>
+                  
+                  <div class="customization-section">
+                      <div class="row">
+                          <div class="phone-container col-lg-4">
+                              <div class="phone" id="phone" data-src="{{phone.pic.url}}">
+                              
+                              <div class="preview" id="preview">
+                    
+                              </div>
+                            </div>
+                            <div class="caption">
+                                <h4>Preview</h4>
+                            </div>
+                          </div>
+      
+                          <div class="canvas-container col-lg-6">
+                              <div class="canvas">
+                                  <canvas id="canvas" width="300" height="500">
+          
+                                  </canvas>
+                              </div>
+                              <!-- <div class="crop-button">
+                                <button type="button" class="btn btn-default alternate-cta-btn" id="crop" name="button">CROP</button>
+                                <button type="button" class="btn btn-default alternate-cta-btn" id="get-crop" name="button">getCROPbox</button>
+                                <button type="button" class="btn btn-default alternate-cta-btn" id="reset" name="button">reset</button>
+                                <button type="button" class="btn btn-default alternate-cta-btn" id="clear" name="button">clear</button>
+                                <button type="button" class="btn btn-default alternate-cta-btn" id="done" name="button">done</button>
+                              </div> -->
+    
+                              
+                        </div>
+    
+                      </div>
+                                          
+                    <div class="final-submit-div">
+                        <button id="" class="btn btn-default cta-btn" data-toggle="modal" data-target="#customModal">Proceed Further</button>
+                    </div>
+
+                    <div>
+                      <button class="btn btn-default" id="preview-btn">preview</button>
+                    </div>
+                    
+  
+                  </div>
+  
+              </div>
+          </div>
+            
+            
+          </div>
+
+
+      </div>
+
+      <!-- custom product form Modal -->
+<div id="customModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+  
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Purchase Product</h4>
+        </div>
+        <div class="modal-body">
+          <div class="form-container">
+            <div class="form-header">
+                <h3>Please fill the details for custom product:</h3>
+            </div>
+              <form id="customForm" class="form-horizontal" action="">
+                  {% csrf_token %}
+                <div class="form-group col-sm-8">
+                  <input type="text" name="product-name" id="product-name" required>
+                  <label for="product-name" class="control-label">Enter a name for the product:</label>
+                  <span class="orange-line"></span>
+                </div>
+                <div class="form-group col-sm-8">
+                    <input type="text" name="product-text" id="product-text">
+                    <label for="product-text" class="control-label">Enter text to be printed on cover:</label>
+                    <span class="orange-line"></span>
+                </div>
+                <div class="form-group col-sm-8">
+                  <button type="submit" id="final-submit-btn" class="btn btn-default cta-btn" data-product-url="{%url "submit-custom-image"%}" data-image-url="{%url "submit-custom-working-images"%}" value="submit">Place Order</button>
+                </div>
+              </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+  
+    </div>
+  </div>
+
+  <datagrid>
+    <data id="successUrl" data-url="{%url "cart"%}">
+      
+    </data>
+  </datagrid>
+          
+
+          
+      
+        
+
+
+          
+
+          <!-- <div class="new-image">
+              <div id="new-image">
+
+              </div>
+          </div> -->
+    </div>
+</div>
+
+
+
+
+
+
+ <!-- <div class="col-md-2">
+  <h1>{{phone.name}}</h1>
+   <img src={{phone.pic.url}} class="img-responsive">
+   
+
+ </div> -->
+<script>
+  $('.preview img').css({
+        'max-width': '100%!important'
+      });
+</script>
+
+
+{%endblock%}

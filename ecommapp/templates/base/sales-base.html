@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     <title>Fashvolts</title>
+     {% load static %}
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.min.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/font-awesome.min.css' %}" />
+     <link href="{% static 'main/css/animate.min.css' %}" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-frame.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-colors.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-form.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-form-colors.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/user-dash.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/user-dash-colors.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/user-dash-mobile.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/sales.css' %}" />
+     <script src="{% static 'main/js/jquery-3.2.1.js' %}"></script>
+     <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
+     <script src="{% static 'main/js/bootstrap-dropdownhover.min.js' %}"></script>
+
+  </head>
+  <body>
+      <header>
+        <div class="admin-header">
+          <div class="logo">
+            <a href="/admin-dashboard">
+              <img class="logo" src="{% static 'main/images/admin-logo.png' %}" />
+            </a>
+          </div>
+          <div class="icon-tray">
+                <div class="admin-user">
+                <a href="#" class="btn btn-default">
+                    <i class="fa fa-user" aria-hidden="true"></i> {{sales.Sales_First_Name}}
+                </a>
+                </div>
+                <div class="logout">
+                <a href="{%url "sales-signout"%}" class="btn btn-default">
+                    <i class="fa fa-sign-out" aria-hidden="true"></i> LOGOUT
+                </a>
+                </div>
+          </div>
+        </div>
+      </header>
+      <div class="side-navigation-bar">
+          <div class="side-nav-header">
+            <i class="fa fa-bars" aria-hidden="true"></i>
+            NAVIGATION
+
+          </div>
+          <ul>
+              <li class="side-nav-li active">
+                <a href="{%url "admin-panel"%}"><i class="fa fa-tachometer" aria-hidden="true"></i>
+                DASHBOARD</a>
+                <!-- <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i> -->
+              </li>
+
+              <li class="side-nav-li">
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                ORDERS
+                <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
+                <!-- <ul class="side-nav-sub-list">
+                          <li>
+                            <a href="{%url "admin-order"%}">
+                              All Orders
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              Pending Orders
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              Confirmed Orders
+                            </a>
+                          </li>
+                          <li>
+                            <a href="/admin-dashboard/order-list-by-category">
+                              Orders by Category
+                            </a>
+                          </li>
+                </ul> -->
+              </li>
+
+              <li class="side-nav-li">
+                <i class="fa fa-tags" aria-hidden="true"></i>
+                Coupons
+                <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
+              </li>
+              <li class="side-nav-li">
+                <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+                REPORTS
+                <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
+                <ul class="side-nav-sub-list">
+                          <li>
+                            <a href="#">
+                              Total Sales
+                            </a>
+                          </li>
+                </ul>
+              </li>
+              <li class="side-nav-li">
+                <i class="fa fa-user" aria-hidden="true"></i>
+                Your Details
+                <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i>
+                <ul class="side-nav-sub-list">
+                          <li>
+                            <a href="#">
+                              Edit Details
+                            </a>
+                          </li>
+                          <li>
+                            <a href="#">
+                              Security
+                            </a>
+                          </li>
+                </ul>
+              </li>
+
+          </ul>
+      </div>
+      
+      <div class="admin-main-screen">
+        {% block body%}{%endblock%}
+      </div>
+
+      <script type="text/javascript" src="{% static 'main/js/list.js' %}"></script>
+      <script type="text/javascript" src="{% static 'main/js/sales-panel.js' %}"></script>
+  </body>
+</html>

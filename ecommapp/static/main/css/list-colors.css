@@ -1,0 +1,122 @@
+.navbar
+{
+  background-color: rgba(255,255,255,1);
+}
+.product-filters
+{
+
+    border:1px solid #f2f2f2;
+
+}
+.product-filters h3
+{
+  border-bottom:1px solid #f2f2f2;
+}
+.filter-list
+{
+  border-bottom:1px solid #f2f2f2;
+}
+.filter-type-list li
+{
+  color: #666;
+}
+.product-list-container
+{
+ color:black;
+  color: #807E7E;
+}
+.main-filter-btn
+{
+
+}
+.product-list
+{
+
+}
+.product-container
+{
+
+}
+.image-container.list
+{
+
+}
+.product-attributes-container
+{
+
+}
+.product-rating
+{
+  background-color: white;
+    border:1px solid orange;
+    color:orange;
+}
+.product-attributes
+{
+
+}
+.product-name
+{
+
+}
+.product-name a
+{
+  color: #807E7E;
+  color:#535766;
+  font-weight:bold;
+}
+.original-price
+{
+  color: #B2ACAC;
+}
+.discount
+{
+
+  color:#640AB2;
+
+}
+.product-ctas
+{
+
+}
+.product-add-to-cart
+{
+
+}
+.product-add-to-cart button
+{
+  border: 1px solid orange;
+  color:orange;
+}
+.sizes
+{
+
+}
+.sizes button
+{
+  border: 1px solid orange;
+}
+.sizes .dropdown-menu
+{
+  background-color: white;
+  border: 1px solid orange;
+  border-color: orange;
+}
+.size-type
+{
+
+}
+
+.list-cta-btn
+{
+  border: 1px solid orange;
+  border-color: orange;
+   box-shadow: 0px 0px 5px 2px #B2ACAC;
+   text-shadow: 0px 0px 1px #B2ACAC;
+   color: orange;
+}
+.list-cta-btn button
+{
+  color: orange;
+
+}

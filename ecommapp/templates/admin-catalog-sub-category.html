@@ -1,0 +1,100 @@
+{% extends "base/admin-dash.html" %}
+{% block body %}
+<div class="container-fluid">
+  <div class="main-screen-header">
+      <h2>Sub Category</h2>
+  </div>
+  <div class="messages">
+      {%if messages%}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {%endif%}
+  </div>
+  <div class="main-container">
+    <div class="form-options">
+      <a href="{% url "admin-catalog-sub-new"  %}" class="btn btn-success">ADD</a>
+
+      <a href="{% url "admin-catalog-sub"  %}" class="btn btn-warning">REBUILD</a>
+    </div>
+    <div class="form-container">
+      <div class="form-header">
+        <h3>Current Categories</h3>
+      </div>
+          {{ form.non_field_errors }}
+          <form action={% url "admin-catalog-sub-delete"  %} method="post" class="form-horizontal">
+          {%csrf_token %}
+          <table class="table table-responsive">
+              <thead>
+                  <tr>
+                      <th>Select</th>
+                      <th>Base Category</th>
+                      <th>Sub Category</th>
+                      <th></th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for contact in contacts %}
+                <tr>
+                  <td><input type="checkbox" value={{contact.pk}} name="selected"></td>
+                  <td>{{contact.Base_category_Key.Base_Category}}</td>
+                  <td>{{ contact.Sub_Category }}</td>
+                  <td><a href={%url "admin-catalog-sub-edit"  contact.id  %} class="btn btn-primary">edit</a></td>
+                </tr>
+                {%endfor%}
+
+              </tbody>
+          </table>
+          <button type="button" name="button" class="btn btn-danger" data-toggle="modal" data-target="#warningModal">Delete</button>
+
+          <!-- Warning Modal -->
+                      <div id="warningModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+
+                          <!-- Modal content-->
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              <h4 class="modal-title">Warning</h4>
+                            </div>
+                            <div class="modal-body">
+                              <p>Once deleted these categories nor their products will exist!!!!!</p>
+                              <p>Are You sure you want to delete the selected categories?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <input type="submit" value="DELETE" class="btn btn-danger">
+                              <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+
+          </form>
+
+          <div class="pagination">
+              <span class="step-links">
+                  {% if contacts.has_previous %}
+                      <a href="?page={{ contacts.previous_page_number }}">previous</a>
+                  {% endif %}
+
+                  <span class="current">
+                      Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
+                  </span>
+
+                  {% if contacts.has_next %}
+                      <a href="?page={{ contacts.next_page_number }}">next</a>
+                  {% endif %}
+              </span>
+          </div>
+
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

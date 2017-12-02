@@ -1,0 +1,120 @@
+{% extends 'base/user-dash.html' %}
+{% load static %}
+{% block body_block %}
+{%csrf_token%}
+    <h3>Your past orders:</h3>
+
+    <div class="container-fluid">
+      {% for order in orders%}
+      <div class="orders-container">
+          <div class="header">
+              <table class="table table-responsive">
+                <thead>
+                  <tr>
+                    <th>order placed</th>
+                    <th>total</th>
+                    <th>will be shipped to</th>
+                    <th>Order</th>
+                    <th>payment status **</th>
+                     <th>transaction Id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td>{{order.Order_Date_Time}}</td>
+                      <td>{{ order.Order_Total_Price}}</td>
+                      <td>{{ order.Order_In_Name_Of}}
+                      </td>
+                      <td>{{ order.pk}}</td>
+                      <td>{{ order.Order_Payment_status.payment_status}}</td>                   
+                       <td>{%if order.Transaction_Id %}
+                          {{order.Transaction_Id}}
+                          {%else%}
+                      <form class="form-horizontal" action="/order/order-payment/{{order.pk}}/" method="post">
+                         {%csrf_token%}
+                          <input type="text" placeholder="enter transaction id" name="transaction_id" />
+                           <input type="submit" value="SUBMIT" />
+          </div>
+       </form>
+                          {%endif%}
+                       </td>
+                      
+                      
+                      
+                    </tr>
+                </tbody>
+              </table>
+          </div>
+          {%for product in  order.order_product_specs_set.all %}
+          <div class="main-content">
+              <div class="image-container">
+                    <img src="{{product.Ordered_Product.Main_Image.url}}" alt="">
+              </div>
+              <div class="product-details">
+                <table class="table table-responsive">
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Final Price</th>
+                              <th>Order Status</th>
+                             <th> Shipment ID**</th>
+                  
+
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{{product.Ordered_Product.Product_Name}}</td>
+                            <td>₹{{product.Ordered_Product.price_after_discount}}</td>
+                            <td>{{product.Quantity}}</td>
+                            <td>₹{{product.Final_Ordered_Product_price}}</td>
+                            <td>{{product.Order_Status.status_for_order}}</td>
+                            <td>{%if product.Shipment_Id%}    
+                            <p> {{product.Shipment_Id}}
+                              {%else%}
+                              PENDING
+                            {%endif%}
+                          </tr>
+                        </tbody>
+                </table>
+
+              </div>
+
+              <div class="action-btns">
+                    <a href={{product.Shipment_Authority_Details.Shipping_Company_URL}} class="btn btn-default alternate-cta-btn">Track Package </a>
+               
+                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal{{order.pk}}" data-url="{%url "cancel-order"%}" data-id="">Cancel Package*</a>
+   <br><b>** order trasaction id will be confimed by the moderators and payment status and shipment id will be updated in 24 hrs.</b><br><b>* you cancel order only within  24 hrs of its placement.</b>
+              </div>
+          </div>
+          <!--cancel warning Modal -->
+            <div id="cancelPackageModal{{order.pk}}" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Cancel Order</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>Are you sure that you want to cancel the order!!</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button data-url="{%url "cancel-order"%}" class="btn btn-danger  cancel-package-btn" data-url="{%url "cancel-order"%}" data-id="{{order.pk}}" data-product-id="{{product.pk}}">Cancel Package </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {%endfor%}
+      </div>
+
+
+
+      {%endfor%}
+    </div>
+
+{% endblock %}

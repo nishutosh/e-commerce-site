@@ -1,0 +1,135 @@
+{%extends 'admin-dash.html'%}
+{% load static %}
+{%block body%}
+  <div class="container-fluid">
+    <div class="detail-box">
+      <div class="header">
+        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+        Order Details
+      </div>
+      <ul class="detail-list">
+          <li><a class="btn btn-default"><i class="fa fa-shopping-cart"></i></a> Vendor Name</li>
+          <li><a class="btn btn-default"><i class="fa fa-calendar"></i></a> 22/07/17</li>
+          <li><a class="btn btn-default"><i class="fa fa-credit-card-alt"></i></a> Cash On Delivery</li>
+          <li><a class="btn btn-default"><i class="fa fa-truck"></i></a> Flat Shipping Rate</li>
+      </ul>
+    </div>
+
+    <div class="detail-box">
+      <div class="header">
+        <i class="fa fa-user" aria-hidden="true"></i>
+        Customer Details
+      </div>
+      <ul class="detail-list">
+          <li><a class="btn btn-default"><i class="fa fa-user"></i></a> User Name</li>
+          <li><a class="btn btn-default"><i class="fa fa-envelope"></i></a> user@fashvolts.com</li>
+          <li><a class="btn btn-default"><i class="fa fa-phone"></i></a> 88888888</li>
+
+      </ul>
+    </div>
+
+    <div class="detail-box">
+      <div class="header">
+        <i class="fa fa-cog" aria-hidden="true"></i>
+        Order Options
+      </div>
+      <ul class="detail-list right-icon">
+          <li>Invoice<a class="btn btn-default pull-right"><i class="fa fa-cog"></i></a></li>
+          <li>Coupon <a class="btn btn-default pull-right"><i class="fa fa-tags"></i></a></li>
+          <li>FashVolts Credits<a class="btn btn-default pull-right"><i class="fa fa-plus"></i></a></li>
+      </ul>
+    </div>
+
+    <div class="data-container detail-box">
+      <div class="header">
+        <i class="fa fa-info-circle" aria-hidden="true"></i>
+        Order Options
+      </div>
+      <div class="table-container">
+          <table class="table-responsive table">
+                <thead>
+                  <tr>
+                    <th>Shipping Address</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>john doe <br>123123123 <br>abcd 1234 <br>Aberdeen <br>United Kingdom</td>
+                  </tr>
+                </tbody>
+          </table>
+          <table class="table-responsive table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                    <th>Cost</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Shirt 1</td>
+                    <td>Clothing</td>
+                    <td>1</td>
+                    <td>Pending</td>
+                    <td>
+                      <div class="dropdown">
+                        500
+                        <button class="pull-right btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                          Details <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>Base Price : 300</li>
+                            <li>GST : 28%</li>
+                            <li>Total Tax: 200</li>
+                            <li>Total Amount: 500</li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>Shirt 1</td>
+                    <td>Clothing</td>
+                    <td>1</td>
+                    <td>Confirmed</td>
+                    <td>
+                      <div class="dropdown">
+                        500
+                        <button class="pull-right btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+                          Details <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>Base Price : 300</li>
+                            <li>GST : 28%</li>
+                            <li>Total Tax: 200</li>
+                            <li>Total Amount: 500</li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+          </table>
+          <table class="table-responsive table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Coupon Applied</th>
+                    <th>FashVolts Credits Used</th>
+                    <th>Amount Paid</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Abra ka dabra</td>
+                    <td>200</td>
+                    <td>300</td>
+                  </tr>
+                </tbody>
+          </table>
+      </div>
+    </div>
+
+  </div>
+{%endblock%}

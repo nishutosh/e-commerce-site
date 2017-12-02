@@ -1,0 +1,115 @@
+{%extends 'base/admin-dash.html'%}
+{% load static %}
+{%block body%}
+  <div class="container-fluid">
+    <div class="main-screen-header">
+        <h2>DASHBOARD</h2>
+    </div>
+      <div class="stats-container">
+        <div class="box">
+          <div class="header">
+                TOTAL ORDERS
+          </div>
+          <div class="info">
+            <div class="icon">
+                  <i class="fa fa-shopping-cart"></i>
+            </div>
+            <div class="stat">
+                        {{order_count}}
+            </div>
+          </div>
+          <div class="link">
+            <a href="#">View More...</a>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="header">
+                TOTAL SALES
+          </div>
+          <div class="info">
+            <div class="icon">
+                  <i class="fa fa-credit-card"></i>
+            </div>
+            <div class="stat">
+                        0
+            </div>
+          </div>
+          <div class="link">
+            <a href="#">View More...</a>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="header">
+                TOTAL CUSTOMERS
+          </div>
+          <div class="info">
+            <div class="icon">
+                  <i class="fa fa-users"></i>
+            </div>
+            <div class="stat">
+                        {{customer_count}}
+            </div>
+          </div>
+          <div class="link">
+            <a href="#">View More...</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="analytics">
+        <div class="analysis-box">
+          <div class="header">
+            <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
+            SALES ANALYTICS
+          </div>
+          <div class="bar-graph">
+              <img src="{%static 'main/images/bar-graph.png'%}" alt="">
+          </div>
+        </div>
+
+      <div class="analysis-box">
+        <div class="header">
+          <i class="fa fa-users" aria-hidden="true"></i>
+          USER ANALYTICS
+        </div>
+        <div class="bar-graph">
+            <img src="{%static 'main/images/bar-graph.png'%}" alt="">
+        </div>
+      </div>
+      </div>
+
+      <div class="table-responsive">
+        <div class="header">
+          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+          Latest Orders
+        </div>
+        <table class="table table-striped">
+          <thead>
+              <tr>
+                <th>Order Id</th>
+                <th>Name</th>
+                <th>Payment Status</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>View</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% for order in recent_order %}
+            <tr>
+              <td>{{order.id}}</td>
+              <td>{{order.Order_In_Name_Of}}</td>
+              <td>{{order.Order_Payment_status.payment_status}}</td>
+              <td>{{order.Order_Date_Time}}</td>
+              <td>Rs {{order.Order_Total_Price}}</td>
+              <td><a class="view-btn btn btn-default" href="admin-dashboard/order-details"><i class="fa fa-eye" aria-hidden="true"></i></a></td>
+            </tr>
+            {%endfor%}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{%endblock%}
