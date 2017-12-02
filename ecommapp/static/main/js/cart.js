@@ -199,6 +199,7 @@ function updateCart(element,id,url)
     data:{
          "quantity":element.value,
          "product":id,
+         "discount":currentBill.discount,
          "X-CSRFToken":$("input[name='csrfmiddlewaretoken']").val(),
          },
     success: function(){
@@ -253,7 +254,7 @@ function Couponupdate()
                   $(".discount-value").text(result.value)
                   $(".discount-note").text(result.message)
                   console.log(result)
-
+                  currentBill.discount = result.value;
                   currentBillCalculate();
                            
                 }
