@@ -204,10 +204,11 @@ function updateCart(element,id,url)
          },
     success: function(){
       console.log("hurray quantity changed");
+      Couponupdate();
+      getCartItems();
     }
   });
-   Couponupdate();
-   getCartItems();
+   
 }
 
 function removeFromCart(item)
