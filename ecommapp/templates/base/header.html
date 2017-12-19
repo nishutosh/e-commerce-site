@@ -33,9 +33,13 @@
                     </div>
                     <!--Desktop buttons-->
                     <div class="main-navbar-more-buttons hidden-xs">
-                          <a href="{%url "checkout"%}" class="header-cart-btn">
+                          <a href='{%url "checkout" %}' class="header-cart-btn">
                               <i class="fa fa-shopping-cart" aria-hidden="true"></i> CART
-                              <span class="cart-item-number badge">1</span>
+                              <span class="cart-item-number badge"></span>
+                            </a>
+                            <a href={%url 'wishlist' %} class="header-wishlist-btn">
+                              <i class="fa fa-shopping-wishlist" aria-hidden="true"></i> WISHLIST
+                              <span class="wishlist-item-number badge">0</span>
                             </a>
                   
                         <div class="dropdown">

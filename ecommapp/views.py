@@ -262,18 +262,32 @@ class UserOrderList(LoginRequiredMixin,View):
 
 
 #AJAX calls classes
-class AddToWishList(View,LoginRequiredMixin):
+class GetToWishList(View):
   def get(self,request):
-    wish_obj=Wish_List.objects.get_or_create(User_Wishlist=request.user)
-    product_list
-    for products in wish_obj_set.all():
-      product_list.append({"product name":products.Product_Name,
-                           "product_url":product.get_product_url()
-                            })
+    if request.user.is_authenticated():
+      product_list=[]
+      if not(Wish_List.objects.filter(User_Wishlist=request.user).exists()):
+         return JsonResponse({"":""})        
+      wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
+      for products in wish_obj.wish_list_product_set.all():
+        product_list.append({"product name":products.Product_In_Wishlist.Product_Name,
+                             "product_url":products.Product_In_Wishlist.get_product_url()
+                              })
       return JsonResponse(product_list,safe=False)
+    else:
+        return JsonResponse({"message":"unauthenticated user"})
+
+class PostToWishlist(View,LoginRequiredMixin):          
   def post(self,request):
-     wish_obj=Wish_List.objects.get_or_create(User_Wishlist=request.user)
-     Wish_List_Product.objects.create(Wishlist=wish_obj,Product_In_Wishlist=request.POST.get("product_id"))
+     if not(Wish_List.objects.filter(User_Wishlist=request.user).exists()):
+        wish_obj=Wish_List.objects.create(User_Wishlist=request.user)
+     wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
+     product=Product.objects.get(pk=request.POST.get("product"))
+     if Wish_List_Product.objects.filter(Wishlist=wish_obj,Product_In_Wishlist=product).exists():
+       return JsonResponse({"message":"product already exist"})
+     else:  
+       Wish_List_Product.objects.create(Wishlist=wish_obj,Product_In_Wishlist=product)
+       return JsonResponse({"message":"wishlist updated"})
 class DeleteFromWishList(View,LoginRequiredMixin):
    def post(self,request):
      if Wish_List_Product.objects.filter(pk=request.POST.get("product_id")).exists():
@@ -1243,7 +1257,7 @@ class SalesSignOut(LoginRequiredMixin,View):
 #       return Seller.objects.filter(seller_user=self.request.user).exists()
 
 
-class CustomModule(ListView):
+class CustomModule(LoginRequiredMixin,ListView):
   context_object_name="brands"
   model=Brand
   template_name="custom-module-index.html"

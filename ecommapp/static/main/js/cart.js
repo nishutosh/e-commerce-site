@@ -1,5 +1,6 @@
 $(document).ready(function(){
   getCartItems();
+  getWishlistItems();
 });
 
 
@@ -55,52 +56,68 @@ $.ajaxSetup({
 //               });
 // });
 
+function getWishlistItems() {
+    console.log("get wishlist item called")
+    $.ajax({
+        type: "GET",
+        url: "/wishlist/product/",
+        success: function(result) {
+            console.log("get cart wishlist call" + result);
+            if (result.message == "unauthenticated user") {
+                console.log("unauthenticated user")
+                var wishlistItems = 0;
+                $(".wishlist-item-number").text(wishlistItems);
+            } else {
+                console.log("wishlist items seen")
+                var wishlistItems = result.length;
+                $(".wishlist-item-number").text(wishlistItems);
+            }
+        }
+    });
+}
+function addtowishlist() {
+    console.log("cart-button click")
+    $.ajax({
+        type: "POST",
+        url: $(this).attr("data-ajax-url"),
+        data: {
+            "product": $(this).attr("data-product-id"),
+            "X-CSRFToken": $("input[name='csrfmiddlewaretoken']").val(),
+        },
+        success: function() {
+         getWishlistItems();
+        }
+    });
+}
 
-
-
-
-
-function getCartItems()
-{    console.log("get cart item called")
-  $.ajax({
-               type: "GET",
-               url: "/cart/",
-                success: function(result){
-                          console.log("get cart item sucess call"+result);
-                          if(result.length == 0)
-                          {
-                            var element = '<h3>Oops! Your cart is empty... </h3>';
-                            $(".continue-shopping-cta").before(element);
-                            $("#order-btn").addClass("disabled");
-                            $("#order-btn").parents(".order-cta").css({
-                              "cursor": "not-allowed"
-                            });
-                            var cartItems = 0;
-                            $(".cart-item-number").text(cartItems);
-                            console.log("result-len0")
-                          }
-                          else if(result.message == "no cookie present")
-                              {
-                                  console.log("no cokkie")
-                                var cartItems = 0;
-                                $(".cart-item-number").text(cartItems);
-                              }
-                              
-                          else{
-                             console.log("cart has some items")
-                            var cartItems = result.length;
-                            $(".cart-item-number").text(cartItems);
-                            
-                          }
-
-
-
-
-
-
-
-                }
+function getCartItems() {
+    console.log("get cart item called")
+    $.ajax({
+        type: "GET",
+        url: "/cart/",
+        success: function(result) {
+            console.log("get cart item sucess call");
+            if (result.length == 0) {
+                var element = '<h3>Oops! Your cart is empty... </h3>';
+                $(".continue-shopping-cta").before(element);
+                $("#order-btn").addClass("disabled");
+                $("#order-btn").parents(".order-cta").css({
+                    "cursor": "not-allowed"
                 });
+                var cartItems = 0;
+                $(".cart-item-number").text(cartItems);
+                console.log("result-len0")
+            } else if (result.message == "no cookie present") {
+                console.log("no cokkie")
+                var cartItems = 0;
+                $(".cart-item-number").text(cartItems);
+            } else {
+                console.log("cart has some items")
+                var cartItems = result.length;
+                $(".cart-item-number").text(cartItems);
+            }
+        }
+    });
 }
 /////////////////////////////////////
 // for adding to cart on list page
@@ -108,6 +125,7 @@ function getCartItems()
 function addtocart(){
    console.log("cart-button click")
     $.ajax({
+      
             type: "POST",
             url: $(this).attr("data-ajax-url"),
             data:{

@@ -26,6 +26,12 @@ carturls=[
     url(r'checkout/$',CheckoutView.as_view(),name="checkout"),
     url(r'apply-coupon/$',ApplyCoupon.as_view(),name="apply-coupon"),
 ]
+wishlisturls=[
+  url(r'product/$',GetToWishList.as_view(),name="wishlist"),
+  url(r'add/$',PostToWishlist.as_view(),name="wishlist-add"),
+  url(r'delete/$',DeleteFromWishList.as_view(),name="delete-wishlist"),
+
+]
 
 commonurls=[
     url(r'^$',HomeView.as_view(),name="home"),
@@ -111,6 +117,8 @@ urlpatterns = [
     url(r'sales-panel/',include(salesurls)),
     url(r'custom/',include(customurls)),
     url(r'custom-module/',include(custommoduleurls)),
+    url(r'wishlist/',include(wishlisturls)),
     url(r'^',include(commonurls)),
     url(r'^',include(authurls)),
+  
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
