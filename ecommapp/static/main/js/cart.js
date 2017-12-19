@@ -1,6 +1,10 @@
 $(document).ready(function(){
   getCartItems();
+<<<<<<< HEAD
   successModal();
+=======
+  getWishlistItems();
+>>>>>>> fix-front-end
 });
 
 function Bill(price,delivery,discount)
@@ -70,6 +74,39 @@ $.ajaxSetup({
 //               });
 // });
 
+function getWishlistItems() {
+    console.log("get wishlist item called")
+    $.ajax({
+        type: "GET",
+        url: "/wishlist/product/",
+        success: function(result) {
+            console.log("get cart wishlist call" + result);
+            if (result.message == "unauthenticated user") {
+                console.log("unauthenticated user")
+                var wishlistItems = 0;
+                $(".wishlist-item-number").text(wishlistItems);
+            } else {
+                console.log("wishlist items seen")
+                var wishlistItems = result.length;
+                $(".wishlist-item-number").text(wishlistItems);
+            }
+        }
+    });
+}
+function addtowishlist() {
+    console.log("cart-button click")
+    $.ajax({
+        type: "POST",
+        url: $(this).attr("data-ajax-url"),
+        data: {
+            "product": $(this).attr("data-product-id"),
+            "X-CSRFToken": $("input[name='csrfmiddlewaretoken']").val(),
+        },
+        success: function() {
+         getWishlistItems();
+        }
+    });
+}
 
 
 
@@ -121,14 +158,14 @@ function getCartItems()
 
 
                 }
-                });
-}
+
 /////////////////////////////////////
 // for adding to cart on list page
 //////////////////////////////////////
 function addtocart(){
    console.log("cart-button click")
     $.ajax({
+      
             type: "POST",
             url: $(this).attr("data-ajax-url"),
             data:{
