@@ -161,18 +161,11 @@ class Product(models.Model):
      return str(self.Product_Name)
   
   def get_product_url(self):
-      return "home/"+self.Product_Base_Category.Base_Slug_Field+"/"+self.product_Sub_Category.Sub_Category_Slug_Field+"/"+self.pk
-  
+      return "product/"+str(self.Product_Base_Category.Base_Slug_Field)+"/"+str(self.product_Sub_Category.Sub_Category_Slug_Field)+"/"+str(self.pk)
   def price_after_discount(self):
-      price_with_tax = self.price_with_tax()
-      Actual_Price=((100-self.Discount)/100)* price_with_tax
-      return  Actual_Price
-
-  def price_with_tax(self):
-      tax = Tax.objects.get(Products = self.product_Sub_Category).Tax_Percentage
-      actual_price = self.Base_Price + ((tax*self.Base_Price)/100)
-      return actual_price
-
+      Actual_Price=((100-self.Discount)/100)* self.Base_Price
+      price_after_tax=Actual_Price+((self.TaxOnProduct.Tax_Percentage/100)*Actual_Price)
+      return  price_after_tax
   def indexing(self):
      from .search import ProductIndex
      obj = ProductIndex(
