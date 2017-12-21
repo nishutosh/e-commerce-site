@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'ecommapp',
     'rest_framework',
     'django_filters',
-    'storages',
 ]
 
 MIDDLEWARE = [
@@ -79,10 +78,15 @@ WSGI_APPLICATION = 'ecommsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE':'django.db.backends.postgresql_psycopg2',
+        'NAME':'d2k9kmjef5kj73',
+        'USER':'myprojectuser',
+        'PASSWORD':'cbcfb527abf409bbcd8cfbe6842d2849c3675a9efa4882fa284677bfa0859769',
+        'HOST':'ec2-184-73-240-228.compute-1.amazonaws.com',
+        'PORT':'5432',
     }
 }
+
 
 ELASTICSEARCH_DSL={
     'default': {
