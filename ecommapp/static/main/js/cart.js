@@ -1,10 +1,7 @@
 $(document).ready(function(){
   getCartItems();
-<<<<<<< HEAD
   successModal();
-=======
   getWishlistItems();
->>>>>>> fix-front-end
 });
 
 function Bill(price,delivery,discount)
@@ -113,11 +110,11 @@ function addtowishlist() {
 
 
 function getCartItems()
-{    console.log("get cart item called")
+{    console.log("get cart item called");
   $.ajax({
                type: "GET",
                url: "/cart/",
-                success: function(result){
+               success: function(result){
                           console.log("get cart item sucess call"+result);
                           if(result.length == 0)
                           {
@@ -150,19 +147,14 @@ function getCartItems()
                             currentBill.price = price;
                             currentBillCalculate();
                           }
-
-
-
-
-
-
-
                 }
-
+              })
+            }             
 /////////////////////////////////////
 // for adding to cart on list page
 //////////////////////////////////////
-function addtocart(){
+function addtocart()
+{
    console.log("cart-button click")
     $.ajax({
       
