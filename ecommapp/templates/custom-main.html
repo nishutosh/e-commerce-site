@@ -62,8 +62,8 @@
                       </div>
                     </div>
                   <div class="button-set">
-                      <button class="alternate-cta-btn btn btn-default" id="back">Back</button>
-                      <button class="cta-btn btn btn-default" id="confirm">Confirm</button>
+                      <button class="alternate-cta-btn btn btn-default back" id="back">Back</button>
+                      <button class="cta-btn btn btn-default confirm" id="confirm">Confirm</button>
                   </div> 
               </div>
           </div>
@@ -103,12 +103,14 @@
                   
                   <div class="customization-section">
                       <div class="row">
-                          <div class="phone-container col-lg-4">
+                          <div class="phone-container col-lg-4" id="phone-container">
                               <div class="phone" id="phone" data-src="{{phone.pic.url}}">
                               
                               <div class="preview" id="preview">
                     
                               </div>
+                              
+                              
                             </div>
                             <div class="caption">
                                 <h4>Preview</h4>
@@ -133,10 +135,12 @@
                         </div>
     
                       </div>
+                      <div class="button-set">
+                        <button class="alternate-cta-btn btn btn-default back" id="back">Back</button>
+                        <button class="cta-btn btn btn-default confirm" id="confirm">Confirm</button>
+                    </div> 
                                           
-                    <div class="final-submit-div">
-                        <button id="" class="btn btn-default cta-btn" data-toggle="modal" data-target="#customModal">Proceed Further</button>
-                    </div>
+                    
 
                     <div>
                       <button class="btn btn-default" id="preview-btn">preview</button>
@@ -147,12 +151,58 @@
   
               </div>
           </div>
-            
+        </div>
+
+        <div id="step-4" class="step panel">
+            <div class="panel-heading">
+                <div class="number">
+                    4
+                  </div>
+                  <div class="heading">
+                    <h4>Add Text</h4>
+                  </div>
+            </div>
+            <div class="panel-body">
+                <div class="content">
+                  <div class="row" >
+                      <div class="col-lg-3" id="textCanvasContainer" >
+                          <!-- Parent Container to get previewCanvas  -->
+                          <!-- <div class="placableText" id="placableText">
+                              
+                                                        </div> -->
+                      </div>
+                      <div class="textContainer col-lg-8" id="textEditorContainer">
+                          <!-- USes Quill Text Editor -->
+                          <div id="toolbar">
+
+                          </div>
+                          <div id="textarea">
+
+                          </div>
+                          <button class="btn btn-default cta-btn" id="textBtn">Place Text</button>
+                          <button class="btn btn-default cta-btn" id="fixTextBtn">Fix Text</button>
+                          
+                      </div>
+                  </div>
+                    
+                    <!-- <div class="button-set">
+                        <button class="alternate-cta-btn btn btn-default back" id="back">Back</button>
+                        <button class="cta-btn btn btn-default confirm" id="confirm">Confirm</button>
+                    </div> -->
+                    
+                    <div class="final-submit-div">
+                      <button id="" class="btn btn-default cta-btn" data-toggle="modal" data-target="#customModal">Proceed Further</button>
+                  </div>
+                </div>
+            </div>
             
           </div>
+      
+      
+      
+        </div>
 
-
-      </div>
+      
 
       <!-- custom product form Modal -->
 <div id="customModal" class="modal fade" role="dialog">
@@ -218,16 +268,6 @@
 </div>
 
 
-
-
-
-
- <!-- <div class="col-md-2">
-  <h1>{{phone.name}}</h1>
-   <img src={{phone.pic.url}} class="img-responsive">
-   
-
- </div> -->
 <script>
   $('.preview img').css({
         'max-width': '100%!important'

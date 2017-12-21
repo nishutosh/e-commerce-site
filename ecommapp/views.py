@@ -1267,10 +1267,11 @@ class CustomModule(ListView):
               
 
 
-@login_required
+
 def getphones(request,brand_slug):
   """js ajax call display all phone 
      names of that brand"""
+  print("inside getphones")   
   phones=Phones.objects.filter(brand__slug=brand_slug)
   phone_list=[]
   for phone in phones:
@@ -1280,7 +1281,8 @@ def getphones(request,brand_slug):
 class CustomeModuleMain(LoginRequiredMixin,View):
   def get(self,request,pk):
      phone_obj=Phones.objects.get(pk=pk)
-     return render(request,"custom-main.html",{"phone":phone_obj})    
+     return render(request,"custom-main.html",{"phone":phone_obj,"siteuser":self.request.user})    
+
 class PostCustomModule(View):
    def post(self,request):
       """first call this then this would return product id and make an add to cart post call using its result"""

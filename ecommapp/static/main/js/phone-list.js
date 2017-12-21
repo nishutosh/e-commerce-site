@@ -19,7 +19,7 @@ $('.phone-list-toggle-btn').click(function(){
         url: url,
         success: function(result)
                     {
-                        console.log(result);
+                       // console.log(result);
                         var phoneListLength = result.length;
                         // for(i=0;i<phoneListLength;i++)
                         // {
