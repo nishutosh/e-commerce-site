@@ -9,6 +9,7 @@ dropbox==8.4.1
 elasticsearch==5.4.0
 elasticsearch-dsl==5.3.0
 fpdf==1.7.2
+gunicorn==19.7.1
 idna==2.6
 InvoiceGenerator==0.5.4
 olefile==0.44
