@@ -156,7 +156,7 @@ class Product(models.Model):
   is_displayed=models.BooleanField(default=True)
   Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
-  Sizes=models.ManyToManyField(Size,null=True)
+  Sizes=models.ManyToManyField(Size)
   def __str__(self):
      return str(self.Product_Name)
   
