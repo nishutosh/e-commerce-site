@@ -219,6 +219,7 @@ class Customer(models.Model):
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
    usability=models.BooleanField(default=True)
    can_create_custom=models.BooleanField(default=True)
+   Join_Date_Time = models.DateTimeField(auto_now_add = True,blank = True)
    def __str__(self):
      return self.Customer_First_Name
 
