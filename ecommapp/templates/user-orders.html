@@ -85,7 +85,8 @@
               <div class="action-btns">
                     <a href={{product.Shipment_Authority_Details.Shipping_Company_URL}} class="btn btn-default alternate-cta-btn">Track Package </a>
                
-                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal{{order.pk}}" data-url="{%url "cancel-order"%}" data-id="">Cancel Package*</a>
+                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal{{order.pk}}" data-url="{%url "cancel-order"%}" data-id="">Cancel Package</a>
+                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#returnPackageModal{{order.pk}}" data-url="{%url "return-orders"%}" data-id="">Return Package</a>
    <br><b>** order trasaction id will be confimed by the moderators and payment status and shipment id will be updated in 24 hrs.</b><br><b>* you cancel order only within  24 hrs of its placement.</b>
               </div>
           </div>
@@ -109,6 +110,33 @@
                 </div>
               </div>
             </div>
+
+            <div id="returnPackageModal{{order.pk}}" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+  
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">Return Order</h4>
+                    </div>
+                    <div class="modal-body">
+                      <p>Are you sure that you want to return this product!!</p>
+                      <form action="">
+                       <div class="form-group">
+                          <label for="return-reason">Specify the reason for the return!</label>
+                          <textarea name="return-reason" id="" cols="30" rows="10" class="form-control"></textarea>
+                       </div> 
+                      </form>
+                      
+                    </div>
+                    <div class="modal-footer">
+                      <button data-url="{%url "return-orders"%}" class="btn btn-danger  return-package-btn" data-id="{{order.pk}}" data-product-id="{{product.pk}}">Return Package </button>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
           {%endfor%}
       </div>
 

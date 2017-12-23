@@ -62,10 +62,13 @@
         <div class="analysis-box">
           <div class="header">
             <i class="fa fa-bar-chart-o" aria-hidden="true"></i>
-            SALES ANALYTICS
+            ORDER ANALYTICS
           </div>
           <div class="bar-graph">
+            <a href="{%url 'admin-reports-orders'%}">
               <img src="{%static 'main/images/bar-graph.png'%}" alt="">
+            </a>
+            
           </div>
         </div>
 
@@ -75,7 +78,9 @@
           USER ANALYTICS
         </div>
         <div class="bar-graph">
-            <img src="{%static 'main/images/bar-graph.png'%}" alt="">
+            <a href="{%url 'admin-reports-users'%}">
+              <img src="{%static 'main/images/bar-graph.png'%}" alt="">
+            </a>
         </div>
       </div>
       </div>

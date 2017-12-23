@@ -366,7 +366,10 @@ class Order_Product_Specs(models.Model):
   Order_Volts_Credit_Used=models.IntegerField(default=0)
 
 class OrderReturn(models.Model):
-   Order=models.ForeignKey(Order)
+   Product=models.ForeignKey(Order_Product_Specs)
+   Reason = models.CharField(max_length = 100)
+   def __str__(self):
+        return self.Product
    
 class TypeOfCustomProduct(models.Model):
     product_type = models.CharField(max_length = 20,unique=True)
