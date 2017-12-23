@@ -212,6 +212,7 @@ class Customer(models.Model):
    User_Profile_Pic=models.ImageField(upload_to="UserProfilePic/",null=True)
    usability=models.BooleanField(default=True)
    can_create_custom=models.BooleanField(default=True)
+   Join_Date_Time = models.DateTimeField(auto_now_add = True,blank = True)
    def __str__(self):
      return self.Customer_First_Name
 
@@ -358,7 +359,10 @@ class Order_Product_Specs(models.Model):
   Order_Volts_Credit_Used=models.IntegerField(default=0)
 
 class OrderReturn(models.Model):
-   Order=models.ForeignKey(Order)
+   Product=models.ForeignKey(Order_Product_Specs)
+   Reason = models.CharField(max_length = 100)
+   def __str__(self):
+        return self.Product
    
 class TypeOfCustomProduct(models.Model):
     product_type = models.CharField(max_length = 20,unique=True)

@@ -11,9 +11,11 @@
      <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-colors.css' %}" />
      <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-form.css' %}" />
      <link rel="stylesheet" type="text/css" href="{% static 'main/css/admin-form-colors.css' %}" />
+     <link rel="stylesheet" type="text/css" href="{% static 'main/css/font-awesome.min.css' %}" />
 
      <script src="{% static 'main/js/jquery-3.2.1.js' %}"></script>
      <script src="{% static 'main/js/bootstrap.min.js' %}"></script>
+     <script src="{% static 'main/js/canvasjs.min.js' %}"></script>
      <script src="{% static 'main/js/bootstrap-dropdownhover.min.js' %}"></script>
 
   </head>
@@ -21,7 +23,7 @@
       <header>
         <div class="admin-header">
           <div class="logo">
-            <a href="/admin-dashboard">
+            <a href="{%url "admin-panel"%}">
               <img class="logo" src="{% static 'main/images/admin-logo.png' %}" />
             </a>
           </div>
@@ -92,6 +94,11 @@
                           <li>
                             <a href="{%url "admin-order-by-category"%}">
                               Orders by Category
+                            </a>
+                          </li>
+                          <li>
+                            <a href="{%url 'admin-return-orders' %}">
+                              Returned Orders
                             </a>
                           </li>
                 </ul>

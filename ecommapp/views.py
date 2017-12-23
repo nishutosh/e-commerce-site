@@ -263,7 +263,47 @@ class UserOrderList(LoginRequiredMixin,View):
           user_obj=request.user
           context={"siteuser":user_obj,"orders":user_obj.customer.order_set.all()}
           context.update(menu_product_view_context)
+          print("UserOrderList view")
           return render(request,"user-orders.html",context)
+
+class ReturnedOrderList(LoginRequiredMixin,View):
+    def get(self,request):
+          user_obj=request.user
+          orders = user_obj.customer.order_set.all()
+          return_status = Order_Status_Model.objects.filter(status_for_order = "RETURNED")
+          request_for_return_status = Order_Status_Model.objects.filter(status_for_order = "REQUEST FOR RETURN")
+          returned_orders = Order_Product_Specs.objects.filter(Order__in = orders,Order_Status__in = return_status)
+          request_for_return_orders = Order_Product_Specs.objects.filter(Order__in = orders,Order_Status__in = request_for_return_status)  
+          context={"siteuser":user_obj,"returned_orders":returned_orders,"requested_orders":request_for_return_orders}
+          context.update(menu_product_view_context)
+          print("ReturnedOrderList view")
+          return render(request,"user-returned-orders.html",context)  
+
+class ReturnOrderAPI(LoginRequiredMixin,View):
+    def post(self,request):
+        order=request.POST.get("order_id")
+        order_obj=get_object_or_404(Order,pk=order)
+        if (request.user==order_obj.Order_Customer.User_customer):
+             order_items_id=request.POST.getlist("order_product_id")
+             for product_id in order_items_id:
+                  order_product=get_object_or_404(Order_Product_Specs,pk=product_id)
+                  if order_product.Order_Status.status_for_order=="DELIVERED":
+                     order_product.Order_Status=Order_Status_Model.objects.get(status_for_order="REQUEST FOR RETURN")
+                     order_product.save()
+                     order_return = OrderReturn.objects.create(
+                           Product = order_items_id, 
+                           Reason = request.POST.get("reason")
+                     )
+                     return JsonResponse({"message":"product request for return successfull"})  
+
+                  else:
+                     messages.error(self.request, 'order not delivered')
+                     return redirect(reverse("user-orders"))   
+                     print("I can't return ") 
+                     
+        else:
+            return  HttpResponse(status=401)
+        return redirect(reverse("user-orders"))             
 
 
 #AJAX calls classes
@@ -1060,6 +1100,13 @@ class OrderProductStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
           return JsonResponse({"message":"status changed"})
        else:
           return JsonResponse({"message":"order does not exist"})
+
+class AdminReturnedOrders(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+            pass
+      def get(self,request):
+            pass
+          
 
 
 #admin reports stuff ------------------------------------------->

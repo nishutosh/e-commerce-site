@@ -1,0 +1,148 @@
+{% extends 'base/user-dash.html' %}
+{% load static %}
+{% block body_block %}
+{%csrf_token%}
+    <h3>Your Requested Returns:</h3>
+
+    <div class="container-fluid">
+      {% for order in requested_orders%}
+      <div class="orders-container">
+          <div class="header">
+              <table class="table table-responsive">
+                <thead>
+                  <tr>
+                    <th>order placed</th>
+                    <th>Delivered To</th>
+                    <th>Price</th>
+                    <th>Order</th>
+                    <th>Payment Status**</th>
+                     <th>Transaction Id</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td>{{order.Order.Order_Date_Time}}</td>
+                      <td>{{order.Order.Order_In_Name_Of}}</td>
+                      <td>{{ order.Final_Ordered_Product_price}}</td>
+                      <td>{{order.Order.pk}}</td>
+                      <td>{{ order.Order.Order_Payment_status.payment_status}}</td>                   
+                       <td>
+                          {{order.Order.Transaction_Id}}
+                       </td>
+                    </tr>
+                </tbody>
+              </table>
+          </div>
+          <div class="main-content">
+              <div class="image-container">
+                    <img src="{{order.Ordered_Product.Main_Image.url}}" alt="">
+              </div>
+              <div class="">
+                <table class="table table-responsive">
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Final Price</th>
+                              <th>Order Status</th>
+                             <th> Shipment ID**</th>
+                  
+
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>{{order.Ordered_Product.Product_Name}}</td>
+                            <td>₹{{order.Ordered_Product.price_after_discount}}</td>
+                            <td>{{order.Quantity}}</td>
+                            <td>₹{{order.Final_Ordered_Product_price}}</td>
+                            <td>{{order.Order_Status.status_for_order}}</td>
+                            <td>{{order.Shipment_Id}}</td>
+                          </tr>
+                        </tbody>
+                </table>
+
+              </div>
+
+              
+          </div>
+          
+      {%endfor%}
+    </div>
+
+    <h3>Your Returned Orders:</h3>
+    {%if returned_orders%}
+        <div class="container-fluid">
+          {% for order in returned_orders%}
+          
+          <div class="orders-container">
+              <div class="header">
+                  <table class="table table-responsive">
+                    <thead>
+                      <tr>
+                        <th>order placed</th>
+                        <th>Delivered To</th>
+                        <th>Price</th>
+                        <th>Order</th>
+                        <th>Payment Status**</th>
+                         <th>Transaction Id</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td>{{order.Order.Order_Date_Time}}</td>
+                          <td>{{order.Order.Order_In_Name_Of}}</td>
+                          <td>{{ order.Final_Ordered_Product_price}}</td>
+                          <td>{{order.Order.pk}}</td>
+                          <td>{{ order.Order.Order_Payment_status.payment_status}}</td>                   
+
+                           <td>
+                              {{order.Order.Transaction_Id}}
+                           </td>
+                        </tr>
+                    </tbody>
+                  </table>
+              </div>
+              <div class="main-content">
+                  <div class="image-container">
+                        <img src="{{order.Ordered_Product.Main_Image.url}}" alt="">
+                  </div>
+                  <div class="">
+                    <table class="table table-responsive">
+                            <thead>
+                              <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Final Price</th>
+                                  <th>Order Status</th>
+                                 <th> Shipment ID**</th>
+                      
+    
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>{{order.Ordered_Product.Product_Name}}</td>
+                                <td>₹{{order.Ordered_Product.price_after_discount}}</td>
+                                <td>{{order.Quantity}}</td>
+                                <td>₹{{order.Final_Ordered_Product_price}}</td>
+                                <td>{{order.Order_Status.status_for_order}}</td>
+                                <td>{{order.Shipment_Id}}</td>
+                              </tr>
+                            </tbody>
+                    </table>
+    
+                  </div>
+    
+                  
+              </div>
+              
+          {%endfor%}
+        </div>
+       {%else%}
+       <h4>No Product to show.</h4> 
+       {%endif%}
+
+{% endblock %}
