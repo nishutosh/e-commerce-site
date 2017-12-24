@@ -369,7 +369,7 @@ class OrderReturn(models.Model):
    Product=models.ForeignKey(Order_Product_Specs)
    Reason = models.CharField(max_length = 100)
    def __str__(self):
-        return self.Product
+        return self.Product.Ordered_Product.Product_Name
    
 class TypeOfCustomProduct(models.Model):
     product_type = models.CharField(max_length = 20,unique=True)

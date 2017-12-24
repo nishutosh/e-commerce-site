@@ -12,7 +12,7 @@ userurls=[
  #  url(r'reviews/$',UserReviewList.as_view(),name="user-reviews"),
    url(r'past-orders/$',UserOrderList.as_view(),name="user-orders"),
    url(r'returned-orders/$',ReturnedOrderList.as_view(),name="user-returned-orders-list"),
-   url(r'return-orders/$',ReturnOrderAPI.as_view(),name="return-orders")
+   url(r'request/return-orders/$',ReturnOrderAPI.as_view(),name="return-orders")
 ]
 
 authurls=[

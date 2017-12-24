@@ -85,13 +85,13 @@
               <div class="action-btns">
                     <a href={{product.Shipment_Authority_Details.Shipping_Company_URL}} class="btn btn-default alternate-cta-btn">Track Package </a>
                
-                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal{{order.pk}}" data-url="{%url "cancel-order"%}" data-id="">Cancel Package</a>
-                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#returnPackageModal{{order.pk}}" data-url="{%url "return-orders"%}" data-id="">Return Package</a>
+                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#cancelPackageModal{{product.pk}}" data-url="{%url "cancel-order"%}" data-id="">Cancel Package</a>
+                    <a href="#" class="btn btn-danger" data-toggle="modal" data-target="#returnPackageModal{{product.pk}}" data-url="{%url "return-orders"%}" data-id="">Return Package</a>
    <br><b>** order trasaction id will be confimed by the moderators and payment status and shipment id will be updated in 24 hrs.</b><br><b>* you cancel order only within  24 hrs of its placement.</b>
               </div>
           </div>
           <!--cancel warning Modal -->
-            <div id="cancelPackageModal{{order.pk}}" class="modal fade" role="dialog">
+            <div id="cancelPackageModal{{product.pk}}" class="modal fade" role="dialog">
               <div class="modal-dialog">
 
                 <!-- Modal content-->
@@ -111,7 +111,7 @@
               </div>
             </div>
 
-            <div id="returnPackageModal{{order.pk}}" class="modal fade" role="dialog">
+            <div id="returnPackageModal{{product.pk}}" class="modal fade" role="dialog">
                 <div class="modal-dialog">
   
                   <!-- Modal content-->
