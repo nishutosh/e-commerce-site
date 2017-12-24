@@ -267,22 +267,27 @@ class UserOrderList(LoginRequiredMixin,View):
 
 
 #AJAX calls classes
-class GetToWishList(View):
-  def get(self,request):
-    if request.user.is_authenticated():
-      product_list=[]
-      if not(Wish_List.objects.filter(User_Wishlist=request.user).exists()):
-         return JsonResponse({"":""})        
-      wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
-      for products in wish_obj.wish_list_product_set.all():
-        product_list.append({"product name":products.Product_In_Wishlist.Product_Name,
-                             "product_url":products.Product_In_Wishlist.get_product_url()
-                              })
-      return JsonResponse(product_list,safe=False)
-    else:
-        return JsonResponse({"message":"unauthenticated user"})
+def GetToWishListCount(request):
+  if request.user.is_authenticated:
+      if Wish_List.objects.filter(User_Wishlist=request.user).exists():    
+         wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
+         wish_obj_count=wish_obj.wish_list_product_set.all().count()
+      else:
+         wish_obj_count=0  
+  else:
+      wish_obj_count=0
+  return JsonResponse({"count":wish_obj_count})
 
-class PostToWishlist(View,LoginRequiredMixin):          
+
+
+class GetPostToWishlist(View,LoginRequiredMixin):
+  def get(self,request):
+    if request.user.is_authenticated:
+      if Wish_List.objects.filter(User_Wishlist=request.user).exists():      
+          wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
+      return render(request,"wishlist.html",{"product_list":wish_obj.wish_list_product_set.all()}) 
+    else:
+       return redirect(reverse("signin"))           
   def post(self,request):
      if not(Wish_List.objects.filter(User_Wishlist=request.user).exists()):
         wish_obj=Wish_List.objects.create(User_Wishlist=request.user)
@@ -295,9 +300,11 @@ class PostToWishlist(View,LoginRequiredMixin):
        return JsonResponse({"message":"wishlist updated"})
 class DeleteFromWishList(View,LoginRequiredMixin):
    def post(self,request):
-     if Wish_List_Product.objects.filter(pk=request.POST.get("product_id")).exists():
-        Wish_List_Product.objects.filter(pk=request.POST.get("product_id")).delete()
-        return JsonResponse({"message":"product removed"})
+     print Wish_List_Product.objects.filter(pk=request.POST.get("product")).exists()
+     if Wish_List_Product.objects.filter(pk=request.POST.get("product")).exists():
+        print "x"
+        Wish_List_Product.objects.filter(pk=request.POST.get("product")).delete()
+        return redirect(reverse("wishlist"))
      else:
         return JsonResponse({"message":"does not exists"})
 

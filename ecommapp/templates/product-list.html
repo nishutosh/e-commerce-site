@@ -1,3 +1,4 @@
+
 {% extends 'base/list.html' %}
 {% load static %}
 
@@ -66,7 +67,7 @@
                                 <button title="Add to cart" data-toggle="modal" class="btn btn-default list-cta-btn"  data-product-id={{product.id}} data-ajax-url={%url  'cart' %}>Add to Cart</button>
                             </div>
                               <div class="product-add-to-cart">
-                                <button title="Add to WishList" data-toggle="modal" class="btn btn-default list-cta-btn"  data-product-id={{product.id}} data-ajax-url={%url  'wishlist-add' %}>Add to WishList</button>
+                                <button title="Add to WishList" data-toggle="modal" class="btn btn-default wishlist-btn"  data-product-id={{product.id}} data-ajax-url={%url  'wishlist' %}>Add to WishList</button>
                             </div>
                            
                             <div class="sizes dropdown">

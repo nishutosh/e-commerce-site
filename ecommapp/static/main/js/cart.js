@@ -1,10 +1,7 @@
 $(document).ready(function(){
   getCartItems();
-<<<<<<< HEAD
   successModal();
-=======
   getWishlistItems();
->>>>>>> fix-front-end
 });
 
 function Bill(price,delivery,discount)
@@ -78,23 +75,17 @@ function getWishlistItems() {
     console.log("get wishlist item called")
     $.ajax({
         type: "GET",
-        url: "/wishlist/product/",
+        url: "/wishlist/product-count/",
         success: function(result) {
-            console.log("get cart wishlist call" + result);
-            if (result.message == "unauthenticated user") {
-                console.log("unauthenticated user")
-                var wishlistItems = 0;
-                $(".wishlist-item-number").text(wishlistItems);
-            } else {
-                console.log("wishlist items seen")
-                var wishlistItems = result.length;
+              console.log("wishlist " + result.count);
+                var wishlistItems = result.count;
                 $(".wishlist-item-number").text(wishlistItems);
             }
-        }
-    });
-}
+        })
+    };
+
 function addtowishlist() {
-    console.log("cart-button click")
+    console.log("wishlist-add-button click")
     $.ajax({
         type: "POST",
         url: $(this).attr("data-ajax-url"),
@@ -107,6 +98,21 @@ function addtowishlist() {
         }
     });
 }
+function deletefromwishlist() {
+    console.log("wishlist-delete click")
+    $.ajax({
+        type: "POST",
+        url: $(this).attr("data-ajax-url"),
+        data: {
+            "product": $(this).attr("data-product-id"),
+            "X-CSRFToken": $("input[name='csrfmiddlewaretoken']").val(),
+        },
+         success: function() {
+         location.reload();
+        }
+    });
+}
+
 
 
 
@@ -158,6 +164,8 @@ function getCartItems()
 
 
                 }
+              })
+            }
 
 /////////////////////////////////////
 // for adding to cart on list page
@@ -183,7 +191,8 @@ function addtocart(){
 }
 $(".cart-btn").click(addtocart);
 $(".list-cta-btn").click(addtocart);
-
+$(".wishlist-btn").click(addtowishlist);
+$(".del-wishlist-btn").click(deletefromwishlist);
 /////////////////////////////////
 // functionality for decreasing quantity via minus button
 $(".reduce-quantity").click(function(){

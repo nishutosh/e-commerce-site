@@ -27,8 +27,8 @@ carturls=[
     url(r'apply-coupon/$',ApplyCoupon.as_view(),name="apply-coupon"),
 ]
 wishlisturls=[
-  url(r'product/$',GetToWishList.as_view(),name="wishlist"),
-  url(r'add/$',PostToWishlist.as_view(),name="wishlist-add"),
+  url(r'product/$',GetPostToWishlist.as_view(),name="wishlist"),
+  url(r'product-count/$',GetToWishListCount,name="wishlist-count"),
   url(r'delete/$',DeleteFromWishList.as_view(),name="delete-wishlist"),
 
 ]
@@ -122,5 +122,4 @@ urlpatterns = [
     url(r'^',include(commonurls)),
     url(r'^',include(authurls)),
   
-]
-#+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
