@@ -6,7 +6,7 @@
     var orderId = $(this).attr("data-id");
     var productId = $(this).attr("data-product-id");
     var url = $(this).attr("data-url");
-    var reason =$('#returnPackageModal'+orderId+' textarea').val();
+    var reason =$('#returnPackageModal'+productId+' textarea').val();
     $.ajax({
       type: "POST",
       url: url,
