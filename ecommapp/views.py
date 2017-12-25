@@ -574,7 +574,11 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                  Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
                                                  Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
                                                  Transaction_Id="",
-                                                 Order_Reference=cart_obj.OrderReferenceCheck()
+                                                 Order_Reference=cart_obj.OrderReferenceCheck(),
+                                                 coupon_code_used_in_order=cart_obj. coupon_code,
+                                                 credits_used_in_order=cart_obj.credits_used,
+                                                 Order_Price_Raw=cart_obj.Total_cart_Price(),
+                                                 Order_Total_Price=cart_obj.final_cart_price(),
                                                         )
                     cart_items=cart_obj.cartitem_set.all()
                     for cart_item in cart_items:

@@ -334,17 +334,16 @@ class Order(models.Model):
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
    Transaction_Id=models.CharField(max_length=100,blank=True)
+   coupon_code_used_in_order=models.ForeignKey(CouponCode,null=True,blank=True)
+   credits_used_in_order=models.IntegerField(default=0)
+   Order_Price_Raw=models.IntegerField()
+   Order_Total_Price=models.IntegerField()
    Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
    class Meta:
        ordering=['-Order_Date_Time']
    def __str__(self):
        return self.Order_In_Name_Of
-   def Order_Total_Price(self):
-       order_list=self.order_product_specs_set.all()
-       total=0
-       for order_item in order_list:
-           total=total+order_item.Final_Ordered_Product_price
-       return total
+
 
 def OrderPaymentOptionCheck(method_request):
           if Payment_Method.objects.filter(payment_type=method_request).exists():
