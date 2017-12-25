@@ -265,6 +265,38 @@ class UserOrderList(LoginRequiredMixin,View):
           context.update(menu_product_view_context)
           return render(request,"user-orders.html",context)
 
+#Credit System
+@login_required
+def creditapply(request):
+    CART_ID="CART_ID"
+    cart=request.COOKIES.get(CART_ID)
+    if cart:
+      cart_obj=Cart.objects.get(pk=cart)
+      if not(cart_obj.credits_used):
+        if request.user.customer.Volts_Credit<=cart_obj.Total_cart_Price():
+          cart_obj.credits_used=request.user.customer.Volts_Credit
+          cart_obj.save()
+          return JsonResponse({"message":"credit applied"})
+        else:
+          return JsonResponse({"message":"not applicable"})
+      else:
+        return JsonResponse({"message":"already applied"})    
+
+@login_required
+def removeapply(request):
+    CART_ID="CART_ID"
+    cart=request.COOKIES.get(CART_ID)
+    if cart:
+      cart_obj=Cart.objects.get(pk=cart)
+      if cart_obj.credits_used:
+          cart_obj.credits_used=0
+          cart_obj.save()
+          return JsonResponse({"message":"credit removed"})
+      else:
+         return JsonResponse({"message":"sorry no credit used"})
+
+
+
 
 #AJAX calls classes
 def GetToWishListCount(request):
@@ -312,20 +344,34 @@ class DeleteFromWishList(View,LoginRequiredMixin):
 class PostGetCartView(View):
      """post and get products to cart"""
      CART_ID="CART_ID"
+     D_charge=100
      def get(self,request):
              cart=request.COOKIES.get(self.CART_ID)
              if cart:
                      cart_obj=Cart.objects.get(id=cart)
+                     cart_dic={}
                      cart_items=cart_obj.cartitem_set.all()
-                     cart_list=[]
+                     cart_products=[]
                      for items in cart_items:
                         product_details={ "Product_name":items.Product_In_Cart.Product_Name,
                                            "Product_id":items.Product_In_Cart.pk,
                                            "Price":items.Total_Price(),
                                            "Quantity":items.Product_Quantity,
                                                         }
-                        cart_list.append(product_details)
-                     return  JsonResponse(cart_list,safe=False)
+                        cart_products.append(product_details)
+                     print cart_products
+                     if (cart_obj.credits_used) and (len(cart_products)!=0):
+                       cart_dic={"credits_used":cart_obj.credits_used}
+                     if (cart_obj.coupon_code) and (len(cart_products)!=0):
+                       cart_dic["coupon_used"]= {"code":cart_obj.coupon_code.Code,"discount":cart_obj.coupon_code.Discount}
+                     if len(cart_products)==0:
+                        cart_obj.coupon_code=None
+                        cart_obj.save()   
+                     cart_dic["delivery_charge"]=100   
+                     cart_dic["products"]=cart_products 
+                     cart_dic["price"]=cart_obj.Total_cart_Price()
+                     cart_dic["bill_total"]=cart_obj.final_cart_price() 
+                     return  JsonResponse(cart_dic,safe=False)
              else :
                      return  JsonResponse({"message":"no cookie present"})
      def post(self,request):
@@ -392,9 +438,13 @@ class ApplyCoupon(View):
                  coupon=CouponCode.objects.get(Code=coupon_code_entered)
                  if (request.user.customer.usability) and (not(CustomerCouponUsed.objects.filter(coupon_code=coupon,customer_track=request.user.customer).exists())):
                     if not(cart_obj.coupon_code):
-                       cart_obj.coupon_code=coupon
-                       cart_obj.save()
-                       return JsonResponse({"message":"coupon code applied","value":coupon.Discount})
+                      if coupon.Discount<=cart_obj.Total_cart_Price():
+                         cart_obj.coupon_code=coupon
+                         cart_obj.save()
+                         return JsonResponse({"message":"coupon code applied","value":coupon.Discount})
+                      else:
+                        return JsonResponse({"message":"coupon code not applied"})
+                           
                     else:
                        return JsonResponse({"message":"coupon code exist on this cart","value":coupon.Discount})
                  else:
@@ -422,6 +472,8 @@ class CheckoutView(LoginRequiredMixin,View):
                  if Cart.objects.filter(pk=cart).exists():
                        cart_obj=Cart.objects.get(pk=cart)
                        context={"siteuser":user,"cart_obj":cart_obj}
+                       if request.user.customer.Volts_Credit:
+                          context["credit"]=request.user.customer.Volts_Credit
                        return render(request,"checkout.html",context)
                  else:
                        messages.error(self.request, 'no cart')

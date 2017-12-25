@@ -262,9 +262,19 @@ class Cart(models.Model):
    date_of_creation=models.DateField(auto_now_add=True)
    checkout_date=models.DateField(blank=True,null=True)
    coupon_code=models.ForeignKey(CouponCode,null=True,blank=True)
-   def Total_Price(self):
-        Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
-        return Total
+   credits_used=models.IntegerField(default=0)
+   def Total_cart_Price(self):
+        total_cart_price=0
+        for products in self.cartitem_set.all():
+          total_cart_price+=products.Total_Price() 
+        return total_cart_price
+   def final_cart_price(self):
+       bill=self.Total_cart_Price()
+       if self.coupon_code:
+          bill=bill-self.coupon_code.Discount
+       if self.credits_used:
+          bill=bill-self.credits_used
+       return bill   
    def OrderReferenceCheck(self):
         if self.coupon_code:
              return self.coupon_code.Sales_Member

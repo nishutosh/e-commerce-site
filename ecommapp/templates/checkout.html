@@ -70,6 +70,9 @@
               </div>
               <div class="col-lg-3">
                       <div class="bill-details">
+                     {% if  credit %}
+                          <input type="checkbox" class="credit"  name="credit" />Use your<b> ₹ {{credit}} </b> credit balance
+                     {%endif%} 
                           <h3>Bill Details</h3>
                           <table class="table table-responsive">
                             <tbody class="bill-list">

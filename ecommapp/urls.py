@@ -25,6 +25,8 @@ carturls=[
     url(r'delete/$',DeleteCartView.as_view(),name="cartdelete"),
     url(r'checkout/$',CheckoutView.as_view(),name="checkout"),
     url(r'apply-coupon/$',ApplyCoupon.as_view(),name="apply-coupon"),
+    url(r'apply-credit/$',creditapply,name="apply-credit"),
+    url(r'remove-credit/$',removeapply,name="remove-credit"),
 ]
 wishlisturls=[
   url(r'product/$',GetPostToWishlist.as_view(),name="wishlist"),

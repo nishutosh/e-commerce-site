@@ -2,6 +2,7 @@ $(document).ready(function(){
   getCartItems();
   successModal();
   getWishlistItems();
+  Couponupdate()
 });
 
 function Bill(price,delivery,discount)
@@ -113,48 +114,129 @@ function deletefromwishlist() {
     });
 }
 
+$("input[name='credit']").change(function() {
+  console.log("checkbox-fired")
+    if(this.checked) {
+       $.ajax({
+             type:"POST",
+             url:"/cart/apply-credit/",
+             success:function(result){
+              console.log(result.message)
+              if (result.message=="credit applied"){
+                console.log("as")
+                     getCartItems();
+
+              }
+              else{
+
+                console.log(result.message)
+              }
+
+
+             }
 
 
 
+
+       })
+    }
+    else{
+           $.ajax({
+             type:"POST",
+             url:"/cart/remove-credit/",
+             success:function(result){
+              console.log(result.message)
+              if (result.message=="credit removed"){
+                console.log("remove")
+                     getCartItems();
+
+              }
+              else{
+
+                console.log(result.message)
+              }
+
+
+             }
+
+
+
+
+       })
+
+
+
+
+
+    }
+});
+var cost_element = $("#totalCost");
+var deliveryCharges_element = $("#deliveryCharges");
+var discount_element = $("#totalDiscount");
+var currentBillAmount_element = $("#totalBill");
+var discount_value = $(".discount-value");
+var cost_value = $(".product-price");
+var quantity_value = $(".quantityValue");
 
 
 function getCartItems()
 {    console.log("get cart item called")
-  $.ajax({
+  $.ajax({ 
                type: "GET",
                url: "/cart/",
                 success: function(result){
-                          console.log("get cart item sucess call"+result);
-                          if(result.length == 0)
-                          {
-                            var element = '<h3>Oops! Your cart is empty... </h3>';
-                            $(".continue-shopping-cta").before(element);
-                            $("#order-btn").addClass("disabled");
-                            $("#order-btn").parents(".order-cta").css({
-                              "cursor": "not-allowed"
-                            });
-                            var cartItems = 0;
-                            $(".cart-item-number").text(cartItems);
-                            console.log("result-len0")
+                          console.log(result.products.length );
+                          if (result.hasOwnProperty("credits_used")){
+                           console.log("credits seen");
+                           if (result.credits_used){
+                            console.log("creditfden");
+                              $("input[name='credit']").prop("checked", true)
+                           } 
+                            
                           }
-                          else if(result.message == "no cookie present")
+                         
+                          if (result.hasOwnProperty("coupon_used")){
+                            console.log("sddds")
+                              discount_element.text("₹"+result.coupon_used.discount);
+                           
+                            
+                          }
+                          else{
+                          
+                            discount_element.text("₹"+0);
+                          }
+                          if(result.message == "no cookie present")
                               {
                                   console.log("no cokkie")
                                 var cartItems = 0;
                                 $(".cart-item-number").text(cartItems);
                               }
+                          else if(result.products.length == 0)
+                          { console.log("lemgth=0")
+                            var element = '<h3>Oops! Your cart is empty... </h3>';
+                            $(".continue-shopping-cta").before(element);
+                            $("#order-btn").addClass("disabled");
+                            $("#order-btn").parents(".order-cta").css({"cursor": "not-allowed"});
+                             cost_element.text("₹"+0);
+                             deliveryCharges_element.text("₹"+0);
+                             currentBillAmount_element.text("₹"+0);
+                             $(".cta-btn").attr("disabled","disabled")
+                             $("#discount-input").attr("disabled","disabled")
+     // checkbox click
+                            var cartItems = 0;
+                            $(".cart-item-number").text(cartItems);
+                            console.log("result-len0")
+                          }
+                         
                               
                           else{
+                             cost_element.text("₹"+result.price);
+                             deliveryCharges_element.text("₹"+result.delivery_charge);
+                             currentBillAmount_element.text("₹"+result.bill_total);
                              console.log("cart has some items")
-                            var cartItems = result.length;
+                            var cartItems = result.products.length;
                             $(".cart-item-number").text(cartItems);
-                            var price = 0;
-                            for(const prop in result)
-                            {
-                              price += result[prop].Price;
-                            }
-                            currentBill.price = price;
-                            currentBillCalculate();
+                            
                           }
 
 
@@ -189,6 +271,7 @@ function addtocart(){
                                         }
               });
 }
+
 $(".cart-btn").click(addtocart);
 $(".list-cta-btn").click(addtocart);
 $(".wishlist-btn").click(addtowishlist);
@@ -250,7 +333,6 @@ function updateCart(element,id,url)
          },
     success: function(){
       console.log("hurray quantity changed");
-      Couponupdate();
       getCartItems();
     }
   });
@@ -272,13 +354,10 @@ function removeFromCart(item)
          },
     success: function(){
       console.log("item removed");
-      getCartItems();
-      Couponupdate();
-       //currentBillCalculate();
+      location.reload();
+    
     }
     });
-
-      location.reload();
 
 }
 
@@ -298,11 +377,9 @@ function Couponupdate()
 
 
                   }
+          
                   $(".discount-value").text(result.value)
                   $(".discount-note").text(result.message)
-                  console.log(result)
-                  currentBill.discount = result.value;
-                  currentBillCalculate();
                            
                 }
                 });
@@ -326,57 +403,14 @@ $(".discount-form").each(function(){
         success: function(result){
             $(".discount-value").text(result.value)
             $(".discount-note").text(result.message)
-            console.log(result)
-            currentBill.discount = result.value;
-            currentBillCalculate();
+            getCartItems();
         }
         });
     });
   });
 
 
-  //////////////////////////////
-  // currentBill Estimation
-  /////////////////////////////
-
-  function currentBillCalculate()
-  {
-    var $cost_element = $("#totalCost");
-    var $deliveryCharges_element = $("#deliveryCharges");
-    var $discount_element = $("#totalDiscount");
-    var $currentBillAmount_element = $("#totalBill");
-    var $discount_value = $(".discount-value");
-    var $cost_value = $(".product-price");
-    var $quantity_value = $(".quantityValue");
-
-    console.log("bil caculate called");
-    var totalDiscount = 0,totalcurrentBill = 0,totalCost = 0,deliveryCharges = 100;
-    var totalelements = $("#cart-table tbody tr").length;
-    // $.each($cost_value,function(index,cost_value){
-    //   console.log("stuff1 call");
-    //       let quantity = $quantity_value.get(index).value;
-    //       cost = parseInt($(this).text())*quantity;
-    //       totalCost+=cost;
-    //       console.log(totalCost);
-    // });
-
-    //       discount = parseInt($discount_value.text());
-    //       console.log(discount);
-    console.log("current bill in bill function is:");
-    console.log(currentBill);
-    currentBill.delivery = 100;
-   // currentBill.update();
-    console.log("currentBill is"+currentBill);
-    
-    console.log(totalcurrentBill);
-    currentBill.calculate();
-    $cost_element.text("₹"+currentBill.price);
-
-    $deliveryCharges_element.text("₹"+currentBill.delivery);
-    $discount_element.text("₹"+currentBill.discount);
-    $currentBillAmount_element.text("₹"+currentBill.total);
-
-  }
+  
 
   //////////////////////////////////////////
   //Cancel Order
