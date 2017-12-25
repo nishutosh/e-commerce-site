@@ -546,9 +546,6 @@ class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
      #paytm redirect url
-
-     def get_success_url(self,**kwargs):
-        return reverse_lazy("order-payment",kwargs={"order_id":kwargs["order_id"]})
      def get_context_data(self, **kwargs):
         context = super(PlaceOrder, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
@@ -595,7 +592,10 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                  response = redirect(reverse("home"))
                  response.delete_cookie(CART_ID)
                  return response
-              return redirect(self.get_success_url(order_id=order.pk))
+              cart_obj.delete()    
+              response=redirect(reverse("order-payment",kwargs={"order_id":order.pk}))
+              response.delete_cookie(CART_ID)
+              return response 
            else:
                 messages.error(self.request, 'nothing in cart')
                 return redirect(reverse("home"))
@@ -611,28 +611,21 @@ class OrderPayment(LoginRequiredMixin,View):
       raise Http404
   def post(self,request,order_id):
     """usablity cancel"""
-    CART_ID="CART_ID"
     if Order.objects.filter(pk=order_id).exists():
        order=Order.objects.get(pk=order_id)
        """just mark cancel here the whole order will be termed as cancel"""
        if (order.Order_Payment_status.payment_status=="PENDING") and (order.Transaction_Id=="") and(order.Order_Customer==request.user.customer):
-            Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))
-            cart=request.COOKIES.get(CART_ID)
-            if cart:
-              cart_obj=Cart.objects.get(pk=cart)
-              if cart_obj.coupon_code:
-                  CustomerCouponUsed.objects.create(customer_track=request.user.customer,coupon_code=cart_obj.coupon_code)
-                  if request.user.customer.usability==True:
-                      request.user.customer.usability=False
-                  else:
-                      request.user.customer.usability
-              Cart.objects.filter(pk=cart).delete()
-              print ("dsds")
-              response = redirect(reverse("user-orders"))
-              response.delete_cookie(CART_ID)
-              return response
-            else:
-              return redirect(reverse("user-orders"))             
+            Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))        
+            if order.credits_used_in_order:
+                request.user.customer.Volts_Credit-=order.credits_used_in_order
+                request.user.customer()
+            if order.coupon_code_used_in_order:
+                CustomerCouponUsed.objects.create(customer_track=request.user.customer,coupon_code=order.coupon_code_used_in_order)
+                if request.user.customer.usability==True:
+                    request.user.customer.usability=False
+                else:
+                    request.user.customer.usability          
+            return redirect(reverse("user-orders"))            
        else:
          raise Http404
     else:

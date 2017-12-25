@@ -185,7 +185,7 @@ function getCartItems()
                type: "GET",
                url: "/cart/",
                 success: function(result){
-                          console.log(result.products.length );
+                         
                           if (result.hasOwnProperty("credits_used")){
                            console.log("credits seen");
                            if (result.credits_used){
