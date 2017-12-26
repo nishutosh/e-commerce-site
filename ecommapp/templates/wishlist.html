@@ -5,10 +5,10 @@
     <h3>Wishlist</h3>
 
     <div class="container-fluid">
-
+    {%if product_list%}
       <div class="orders-container">
           <div class="header">
-             <ol>
+             <ol>  
                   {% for product in product_list%}
                   <li>
                    <a href={{product.Product_In_Wishlist.get_product_url}} >  
@@ -18,10 +18,15 @@
                      </li>
                      <button title="Remove from Wishlist"  class="btn btn-default del-wishlist-btn"  data-product-id={{product.id}} data-ajax-url={%url  'delete-wishlist' %}>Remove from Wishlist</button>
                      {%endfor%}
+                    
                </ol>
+              
           </div>
    
     </div>
+    {%else%}
+                     <h4>NO ITEM</h4>
+                     {%endif%}
   </div>
 
 

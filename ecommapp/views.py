@@ -19,14 +19,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .search import search
 from .orderfilters import OrderFilter
-from fpdf import FPDF
 from django.core.files.base import ContentFile
 import base64
 import re
-import os
-from InvoiceGenerator.api import Invoice, Item, Client, Provider, Creator
-from InvoiceGenerator.pdf import SimpleInvoice
-os.environ["INVOICE_LANG"] = "en"
+
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all()
@@ -633,9 +629,7 @@ class OrderPayment(LoginRequiredMixin,View):
     
 
 
-class OrderProcessCompleted(LoginRequiredMixin,View):
-     pass
-     #delete cart id and revive paytm crdentials and dadd coupon to used
+
 
 
 
@@ -1073,21 +1067,11 @@ class WholeOrderPaymentConfirm(LoginRequiredMixin,UserPassesTestMixin,View):
           if order.Order_Payment_status.payment_status=="PENDING":
             order.Order_Payment_status=Payment_Status.objects.get(payment_status="COMPLETED")
             order.Transaction_Id=request.POST.get("transactionID")
-            #order reference
-            client = Client(request.user.customer.Customer_First_Name)
-            provider = Provider('Fashvolts')
-            creator = Creator('Vaibhav')
-            invoice = Invoice(client, provider, creator)
-            invoice.currency=u'Rs.'
-
+            order.Order_Payment_Date=timezone.now()
+            order.Invoice_visible=True
+            order.save()
             for product in order.order_product_specs_set.all():
               product.Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED")
-              #shipment id enter
-              invoice.add_item(Item(product.Quantity, product.Final_Ordered_Product_price, description=product.Ordered_Product.Product_Name))
-            pdf = SimpleInvoice(invoice)
-            name="invoice"+str(order.pk)
-            order.Invoice=pdf.gen(name, generate_qr_code=False)
-            order.save()
             return JsonResponse({"status":"order made"})
 
         else:
@@ -1097,6 +1081,14 @@ class WholeOrderPaymentConfirm(LoginRequiredMixin,UserPassesTestMixin,View):
               product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
             return JsonResponse({"status":"order cancelled"})  
 
+@login_required
+def Invoice_View(request,order_id):
+   order=Order.objects.get(pk=order_id)
+   if order.Invoice_visible:
+       return render(request,"invoice.html",{"order":order})
+   else:
+       messages.error(request, 'Please Wait for payment confirmation')
+       return redirect(reverse("user-orders"))  
 
                 
         

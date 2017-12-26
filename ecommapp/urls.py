@@ -45,6 +45,7 @@ orderurls=[
 url(r'place-order/$',PlaceOrder.as_view(),name="place-order"),
 url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
 url(r'order-payment/(?P<order_id>\d+)/$',OrderPayment.as_view(),name="order-payment"),
+url(r'invoice/(?P<order_id>\d+)/$',Invoice_View,name="invoice")
 ]
 
 adminurls=[
