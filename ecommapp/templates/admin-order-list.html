@@ -195,7 +195,7 @@
 
 
 <!-- Filter modal ends -->
-  <div class="pagination">
+  <!-- <div class="pagination">
       <span class="step-links">
           {% if contacts.has_previous %}
               <a href="?page={{ contacts.previous_page_number }}">previous</a>
@@ -209,6 +209,36 @@
               <a href="?page={{ contacts.next_page_number }}">next</a>
           {% endif %}
       </span>
-  </div>
+  </div> -->
+
+  <div class="pagination">
+      {% if contacts.has_previous %}
+          <a href="?page={{ contacts.previous_page_number }}" class="btn btn-default pagination-btn">Previous</a>
+      {%else%}    
+      <a href="#" class="btn btn-default pagination-btn" disabled>Previous</a>
+      {% endif %}
+      {% for page in contacts.paginator.page_range %}
+      {% ifequal page contacts.number %}
+      <a class="current btn btn-default" href="#">
+          {{page}}
+      </a>
+
+      {% else %}
+      <a class="btn btn-default pagination-btn" href="?page={{ page }}">
+              {{page}}
+      </a>
+      {%endifequal%}
+      {% endfor %}
+
+      {% if contacts.has_next %}
+      <a href="?page={{ contacts.next_page_number }}" class="btn btn-default pagination-btn">Next</a>
+      {%else%}
+      <a href="#" class="btn btn-default pagination-btn" disabled>Next</a>
+      {% endif %}
+
 </div>
+
+</div>
+
+
 {%endblock%}
