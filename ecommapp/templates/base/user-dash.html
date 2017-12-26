@@ -48,7 +48,7 @@
                     <a href="{%url "user-orders" %}">Past Orders</a>
                   </li>
                   <li>
-                    <a href="#">Return Order</a>
+                    <a href="{%url "user-returned-orders-list" %}">Returned Orders</a>
                   </li>
             </ul>
           </li>
@@ -88,6 +88,8 @@
 
 <footer>
   {% include 'base/footer.html' %}
+
 </footer>
+<script src="{% static 'main/js/user.js' %}"></script>
   </body>
 </html>

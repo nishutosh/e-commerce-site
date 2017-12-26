@@ -259,7 +259,9 @@ class UserOrderList(LoginRequiredMixin,View):
           user_obj=request.user
           context={"siteuser":user_obj,"orders":user_obj.customer.order_set.all()}
           context.update(menu_product_view_context)
+          print("UserOrderList view")
           return render(request,"user-orders.html",context)
+
 
 #Credit System
 @login_required
@@ -291,6 +293,56 @@ def removeapply(request):
       else:
          return JsonResponse({"message":"sorry no credit used"})
 
+
+
+class ReturnedOrderList(LoginRequiredMixin,View):
+    def get(self,request):
+          user_obj=request.user
+          orders = user_obj.customer.order_set.all()
+          return_status = Order_Status_Model.objects.filter(status_for_order = "RETURNED")
+          request_for_return_status = Order_Status_Model.objects.filter(status_for_order = "REQUEST FOR RETURN")
+          returned_orders = Order_Product_Specs.objects.filter(Order__in = orders,Order_Status__in = return_status)
+          request_for_return_orders = Order_Product_Specs.objects.filter(Order__in = orders,Order_Status__in = request_for_return_status)  
+          context={"siteuser":user_obj,"returned_orders":returned_orders,"requested_orders":request_for_return_orders}
+          context.update(menu_product_view_context)
+          print("ReturnedOrderList view")
+          return render(request,"user-returned-orders.html",context)  
+
+class ReturnOrderAPI(LoginRequiredMixin,View):
+    def post(self,request):
+        print("I am return api")  
+        order=request.POST.get("order_id")
+        order_obj=get_object_or_404(Order,pk=order)
+        if (request.user==order_obj.Order_Customer.User_customer):
+             print("I am the customer") 
+             order_items_id=request.POST.getlist("order_product_id")
+             print("order items is")
+             print(order_items_id)
+             for product_id in order_items_id:
+                  print(product_id) 
+                  order_product=get_object_or_404(Order_Product_Specs,pk=product_id)
+                  print(order_product.Order_Status.status_for_order)
+                  if order_product.Order_Status.status_for_order=="DELIVERED":
+                     order_product.Order_Status=Order_Status_Model.objects.get(status_for_order="REQUEST FOR RETURN")
+                     print("status model is:")
+                     print(order_product.Order_Status.status_for_order)
+                     order_product.save()
+                     order_return = OrderReturn.objects.create(
+                           Product = order_product, 
+                           Reason = request.POST.get("reason")
+                     )
+                    # print(order_return)
+                     return JsonResponse({"message":"product request for return successfull"})  
+
+                  else:
+                     print("I can't return ")
+                     messages.error(self.request, 'order not delivered')
+                     return redirect(reverse("user-returned-orders-list"))   
+                      
+                     
+        else:
+            return  HttpResponse(status=401)
+        return redirect(reverse("user-returned-orders-list"))             
 
 
 
@@ -1100,14 +1152,41 @@ class OrderProductStatusChange(LoginRequiredMixin,UserPassesTestMixin,View):
        order_id=request.POST.get("order_id")
        print (order_id)
        if Order.objects.filter(pk=order_id).exists():
+          print("the order exists")   
           order=Order.objects.get(pk=order_id)
           product_id=request.POST.get("order_product_id")
           ordered_product=Order_Product_Specs.objects.get(pk=product_id)
+          print(ordered_product.Ordered_Product)
           ordered_product.Order_Status=Order_Status_Model.objects.get(status_for_order=request.POST.get("status"))
+          print(ordered_product.Order_Status)
           ordered_product.save()
+          print("status changed")
           return JsonResponse({"message":"status changed"})
        else:
           return JsonResponse({"message":"order does not exist"})
+
+class AdminReturnedOrders(LoginRequiredMixin,UserPassesTestMixin,View):
+      def test_func(self):
+            return self.request.user.is_superuser
+      def get(self,request):
+         status=Order_Status_Model.objects.filter(status_for_order = "REQUEST FOR RETURN")
+         order_list=Order_Product_Specs.objects.filter(Order_Status__in = status)
+         status = Order_Status_Model.objects.all()
+         required_orders = order_list
+         reason_list = OrderReturn.objects.filter(Product__in=order_list)
+         filter = OrderFilter(request.GET, queryset=required_orders)
+         paginator = Paginator(required_orders, 25)
+         page = request.GET.get('page')
+
+         try:
+            contacts = paginator.page(page)
+         except PageNotAnInteger:
+            contacts = paginator.page(1)
+         except EmptyPage:
+            contacts = paginator.page(paginator.num_pages)
+         return render(request,"admin-return-order-list.html",{"contacts":contacts,"status":status,'filter': filter,'reasons':reason_list})
+
+          
 
 
 #admin reports stuff ------------------------------------------->
@@ -1329,10 +1408,11 @@ class CustomModule(LoginRequiredMixin,ListView):
               
 
 
-@login_required
+
 def getphones(request,brand_slug):
   """js ajax call display all phone 
      names of that brand"""
+  print("inside getphones")   
   phones=Phones.objects.filter(brand__slug=brand_slug)
   phone_list=[]
   for phone in phones:
@@ -1342,7 +1422,8 @@ def getphones(request,brand_slug):
 class CustomeModuleMain(LoginRequiredMixin,View):
   def get(self,request,pk):
      phone_obj=Phones.objects.get(pk=pk)
-     return render(request,"custom-main.html",{"phone":phone_obj})    
+     return render(request,"custom-main.html",{"phone":phone_obj,"siteuser":self.request.user})    
+
 class PostCustomModule(View):
    def post(self,request):
       """first call this then this would return product id and make an add to cart post call using its result"""

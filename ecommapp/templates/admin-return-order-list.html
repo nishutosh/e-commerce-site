@@ -16,7 +16,7 @@
        {%csrf_token%}
       <div class="header">
         <i class="fa fa-list" aria-hidden="true"></i>
-        Order List
+        Requested Orders for Return:
 
           <button type="button" class="btn btn-default alternate-cta-btn pull-right" data-toggle="modal" data-target="#filter-modal">Filter Orders</button>
       </div>
@@ -28,7 +28,6 @@
                   <th>Customer</th>
                   <th>Payment Status</th>
                   <th>Order Date</th>
-                  <th>Last Modified</th>
                   <th>Total Cost</th>
                   <th>View Order</th>
                 </tr>
@@ -36,12 +35,11 @@
               <tbody>
                 {% for contact in filter.qs %}
                 <tr>
-                  <td>{{contact.id}}</td>
-                  <td>{{contact.Order_In_Name_Of}}</td>
-                  <td>{{contact.Order_Payment_status.payment_status}}</td>
-                  <td>{{contact.Order_Date_Time}}</td>
-                  <td>22/08/17</td>
-                  <td>{{contact.Order_Total_Price}}</td>
+                  <td>{{contact.Order.id}}</td>
+                  <td>{{contact.Order.Order_In_Name_Of}}</td>
+                  <td>{{contact.Order.Order_Payment_status.payment_status}}</td>
+                  <td>{{contact.Order.Order_Date_Time}}</td>
+                  <td>{{contact.Order.Order_Total_Price}}</td>
                   <td>
                     <a class="view-btn btn btn-default" data-toggle="modal" data-target="#productModal{{contact.id}}"><i class="fa fa-eye" aria-hidden="true"></i></a>
 
@@ -71,32 +69,39 @@
                                 </thead>
                                 <tbody>
            
-                                    {%for product in  contact.order_product_specs_set.all %}
                                  
                                         <tr>
-                                          <td><img src="{{product.Ordered_Product.Main_Image.url}}" alt=""></td>
-                                          <td>{{product.Ordered_Product.Product_Name}}</td>
-                                          <td>₹{{product.Ordered_Product.price_after_discount}}</td>
-                                          <td>{{product.Quantity}}</td>
-                                          <td>₹{{product.Final_Ordered_Product_price}}</td>
-                                          <td>{{product.Order_Status.status_for_order}}</td>
+                                          <td><img src="{{contact.Ordered_Product.Main_Image.url}}" alt=""></td>
+                                          <td>{{contact.Ordered_Product.Product_Name}}</td>
+                                          <td>₹{{contact.Ordered_Product.price_after_discount}}</td>
+                                          <td>{{contact.Quantity}}</td>
+                                          <td>₹{{contact.Final_Ordered_Product_price}}</td>
+                                          <td>{{contact.Order_Status.status_for_order}}</td>
                                           <td>
                                           
-                                            <select id="status-list-{{contact.pk}}-{{product.pk}}" class="status-list" name="">
+                                            <select id="status-list-{{contact.Order.pk}}-{{contact.pk}}" class="status-list" name="">
                                                   {%for status in status%}
                                                     <option value="{{status.status_for_order}}">{{status.status_for_order}}</option>
                                                   {%endfor%}
                                             </select>
                                           </td>
                                           <td>
-                                            <button type="button" name="button" class="status-change-btn btn btn-primary" data-order-id="{{contact.pk}}" data-product-id="{{product.pk}}" data-url="{%url "admin-order-product-status"%}">Change</button>
+                                            <button type="button" name="button" class="status-change-btn btn btn-primary" data-order-id="{{contact.Order.pk}}" data-product-id="{{contact.pk}}" data-url="{%url "admin-order-product-status"%}">Change</button>
                           
                                           </td>
                                         </tr>
+                                        
                                  
-                                    {%endfor%}
                                 </tbody>
                               </table>
+                              <div class="reason">
+                                <h4>Reason:</h4>
+                                {% for reason in reasons%}
+                                {% ifequal reason.Product contact %}
+                                <p>{{reason.Reason}}</p>
+                                {%endifequal%}
+                                {%endfor%}
+                              </div>
                             </div>
                             <div class="modal-footer">
                               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -209,36 +214,34 @@
               <a href="?page={{ contacts.next_page_number }}">next</a>
           {% endif %}
       </span>
-  </div> -->
+  </div>-->
+</div> 
 
-  <div class="pagination">
-      {% if contacts.has_previous %}
-          <a href="?page={{ contacts.previous_page_number }}" class="btn btn-default pagination-btn">Previous</a>
-      {%else%}    
-      <a href="#" class="btn btn-default pagination-btn" disabled>Previous</a>
-      {% endif %}
-      {% for page in contacts.paginator.page_range %}
-      {% ifequal page contacts.number %}
-      <a class="current btn btn-default" href="#">
-          {{page}}
-      </a>
+<div class="pagination">
+    {% if contacts.has_previous %}
+        <a href="?page={{ contacts.previous_page_number }}" class="btn btn-default pagination-btn">Previous</a>
+    {%else%}    
+    <a href="#" class="btn btn-default pagination-btn" disabled>Previous</a>
+    {% endif %}
+    {% for page in contacts.paginator.page_range %}
+    {% ifequal page contacts.number %}
+    <a class="current btn btn-default" href="#">
+        {{page}}
+    </a>
 
-      {% else %}
-      <a class="btn btn-default pagination-btn" href="?page={{ page }}">
-              {{page}}
-      </a>
-      {%endifequal%}
-      {% endfor %}
+    {% else %}
+    <a class="btn btn-default pagination-btn" href="?page={{ page }}">
+            {{page}}
+    </a>
+    {%endifequal%}
+    {% endfor %}
 
-      {% if contacts.has_next %}
-      <a href="?page={{ contacts.next_page_number }}" class="btn btn-default pagination-btn">Next</a>
-      {%else%}
-      <a href="#" class="btn btn-default pagination-btn" disabled>Next</a>
-      {% endif %}
+    {% if contacts.has_next %}
+    <a href="?page={{ contacts.next_page_number }}" class="btn btn-default pagination-btn">Next</a>
+    {%else%}
+    <a href="#" class="btn btn-default pagination-btn" disabled>Next</a>
+    {% endif %}
 
 </div>
-
-</div>
-
 
 {%endblock%}

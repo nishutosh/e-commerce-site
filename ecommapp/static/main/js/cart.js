@@ -3,6 +3,7 @@ $(document).ready(function(){
   successModal();
   getWishlistItems();
   Couponupdate()
+
 });
 
 function Bill(price,delivery,discount)
@@ -212,7 +213,7 @@ function getCartItems()
                                 $(".cart-item-number").text(cartItems);
                               }
                           else if(result.products.length == 0)
-                          { console.log("lemgth=0")
+                          { console.log("lemgth=0");
                             var element = '<h3>Oops! Your cart is empty... </h3>';
                             $(".continue-shopping-cta").before(element);
                             $("#order-btn").addClass("disabled");
@@ -238,21 +239,17 @@ function getCartItems()
                             $(".cart-item-number").text(cartItems);
                             
                           }
-
-
-
-
-
-
-
                 }
               })
+
             }
+
 
 /////////////////////////////////////
 // for adding to cart on list page
 //////////////////////////////////////
-function addtocart(){
+function addtocart()
+{
    console.log("cart-button click")
     $.ajax({
       

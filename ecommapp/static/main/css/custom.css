@@ -200,3 +200,105 @@ input[type=file]
   text-align: center;
   margin-top: 20px;
 }
+
+#previewCanvas
+{
+  position:relative;
+ 
+}
+
+.textContainer
+{
+  margin-left: 50px;
+}
+
+
+.ql-snow .ql-picker.ql-font .ql-picker-label::before, .ql-snow .ql-picker.ql-font .ql-picker-item::before {
+  content: 'Sofia';
+  font-family: 'Sofia', sans-serif;
+}
+
+.ql-font-sofia {
+font-family: 'Sofia', sans-serif;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=pacifico]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=pacifico]::before {
+  content: 'Pacifico';
+  font-family: 'Pacifico', cursive;
+}
+
+.ql-font-pacifico {
+  font-family: 'Pacifico', cursive;
+}
+
+.ql-font-roboto {
+font-family: 'Roboto', sans-serif;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=roboto]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=roboto]::before {
+  content: 'Roboto';
+  font-family: 'Roboto', sans-serif;
+}
+
+.ql-font-serif {
+  font-family: 'Serif', sans-serif;
+}
+  
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=serif]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=serif]::before {
+  content: 'Serif';
+  font-family: 'Serif', sans-serif;
+}
+
+
+.ql-font-lobster {
+  font-family: 'lobster', cursive;
+}
+      
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=lobster]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=lobster]::before {
+  content: 'Lobster';
+  font-family: 'Lobster', cursive;
+}
+
+.ql-font-bungee {
+  font-family: 'bungee', cursive;
+}
+        
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=bungee]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=bungee]::before 
+{
+  content: 'bungee';
+  font-family: 'bungee', cursive;
+}  
+
+.ql-font-lato
+{
+  font-family: 'Lato', sans-serif;
+}
+          
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value=lato]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value=lato]::before 
+{
+  content: 'Lato';
+  font-family: 'Lato', sans-serif;
+}      
+
+
+
+.placableText
+{
+  position: absolute;
+  top: 80px;
+  left: 63px;
+  cursor: move;
+  padding:10px;
+  border: 2px dotted black;
+}
+
+.ql-container
+{
+  height: 400px;
+}

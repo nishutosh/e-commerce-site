@@ -10,7 +10,9 @@ userurls=[
    url(r'credits/$',FashVoltsCreditView.as_view(),name="credits"),
    url(r'coupon-applied/$',CoupounAppliedView.as_view(),name="coupons"),
  #  url(r'reviews/$',UserReviewList.as_view(),name="user-reviews"),
-   url(r'orders/$',UserOrderList.as_view(),name="user-orders")
+   url(r'past-orders/$',UserOrderList.as_view(),name="user-orders"),
+   url(r'returned-orders/$',ReturnedOrderList.as_view(),name="user-returned-orders-list"),
+   url(r'request/return-orders/$',ReturnOrderAPI.as_view(),name="return-orders")
 ]
 
 authurls=[
@@ -85,8 +87,8 @@ adminurls=[
    url(r'admin-reports/total-order$',AdminReportsOrderView.as_view(),name="admin-reports-orders"),
    url(r'admin-reports/get-order-stats$',OrderReportApi.as_view(),name="admin-reports-orders-stats"),
    url(r'admin-reports/total-users$',AdminReportsUserView.as_view(),name="admin-reports-users"),
-   url(r'admin-reports/get-user-stats$',UserReportApi.as_view(),name="admin-reports-users-stats")
-
+   url(r'admin-reports/get-user-stats$',UserReportApi.as_view(),name="admin-reports-users-stats"),
+   url(r'admin-order/returned-orders$',AdminReturnedOrders.as_view(),name="admin-return-orders"),
 ]
 
 salesurls=[
