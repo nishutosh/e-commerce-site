@@ -1,5 +1,6 @@
 $(".search-btn").click(function(){
   var searchUrl = $(this).attr("data-url");
+  searchUrl = encodeURI(searchUrl + "?search_term="+ $('input[name=search_term]').val());
   $.get(searchUrl,function(data,status){
     console.log(data + "Is the response from server for elastic search");
   })
