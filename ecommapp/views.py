@@ -380,9 +380,9 @@ class GetPostToWishlist(View,LoginRequiredMixin):
        return JsonResponse({"message":"wishlist updated"})
 class DeleteFromWishList(View,LoginRequiredMixin):
    def post(self,request):
-     print Wish_List_Product.objects.filter(pk=request.POST.get("product")).exists()
+     print (Wish_List_Product.objects.filter(pk=request.POST.get("product")).exists())
      if Wish_List_Product.objects.filter(pk=request.POST.get("product")).exists():
-        print "x"
+        print ("x")
         Wish_List_Product.objects.filter(pk=request.POST.get("product")).delete()
         return redirect(reverse("wishlist"))
      else:
@@ -407,7 +407,7 @@ class PostGetCartView(View):
                                            "Quantity":items.Product_Quantity,
                                                         }
                         cart_products.append(product_details)
-                     print cart_products
+                     print (cart_products)
                      if (cart_obj.credits_used) and (len(cart_products)!=0):
                        cart_dic={"credits_used":cart_obj.credits_used}
                      if (cart_obj.coupon_code) and (len(cart_products)!=0):
