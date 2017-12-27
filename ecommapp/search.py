@@ -7,12 +7,6 @@ from elasticsearch_dsl.query import MultiMatch, Match
 
 connections.create_connection()
 
-product = Index('products')
-product.settings(
-    number_of_shards=1,
-    number_of_replicas=0
-)
-@product.doc_type
 class ProductIndex(DocType):
   Product_Name=Text()
   Description=Text()

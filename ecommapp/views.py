@@ -1364,7 +1364,7 @@ class PostCustomModule(View):
    def post(self,request):
       """first call this then this would return product id and make an add to cart post call using its result"""
       if request.user.customer.can_create_custom:
-        base_price=200
+        base_price=250
         name = request.POST.get("product_name")
         image_parameter = request.POST['custom_image']
         image_data = base64.b64decode(re.search(r'base64,(.*)', request.POST['custom_image']).group(1))

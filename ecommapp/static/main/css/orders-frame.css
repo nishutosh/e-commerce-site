@@ -105,3 +105,15 @@ input[type=number]
   margin-right: 20px;
   font-size: 14px;
 }
+
+@media(max-width:400px)
+{
+  .quantity-icon
+  {
+    margin: 0 15px;
+  }
+  .quantity-input
+  {
+    margin:5px;
+  }
+}
