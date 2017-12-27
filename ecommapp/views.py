@@ -19,14 +19,10 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .search import search
 from .orderfilters import OrderFilter
-from fpdf import FPDF
 from django.core.files.base import ContentFile
 import base64
 import re
-import os
-from InvoiceGenerator.api import Invoice, Item, Client, Provider, Creator
-from InvoiceGenerator.pdf import SimpleInvoice
-os.environ["INVOICE_LANG"] = "en"
+
 
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all()
@@ -266,6 +262,39 @@ class UserOrderList(LoginRequiredMixin,View):
           print("UserOrderList view")
           return render(request,"user-orders.html",context)
 
+
+#Credit System
+@login_required
+def creditapply(request):
+    CART_ID="CART_ID"
+    cart=request.COOKIES.get(CART_ID)
+    if cart:
+      cart_obj=Cart.objects.get(pk=cart)
+      if not(cart_obj.credits_used):
+        if request.user.customer.Volts_Credit<=cart_obj.Total_cart_Price():
+          cart_obj.credits_used=request.user.customer.Volts_Credit
+          cart_obj.save()
+          return JsonResponse({"message":"credit applied"})
+        else:
+          return JsonResponse({"message":"not applicable"})
+      else:
+        return JsonResponse({"message":"already applied"})    
+
+@login_required
+def removeapply(request):
+    CART_ID="CART_ID"
+    cart=request.COOKIES.get(CART_ID)
+    if cart:
+      cart_obj=Cart.objects.get(pk=cart)
+      if cart_obj.credits_used:
+          cart_obj.credits_used=0
+          cart_obj.save()
+          return JsonResponse({"message":"credit removed"})
+      else:
+         return JsonResponse({"message":"sorry no credit used"})
+
+
+
 class ReturnedOrderList(LoginRequiredMixin,View):
     def get(self,request):
           user_obj=request.user
@@ -316,23 +345,29 @@ class ReturnOrderAPI(LoginRequiredMixin,View):
         return redirect(reverse("user-returned-orders-list"))             
 
 
-#AJAX calls classes
-class GetToWishList(View):
-  def get(self,request):
-    if request.user.is_authenticated():
-      product_list=[]
-      if not(Wish_List.objects.filter(User_Wishlist=request.user).exists()):
-         return JsonResponse({"":""})        
-      wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
-      for products in wish_obj.wish_list_product_set.all():
-        product_list.append({"product name":products.Product_In_Wishlist.Product_Name,
-                             "product_url":products.Product_In_Wishlist.get_product_url()
-                              })
-      return JsonResponse(product_list,safe=False)
-    else:
-        return JsonResponse({"message":"unauthenticated user"})
 
-class PostToWishlist(View,LoginRequiredMixin):          
+#AJAX calls classes
+def GetToWishListCount(request):
+  if request.user.is_authenticated:
+      if Wish_List.objects.filter(User_Wishlist=request.user).exists():    
+         wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
+         wish_obj_count=wish_obj.wish_list_product_set.all().count()
+      else:
+         wish_obj_count=0  
+  else:
+      wish_obj_count=0
+  return JsonResponse({"count":wish_obj_count})
+
+
+
+class GetPostToWishlist(View,LoginRequiredMixin):
+  def get(self,request):
+    if request.user.is_authenticated:
+      if Wish_List.objects.filter(User_Wishlist=request.user).exists():      
+          wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
+      return render(request,"wishlist.html",{"product_list":wish_obj.wish_list_product_set.all()}) 
+    else:
+       return redirect(reverse("signin"))           
   def post(self,request):
      if not(Wish_List.objects.filter(User_Wishlist=request.user).exists()):
         wish_obj=Wish_List.objects.create(User_Wishlist=request.user)
@@ -345,9 +380,11 @@ class PostToWishlist(View,LoginRequiredMixin):
        return JsonResponse({"message":"wishlist updated"})
 class DeleteFromWishList(View,LoginRequiredMixin):
    def post(self,request):
-     if Wish_List_Product.objects.filter(pk=request.POST.get("product_id")).exists():
-        Wish_List_Product.objects.filter(pk=request.POST.get("product_id")).delete()
-        return JsonResponse({"message":"product removed"})
+     print Wish_List_Product.objects.filter(pk=request.POST.get("product")).exists()
+     if Wish_List_Product.objects.filter(pk=request.POST.get("product")).exists():
+        print "x"
+        Wish_List_Product.objects.filter(pk=request.POST.get("product")).delete()
+        return redirect(reverse("wishlist"))
      else:
         return JsonResponse({"message":"does not exists"})
 
@@ -355,20 +392,34 @@ class DeleteFromWishList(View,LoginRequiredMixin):
 class PostGetCartView(View):
      """post and get products to cart"""
      CART_ID="CART_ID"
+     D_charge=100
      def get(self,request):
              cart=request.COOKIES.get(self.CART_ID)
              if cart:
                      cart_obj=Cart.objects.get(id=cart)
+                     cart_dic={}
                      cart_items=cart_obj.cartitem_set.all()
-                     cart_list=[]
+                     cart_products=[]
                      for items in cart_items:
                         product_details={ "Product_name":items.Product_In_Cart.Product_Name,
                                            "Product_id":items.Product_In_Cart.pk,
                                            "Price":items.Total_Price(),
                                            "Quantity":items.Product_Quantity,
                                                         }
-                        cart_list.append(product_details)
-                     return  JsonResponse(cart_list,safe=False)
+                        cart_products.append(product_details)
+                     print cart_products
+                     if (cart_obj.credits_used) and (len(cart_products)!=0):
+                       cart_dic={"credits_used":cart_obj.credits_used}
+                     if (cart_obj.coupon_code) and (len(cart_products)!=0):
+                       cart_dic["coupon_used"]= {"code":cart_obj.coupon_code.Code,"discount":cart_obj.coupon_code.Discount}
+                     if len(cart_products)==0:
+                        cart_obj.coupon_code=None
+                        cart_obj.save()   
+                     cart_dic["delivery_charge"]=100   
+                     cart_dic["products"]=cart_products 
+                     cart_dic["price"]=cart_obj.Total_cart_Price()
+                     cart_dic["bill_total"]=cart_obj.final_cart_price() 
+                     return  JsonResponse(cart_dic,safe=False)
              else :
                      return  JsonResponse({"message":"no cookie present"})
      def post(self,request):
@@ -435,9 +486,13 @@ class ApplyCoupon(View):
                  coupon=CouponCode.objects.get(Code=coupon_code_entered)
                  if (request.user.customer.usability) and (not(CustomerCouponUsed.objects.filter(coupon_code=coupon,customer_track=request.user.customer).exists())):
                     if not(cart_obj.coupon_code):
-                       cart_obj.coupon_code=coupon
-                       cart_obj.save()
-                       return JsonResponse({"message":"coupon code applied","value":coupon.Discount})
+                      if coupon.Discount<=cart_obj.Total_cart_Price():
+                         cart_obj.coupon_code=coupon
+                         cart_obj.save()
+                         return JsonResponse({"message":"coupon code applied","value":coupon.Discount})
+                      else:
+                        return JsonResponse({"message":"coupon code not applied"})
+                           
                     else:
                        return JsonResponse({"message":"coupon code exist on this cart","value":coupon.Discount})
                  else:
@@ -465,6 +520,8 @@ class CheckoutView(LoginRequiredMixin,View):
                  if Cart.objects.filter(pk=cart).exists():
                        cart_obj=Cart.objects.get(pk=cart)
                        context={"siteuser":user,"cart_obj":cart_obj}
+                       if request.user.customer.Volts_Credit:
+                          context["credit"]=request.user.customer.Volts_Credit
                        return render(request,"checkout.html",context)
                  else:
                        messages.error(self.request, 'no cart')
@@ -537,9 +594,6 @@ class PlaceOrder(LoginRequiredMixin,FormView):
      template_name="place-order.html"
      form_class=PlaceOrderForm
      #paytm redirect url
-
-     def get_success_url(self,**kwargs):
-        return reverse_lazy("order-payment",kwargs={"order_id":kwargs["order_id"]})
      def get_context_data(self, **kwargs):
         context = super(PlaceOrder, self).get_context_data(**kwargs)
         context.update(menu_product_view_context)
@@ -565,7 +619,11 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                                                  Order_Payment_Type=OrderPaymentOptionCheck(form.cleaned_data["Payment_Method"]),
                                                  Order_Payment_status=Payment_Status.objects.get(payment_status="PENDING"),
                                                  Transaction_Id="",
-                                                 Order_Reference=cart_obj.OrderReferenceCheck()
+                                                 Order_Reference=cart_obj.OrderReferenceCheck(),
+                                                 coupon_code_used_in_order=cart_obj. coupon_code,
+                                                 credits_used_in_order=cart_obj.credits_used,
+                                                 Order_Price_Raw=cart_obj.Total_cart_Price(),
+                                                 Order_Total_Price=cart_obj.final_cart_price(),
                                                         )
                     cart_items=cart_obj.cartitem_set.all()
                     for cart_item in cart_items:
@@ -582,7 +640,10 @@ class PlaceOrder(LoginRequiredMixin,FormView):
                  response = redirect(reverse("home"))
                  response.delete_cookie(CART_ID)
                  return response
-              return redirect(self.get_success_url(order_id=order.pk))
+              cart_obj.delete()    
+              response=redirect(reverse("order-payment",kwargs={"order_id":order.pk}))
+              response.delete_cookie(CART_ID)
+              return response 
            else:
                 messages.error(self.request, 'nothing in cart')
                 return redirect(reverse("home"))
@@ -598,28 +659,21 @@ class OrderPayment(LoginRequiredMixin,View):
       raise Http404
   def post(self,request,order_id):
     """usablity cancel"""
-    CART_ID="CART_ID"
     if Order.objects.filter(pk=order_id).exists():
        order=Order.objects.get(pk=order_id)
        """just mark cancel here the whole order will be termed as cancel"""
        if (order.Order_Payment_status.payment_status=="PENDING") and (order.Transaction_Id=="") and(order.Order_Customer==request.user.customer):
-            Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))
-            cart=request.COOKIES.get(CART_ID)
-            if cart:
-              cart_obj=Cart.objects.get(pk=cart)
-              if cart_obj.coupon_code:
-                  CustomerCouponUsed.objects.create(customer_track=request.user.customer,coupon_code=cart_obj.coupon_code)
-                  if request.user.customer.usability==True:
-                      request.user.customer.usability=False
-                  else:
-                      request.user.customer.usability
-              Cart.objects.filter(pk=cart).delete()
-              print ("dsds")
-              response = redirect(reverse("user-orders"))
-              response.delete_cookie(CART_ID)
-              return response
-            else:
-              return redirect(reverse("user-orders"))             
+            Order.objects.filter(pk=order_id).update(Transaction_Id=request.POST.get("transaction_id"))        
+            if order.credits_used_in_order:
+                request.user.customer.Volts_Credit-=order.credits_used_in_order
+                request.user.customer()
+            if order.coupon_code_used_in_order:
+                CustomerCouponUsed.objects.create(customer_track=request.user.customer,coupon_code=order.coupon_code_used_in_order)
+                if request.user.customer.usability==True:
+                    request.user.customer.usability=False
+                else:
+                    request.user.customer.usability          
+            return redirect(reverse("user-orders"))            
        else:
          raise Http404
     else:
@@ -627,9 +681,7 @@ class OrderPayment(LoginRequiredMixin,View):
     
 
 
-class OrderProcessCompleted(LoginRequiredMixin,View):
-     pass
-     #delete cart id and revive paytm crdentials and dadd coupon to used
+
 
 
 
@@ -1067,21 +1119,11 @@ class WholeOrderPaymentConfirm(LoginRequiredMixin,UserPassesTestMixin,View):
           if order.Order_Payment_status.payment_status=="PENDING":
             order.Order_Payment_status=Payment_Status.objects.get(payment_status="COMPLETED")
             order.Transaction_Id=request.POST.get("transactionID")
-            #order reference
-            client = Client(request.user.customer.Customer_First_Name)
-            provider = Provider('Fashvolts')
-            creator = Creator('Vaibhav')
-            invoice = Invoice(client, provider, creator)
-            invoice.currency=u'Rs.'
-
+            order.Order_Payment_Date=timezone.now()
+            order.Invoice_visible=True
+            order.save()
             for product in order.order_product_specs_set.all():
               product.Order_Status=Order_Status_Model.objects.get(status_for_order="PLACED")
-              #shipment id enter
-              invoice.add_item(Item(product.Quantity, product.Final_Ordered_Product_price, description=product.Ordered_Product.Product_Name))
-            pdf = SimpleInvoice(invoice)
-            name="invoice"+str(order.pk)
-            order.Invoice=pdf.gen(name, generate_qr_code=False)
-            order.save()
             return JsonResponse({"status":"order made"})
 
         else:
@@ -1091,6 +1133,14 @@ class WholeOrderPaymentConfirm(LoginRequiredMixin,UserPassesTestMixin,View):
               product.Order_Status=Order_Status_Model.objects.get(status_for_order="CANCELLED")
             return JsonResponse({"status":"order cancelled"})  
 
+@login_required
+def Invoice_View(request,order_id):
+   order=Order.objects.get(pk=order_id)
+   if order.Invoice_visible:
+       return render(request,"invoice.html",{"order":order})
+   else:
+       messages.error(request, 'Please Wait for payment confirmation')
+       return redirect(reverse("user-orders"))  
 
                 
         

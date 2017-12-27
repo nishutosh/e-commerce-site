@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'ecommsite.urls'
@@ -75,17 +76,26 @@ WSGI_APPLICATION = 'ecommsite.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-DATABASES = {
+if DEBUG==True:
+  DATABASES = {
     'default': {
-        'ENGINE':'django.db.backends.postgresql_psycopg2',
-        'NAME':'d2k9kmjef5kj73',
-        'USER':'myprojectuser',
-        'PASSWORD':'cbcfb527abf409bbcd8cfbe6842d2849c3675a9efa4882fa284677bfa0859769',
-        'HOST':'ec2-184-73-240-228.compute-1.amazonaws.com',
-        'PORT':'5432',
-    }
-}
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+               }
+  }
+
+
+else:  
+  DATABASES = {
+      'default': {
+          'ENGINE':'django.db.backends.postgresql_psycopg2',
+          'NAME':'d8j295sm0en42',
+          'USER':'lplhtwsvupcqcl',
+          'PASSWORD':'5646b72e0691e4e7bec57877b18f7c9f7031d50afa445097ab6e20106d9274f1',
+          'HOST':'ec2-54-83-3-101.compute-1.amazonaws.com',
+          'PORT':'5432',
+      }
+  }
 
 
 ELASTICSEARCH_DSL={
@@ -136,3 +146,5 @@ STATIC_URL = '/static/'
 STATIC_ROOT=os.path.join(BASE_DIR, "static")
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR, "media")
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'

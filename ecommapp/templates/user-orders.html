@@ -2,6 +2,15 @@
 {% load static %}
 {% block body_block %}
 {%csrf_token%}
+<div class="messages">
+      {%if messages%}
+      <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+      {%endif%}
+  </div>
     <h3>Your past orders:</h3>
 
     <div class="container-fluid">
@@ -17,6 +26,7 @@
                     <th>Order</th>
                     <th>payment status **</th>
                      <th>transaction Id</th>
+                      <th>Invoice</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -38,6 +48,7 @@
        </form>
                           {%endif%}
                        </td>
+                       <td><a href={%url "invoice"   order.id  %} >Invoice</a></td>
                       
                       
                       
@@ -60,6 +71,7 @@
                             <th>Final Price</th>
                               <th>Order Status</th>
                              <th> Shipment ID**</th>
+
                   
 
                           </tr>

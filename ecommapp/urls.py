@@ -27,10 +27,12 @@ carturls=[
     url(r'delete/$',DeleteCartView.as_view(),name="cartdelete"),
     url(r'checkout/$',CheckoutView.as_view(),name="checkout"),
     url(r'apply-coupon/$',ApplyCoupon.as_view(),name="apply-coupon"),
+    url(r'apply-credit/$',creditapply,name="apply-credit"),
+    url(r'remove-credit/$',removeapply,name="remove-credit"),
 ]
 wishlisturls=[
-  url(r'product/$',GetToWishList.as_view(),name="wishlist"),
-  url(r'add/$',PostToWishlist.as_view(),name="wishlist-add"),
+  url(r'product/$',GetPostToWishlist.as_view(),name="wishlist"),
+  url(r'product-count/$',GetToWishListCount,name="wishlist-count"),
   url(r'delete/$',DeleteFromWishList.as_view(),name="delete-wishlist"),
 
 ]
@@ -45,6 +47,7 @@ orderurls=[
 url(r'place-order/$',PlaceOrder.as_view(),name="place-order"),
 url(r'cancel-order/$',CancelOrder.as_view(),name="cancel-order"),
 url(r'order-payment/(?P<order_id>\d+)/$',OrderPayment.as_view(),name="order-payment"),
+url(r'invoice/(?P<order_id>\d+)/$',Invoice_View,name="invoice")
 ]
 
 adminurls=[
@@ -124,4 +127,4 @@ urlpatterns = [
     url(r'^',include(commonurls)),
     url(r'^',include(authurls)),
   
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

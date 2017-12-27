@@ -156,7 +156,7 @@ class Product(models.Model):
   is_displayed=models.BooleanField(default=True)
   Product_Seller=models.ForeignKey(Seller)
   TaxOnProduct=models.ForeignKey(Tax)
-  Sizes=models.ManyToManyField(Size,null=True)
+  Sizes=models.ManyToManyField(Size)
   def __str__(self):
      return str(self.Product_Name)
   
@@ -263,9 +263,19 @@ class Cart(models.Model):
    date_of_creation=models.DateField(auto_now_add=True)
    checkout_date=models.DateField(blank=True,null=True)
    coupon_code=models.ForeignKey(CouponCode,null=True,blank=True)
-   def Total_Price(self):
-        Total=(self.Product_In_Cart.price_after_discount())*(self.Product_Quantity)
-        return Total
+   credits_used=models.IntegerField(default=0)
+   def Total_cart_Price(self):
+        total_cart_price=0
+        for products in self.cartitem_set.all():
+          total_cart_price+=products.Total_Price() 
+        return total_cart_price
+   def final_cart_price(self):
+       bill=self.Total_cart_Price()
+       if self.coupon_code:
+          bill=bill-self.coupon_code.Discount
+       if self.credits_used:
+          bill=bill-self.credits_used
+       return bill   
    def OrderReferenceCheck(self):
         if self.coupon_code:
              return self.coupon_code.Sales_Member
@@ -316,26 +326,26 @@ class Order(models.Model):
    Order_Customer=models.ForeignKey(Customer)
    Order_Delivery_Type=models.ForeignKey(Delivery_Type)
    Order_Date_Time=models.DateTimeField(auto_now_add=True)
+   Order_Payment_Date=models.DateTimeField(null=True,blank=True)
    Order_Address_Line1=models.CharField(max_length=200)
    Order_Address_Line2=models.CharField(max_length=200)
    Order_City=models.CharField(max_length=200)
    Order_State=models.CharField(max_length=200)
    Order_ZIP=models.IntegerField()
-   Invoice=models.FileField(upload_to="Invoices/",null=True)
+   Invoice_visible=models.BooleanField(default=False)
    Order_Payment_Type=models.ForeignKey(Payment_Method)
    Order_Payment_status=models.ForeignKey(Payment_Status)
    Transaction_Id=models.CharField(max_length=100,blank=True)
+   coupon_code_used_in_order=models.ForeignKey(CouponCode,null=True,blank=True)
+   credits_used_in_order=models.IntegerField(default=0)
+   Order_Price_Raw=models.IntegerField()
+   Order_Total_Price=models.IntegerField()
    Order_Reference=models.ForeignKey(Sales_Team,null=True,blank=True)
    class Meta:
        ordering=['-Order_Date_Time']
    def __str__(self):
        return self.Order_In_Name_Of
-   def Order_Total_Price(self):
-       order_list=self.order_product_specs_set.all()
-       total=0
-       for order_item in order_list:
-           total=total+order_item.Final_Ordered_Product_price
-       return total
+
 
 def OrderPaymentOptionCheck(method_request):
           if Payment_Method.objects.filter(payment_type=method_request).exists():

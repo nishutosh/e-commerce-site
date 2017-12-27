@@ -1,0 +1,193 @@
+{%load static%} {%load product_price_filter %}
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>A simple, clean, and responsive HTML invoice template</title>
+    <style>
+    .invoice-box {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        border: 1px solid #eee;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+        font-size: 16px;
+        line-height: 24px;
+        font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+        color: #555;
+    }
+
+    .grid-box {
+        display: grid;
+        grid-gap: 10px;
+    }
+
+    .item1 {
+
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .item2 {
+        margin-top: 30px;
+        grid-column: 9;
+        grid-row: 1;
+    }
+
+    .item3 {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .item4 {
+        grid-column: 9;
+        grid-row: 2;
+    }
+
+    .item5 {
+        margin-top: 30px;
+        grid-column: 1/10;
+        grid-row: 3;
+    }
+    .item6{
+      margin-top: 30px;
+      grid-column: 1/10;
+   
+      grid-row: 4;
+    }
+    h2,h4{
+
+text-align:center;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    th {
+        background-color: grey;
+        padding: 10px;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="invoice-box">
+        <div class="grid-box">
+            <div class="item1">
+                <img src={%static "main/images/invoice-logo.png" %}>
+            </div>
+            <div class="item2">
+                <b>INVOICE # </b>{{order.id}}
+                <br>
+                <b>DATE </b> {{order.Order_Payment_Date}}
+            </div>
+            <div class="item3">
+                <h3>SHIP TO</h3> {{order.Order_Customer.Customer_First_Name}} {{order.Order_Customer.Customer_Last_Name}}
+                <br> {{order.Order_Customer.Order_Address_Line1}} {{order.Order_Address_Line2}} {{order.Order_City}} {{order.Order_State}} {{order.Order_ZIP}}
+                <br> {{order.Order_Customer.Customer_Email}}
+                <br> {{order.Order_Customer.Customer_Contact_Number}}
+                <br>
+            </div>
+            <div class="item4">
+                <h3>SHIP FROM</h3> FASHVOLTS
+                <br> GHAZIABAD
+                <br> 201001
+                <br> 9650143972,8130961310,
+                <br>8586858380
+                <br> fashvoltsofficial@gmail.com
+                <br>
+            </div>
+            <div class="item5">
+                <table>
+                    <tr class="heading">
+                        <th>
+                            Description
+                        </th>
+                        <th>
+                            Unit Price
+                        </th>
+                        <th>
+                            Quantity
+                        </th>
+                        <th>
+                            Amount
+                        </th>
+                    </tr>
+                    </tr>
+                    {%for product in order.order_product_specs_set.all %}
+                    <tr class="item">
+                        <td>
+                            {{product.Ordered_Product.Product_Name}}
+                        </td>
+                        <td>
+                            ₹{{product.Final_Ordered_Product_price|product_price_filter:product.Quantity}}
+                        </td>
+                        <td>
+                            {{product.Quantity}}
+                        </td>
+                        <td>
+                            ₹{{product.Final_Ordered_Product_price}}
+                        </td>
+                    </tr>{%endfor%} 
+
+                    {% if order.coupon_code_used_in_order%}
+                    <tr>
+                        <td>
+                            DISCOUNT
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                           ₹{{order.coupon_code_used_in_order.Discount}}
+                        </td>
+                    </tr>
+                    {%endif%}
+                       {% if order.credits_used_in_order%}
+                    <tr>
+                        <td>
+                            CREDIT USED
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                           ₹{{order.credits_used_in_order}}
+                        </td>
+                    </tr>
+                    
+
+                    {%endif%}
+                    <tr>
+                        <td>
+                           <b>TOTAL</b>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                           ₹{{order.Order_Total_Price}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="item6">
+              <h2>Thankyour For Shopping</h2>
+              <h4>If you have any questions about this invoice .please contact ..........</h4>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
