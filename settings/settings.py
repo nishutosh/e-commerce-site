@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-ROOT_URLCONF = 'ecommsite.urls'
+ROOT_URLCONF = 'ecommapp.urls'
 
 TEMPLATES = [
     {
@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ecommsite.wsgi.application'
+WSGI_APPLICATION = 'ecommapp.wsgi.application'
 
 
 # Database
@@ -142,10 +142,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
+#amazon S3 storage
+if DEBUG==True:
+  MEDIA_URL='/media/'
+  MEDIA_ROOT=os.path.join(BASE_DIR, "media")
+  STATIC_URL = '/static/'
+  STATIC_ROOT=os.path.join(BASE_DIR, "static")
+  STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+  DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+  STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  
 
-STATIC_URL = '/static/'
-STATIC_ROOT=os.path.join(BASE_DIR, "static")
-MEDIA_URL='/media/'
-MEDIA_ROOT=os.path.join(BASE_DIR, "media")
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
