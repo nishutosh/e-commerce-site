@@ -17,7 +17,9 @@ A django e-commerce application .
 
 - Install requirements
 
-    `pip install -r requirements`
+    `pip install -r requirements/dev.txt`
+
+
 
 
 - Enable Debug for debugging
@@ -35,4 +37,8 @@ A django e-commerce application .
     `python manage.py runserver`
 
     This will run the server at localhost.
+
+- Running tests
+
+    `python manage.py test`  
 
