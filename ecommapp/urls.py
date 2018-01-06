@@ -2,6 +2,10 @@ from django.conf.urls import url,include
 from .views import *
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+
+
+
 
 userurls=[
    url(r'user-dashboard/$',UserDashboard.as_view(),name="user-dashboard"),
@@ -115,6 +119,7 @@ custommoduleurls=[
 ]
 
 urlpatterns = [
+    url(r'^admin/', admin.site.urls),
     url(r'cart/',include(carturls)),
     url(r'user/',include(userurls)),
     url(r'order/',include(orderurls)),

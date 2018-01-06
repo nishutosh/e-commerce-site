@@ -100,6 +100,9 @@ function addtowishlist() {
         }
     });
 }
+shmair abtar khan
+
+
 function deletefromwishlist() {
     console.log("wishlist-delete click")
     $.ajax({

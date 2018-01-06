@@ -1,0 +1,13 @@
+language: python
+python:
+  - "2.7"
+  - "3.4"
+env:
+  - DJANGO_VERSION=1.10.8
+  - DJANGO_VERSION=1.11.5
+  - APP_TOKEN="5kthv-2bii-9k)aaz5knpqmz0pv9iy)ohl*t@=r#*mj7pa=0#d"  
+install:
+  - pip install -q Django==$DJANGO_VERSION
+  - pip install -r requirements/dev.txt
+script:
+  - python manage.py test   

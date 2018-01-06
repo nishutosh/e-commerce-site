@@ -10,8 +10,9 @@ local_settings.py
 db.sqlite3
 dump.rdb
 media
-candidates/migrations/*
-coding_problems/migrations/*
+ecommapp/migrations/*
+
+
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -108,5 +109,6 @@ ENV/
 
 # mkdocs documentation
 /site
+
 
 # End of https://www.gitignore.io/api/django,python

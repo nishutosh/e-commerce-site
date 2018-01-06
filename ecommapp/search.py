@@ -21,7 +21,22 @@ def bulk_indexing():
     bulk(client=es, actions=(b.indexing() for b in Product.objects.all().iterator()))
 
 def search(search_term):
-    s = Search().query("multi_match",query=search_term, fields=['Product_Name','Description','Features','TechnicalSpecs'])
+    s = Search().query("multi_match",query=search_term, fields=['Product_Name',
+                                                                'Description',
+                                                                'Features',
+                                                                'TechnicalSpecs',  
+                                                                'Product_Base_Category',
+                                                                'product_Sub_Category',
+                                                                'Discount',
+                                                                'Base_Price',
+                                                                'Availiability',
+                                                                'Main_Image',
+                                                                'Shipment_Authority',
+                                                                'is_displayed',
+                                                                'Product_Seller',
+                                                                'TaxOnProduct',
+                                                                'Sizes'])
     #print s.to_dict()
     response = s.execute()
     return response
+

@@ -20,10 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_*kg-ta+-04v!yzr2xrg$t@4cr@ew1k84hx+ogx^sg)4br+0@r'
+DEBUG = True
+
+SECRET_KEY = os.environ.get('APP_TOKEN')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 
 ALLOWED_HOSTS = ["*"]
 
@@ -38,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'ecommapp',
-    'rest_framework',
     'django_filters',
 ]
 
@@ -53,7 +54,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-ROOT_URLCONF = 'ecommsite.urls'
+ROOT_URLCONF = 'ecommapp.urls'
 
 TEMPLATES = [
     {
@@ -71,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ecommsite.wsgi.application'
+WSGI_APPLICATION = 'ecommapp.wsgi.application'
 
 
 # Database
@@ -89,10 +90,10 @@ else:
   DATABASES = {
       'default': {
           'ENGINE':'django.db.backends.postgresql_psycopg2',
-          'NAME':'d8j295sm0en42',
-          'USER':'lplhtwsvupcqcl',
-          'PASSWORD':'5646b72e0691e4e7bec57877b18f7c9f7031d50afa445097ab6e20106d9274f1',
-          'HOST':'ec2-54-83-3-101.compute-1.amazonaws.com',
+          'NAME':os.environ.get("DATABASE_DB"),
+          'USER':os.environ.get("DATABASE_USER"),
+          'PASSWORD':os.environ.get("DATABASE_PASS"),
+          'HOST':os.environ.get("DATABASE_HOST"),
           'PORT':'5432',
       }
   }
@@ -141,10 +142,14 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
+#amazon S3 storage
+if DEBUG==True:
+  MEDIA_URL='/media/'
+  MEDIA_ROOT=os.path.join(BASE_DIR, "media")
+  STATIC_URL = '/static/'
+  STATIC_ROOT=os.path.join(BASE_DIR, "static")
+  STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+  DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+  STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  
 
-STATIC_URL = '/static/'
-STATIC_ROOT=os.path.join(BASE_DIR, "static")
-MEDIA_URL='/media/'
-MEDIA_ROOT=os.path.join(BASE_DIR, "media")
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
