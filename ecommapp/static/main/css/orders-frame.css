@@ -50,6 +50,11 @@ input[type=number]
   display:inline-block;
 }
 
+.table td .description
+{
+  display: block;
+}
+
 .quantity-icon
 {
   vertical-align: top;

@@ -319,3 +319,21 @@ footer a
   width: 100%;
   padding: 10px 20px;
 }
+
+@media(max-width:500px)
+{
+  .navbar-cart-btn
+  {
+    vertical-align: bottom;
+    margin-left: 30px;
+  }
+  .main-navbar-more-buttons
+  {
+    text-align: center;
+    margin: 10px 0;
+    /* margin-right: 10px; */
+    width: 100%;
+  }
+
+  
+}

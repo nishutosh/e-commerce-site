@@ -100,7 +100,7 @@ function addtowishlist() {
         }
     });
 }
-shmair abtar khan
+
 
 
 function deletefromwishlist() {

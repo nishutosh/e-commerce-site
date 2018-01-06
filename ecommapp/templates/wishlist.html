@@ -1,33 +1,82 @@
-{% extends 'base/user-dash.html' %}
-{% load static %}
+{% extends "base/base-orders.html" %}
 {% block body_block %}
+{%load static%}
 {%csrf_token%}
-    <h3>Wishlist</h3>
+<div class="container-fluid">
+  <h3>Wishlist</h3>
 
-    <div class="container-fluid">
-    {%if product_list%}
-      <div class="orders-container">
-          <div class="header">
-             <ol>  
-                  {% for product in product_list%}
-                  <li>
-                   <a href={{product.Product_In_Wishlist.get_product_url}} >  
-                      <h3>{{product.Product_In_Wishlist.Product_Name}} price: 
-                     {{product.Product_In_Wishlist.price_after_discount}}  </h3>
+  <div class="cart-container">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+          {%if product_list%}
+          {% for items in product_list%}
+            <tr>
+                <td class="item-image">
+                    <a href={{items.Product_In_Wishlist.get_product_url}} >
+                      <img src="{{ items.Product_In_Wishlist.Main_Image.url}}" alt="{{ items.Product_In_Wishlist.Product_Name}}">
+                    </a>
+               </td>
+                <td class="product-name">
+                    <a href={{items.Product_In_Wishlist.get_product_url}} >
+                    {{ items.Product_In_Wishlist.Product_Name}}
                   </a>
-                     </li>
-                     <button title="Remove from Wishlist"  class="btn btn-default del-wishlist-btn"  data-product-id={{product.id}} data-ajax-url={%url  'delete-wishlist' %}>Remove from Wishlist</button>
-                     {%endfor%}
-                    
-               </ol>
-              
-          </div>
-   
+                    <div class="description">
+                      {{ items.Product_In_Wishlist.Description}}
+                    </div>
+                </td>
+                <td class="product-price">{{ items.Product_In_Wishlist.price_after_discount}}</td>
+                <td>
+                    <button class="btn btn-default cart-btn" id="add-to-cart-btn" data-product-id={{items.Product_In_Wishlist.id}} data-ajax-url={%url  'cart' %}>
+                        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                          ADD TO CART
+                    </button>
+                </td>
+                <td>
+                    <button title="Remove from Wishlist"  class="btn btn-default  del-wishlist-btn alternate-cta-btn"  data-product-id={{product.id}} data-ajax-url={%url  'delete-wishlist' %}>Remove from Wishlist</button>
+                </td>
+            </tr>
+          {%endfor%}
+          {%else%}
+                   <h4>NO ITEM</h4>
+          {%endif%}
+          
+      </tbody>
+    </table>
+    <div class="continue-shopping-cta">
+        <a href="/" class="btn btn-default alternate-cta-btn"><i class="fa fa-chevron-left"></i>Continue Shopping</a>
     </div>
-    {%else%}
-                     <h4>NO ITEM</h4>
-                     {%endif%}
+  <!-- {%if product_list%}
+    <div class="orders-container">
+        <div class="header">
+           <ol>  
+                {% for product in product_list%}
+                <li>
+                 <a href={{product.Product_In_Wishlist.get_product_url}} >  
+                    <h3>{{product.Product_In_Wishlist.Product_Name}} price: 
+                   {{product.Product_In_Wishlist.price_after_discount}}  </h3>
+                </a>
+                   </li>
+                   <button title="Remove from Wishlist"  class="btn btn-default del-wishlist-btn"  data-product-id={{product.id}} data-ajax-url={%url  'delete-wishlist' %}>Remove from Wishlist</button>
+                   {%endfor%}
+                  
+             </ol>
+            
+        </div>
+ 
   </div>
+  {%else%}
+                   <h4>NO ITEM</h4>
+                   {%endif%} -->
+</div>
+</div>
+   
 
 
 {% endblock %}
