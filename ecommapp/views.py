@@ -24,6 +24,7 @@ import base64
 import re
 
 
+
 menu_product_view_context={
 "base_category_list":BaseCategory.objects.all()
 }
@@ -369,15 +370,18 @@ class GetPostToWishlist(View,LoginRequiredMixin):
     else:
        return redirect(reverse("signin"))           
   def post(self,request):
-     if not(Wish_List.objects.filter(User_Wishlist=request.user).exists()):
-        wish_obj=Wish_List.objects.create(User_Wishlist=request.user)
-     wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
-     product=Product.objects.get(pk=request.POST.get("product"))
-     if Wish_List_Product.objects.filter(Wishlist=wish_obj,Product_In_Wishlist=product).exists():
-       return JsonResponse({"message":"product already exist"})
-     else:  
-       Wish_List_Product.objects.create(Wishlist=wish_obj,Product_In_Wishlist=product)
-       return JsonResponse({"message":"wishlist updated"})
+     if request.user.is_authenticated:
+       if not(Wish_List.objects.filter(User_Wishlist=request.user).exists()):
+          wish_obj=Wish_List.objects.create(User_Wishlist=request.user)
+       wish_obj=Wish_List.objects.get(User_Wishlist=request.user)
+       product=Product.objects.get(pk=request.POST.get("product"))
+       if Wish_List_Product.objects.filter(Wishlist=wish_obj,Product_In_Wishlist=product).exists():
+         return JsonResponse({"message":"product already exist"})
+       else:  
+         Wish_List_Product.objects.create(Wishlist=wish_obj,Product_In_Wishlist=product)
+         return JsonResponse({"message":"wishlist updated"})
+     else:
+        return redirect(reverse("signin"))           
 class DeleteFromWishList(View,LoginRequiredMixin):
    def post(self,request):
      print (Wish_List_Product.objects.filter(pk=request.POST.get("product")).exists())

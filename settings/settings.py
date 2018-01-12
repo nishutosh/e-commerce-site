@@ -77,17 +77,10 @@ WSGI_APPLICATION = 'ecommapp.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-if DEBUG==True:
-  DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-               }
-  }
 
 
-else:  
-  DATABASES = {
+ 
+DATABASES = {
       'default': {
           'ENGINE':'django.db.backends.postgresql_psycopg2',
           'NAME':os.environ.get("DATABASE_DB"),
@@ -96,7 +89,7 @@ else:
           'HOST':os.environ.get("DATABASE_HOST"),
           'PORT':'5432',
       }
-  }
+}
 
 
 ELASTICSEARCH_DSL={

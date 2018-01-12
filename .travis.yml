@@ -1,7 +1,6 @@
 language: python
 python:
   - "2.7"
-  - "3.4"
 env:
   - APP_TOKEN="5kthv-2bii-9k)aaz5knpqmz0pv9iy)ohl*t@=r#*mj7pa=0#d"  
 install:
