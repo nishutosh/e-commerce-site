@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ecommapp',
     'django_filters',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -135,14 +136,21 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-#amazon S3 storage
-if DEBUG==True:
-  MEDIA_URL='/media/'
-  MEDIA_ROOT=os.path.join(BASE_DIR, "media")
-  STATIC_URL = '/static/'
-  STATIC_ROOT=os.path.join(BASE_DIR, "static")
-  STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-else:
-  DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-  STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  
+
+
+#local storage
+# MEDIA_URL='/media/'
+# MEDIA_ROOT=os.path.join(BASE_DIR, "media")
+
+#heroku storage
+STATIC_URL = '/static/'
+STATIC_ROOT=os.path.join(BASE_DIR, "static")
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+#dropbox storage
+DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+DROPBOX_OAUTH2_TOKEN=os.environ.get("DROPBOX_API_TOKEN")
+DROPBOX_ROOT_PATH="/"
+
+ 
 

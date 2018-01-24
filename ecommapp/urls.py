@@ -4,16 +4,6 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 
-# DATABASES = {
-#       'default': {
-#           'ENGINE':'django.db.backends.postgresql_psycopg2',
-#           'NAME':'mydb',
-#           'USER':'postgres',
-#           'PASSWORD':'autojinx',
-#           'HOST':'localhost',
-#           'PORT':'5432',
-#       }
-# }
 
 
 
@@ -142,4 +132,4 @@ urlpatterns = [
     url(r'^',include(commonurls)),
     url(r'^',include(authurls)),
   
-]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
